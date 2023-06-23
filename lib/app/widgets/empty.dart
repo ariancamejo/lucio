@@ -18,9 +18,7 @@ class EmptyScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text("Noting to show"),
-            const SizedBox(height: kDefaultRefNumber),
-            Text("Press to add $name"),
+            Image.asset("assets/empty.png"),
           ],
         ),
       ),

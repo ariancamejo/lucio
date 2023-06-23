@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lucio/app/home/production/widget/work_prodction_item.dart';
 import 'package:lucio/app/widgets/section_widget.dart';
 import 'package:lucio/data/const.dart';
+import 'package:lucio/data/repositories/production/production_provider.dart';
 import 'package:lucio/data/repositories/production/work_production_provider.dart';
 import 'package:lucio/domain/scheme/production/production_model.dart';
 
@@ -24,6 +26,12 @@ class ProductionItem extends ConsumerWidget {
         DateFormat(dateFormat).format(model.date),
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
       ),
+      trailing: workProductionItems.isEmpty
+          ? IconButton(
+              icon: const Icon(FontAwesomeIcons.trash),
+              onPressed: () => ref.read(productionProvider.notifier).delete([model]),
+            )
+          : null,
       boxDecoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
       items: workProductionItems,
     );

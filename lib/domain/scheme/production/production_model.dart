@@ -3,6 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/device/helpers/storage/database.dart';
 import 'package:lucio/domain/scheme/employe/employe_model.dart';
+import 'package:lucio/domain/scheme/sale/sale_model.dart';
 
 part 'production_model.g.dart';
 
@@ -14,6 +15,9 @@ class ProductionModel {
 
   @Backlink(to: 'production')
   final workProductions = IsarLinks<WorkProductionModel>();
+
+  @Backlink(to: 'lot')
+  final subsales = IsarLinks<SubSaleModel>();
 }
 
 @collection
@@ -44,6 +48,11 @@ class ProductionTypeModel {
   late String name;
   late int color;
   int daysToBeReady = 17;
+  late double price;
+
   @Backlink(to: 'type')
   final workProductions = IsarLinks<WorkProductionModel>();
+
+  @Backlink(to: 'type')
+  final subsales = IsarLinks<SubSaleModel>();
 }

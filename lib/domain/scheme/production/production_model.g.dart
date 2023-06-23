@@ -36,6 +36,13 @@ const ProductionModelSchema = CollectionSchema(
       target: r'WorkProductionModel',
       single: false,
       linkName: r'production',
+    ),
+    r'subsales': LinkSchema(
+      id: 3879340026832286364,
+      name: r'subsales',
+      target: r'SubSaleModel',
+      single: false,
+      linkName: r'lot',
     )
   },
   embeddedSchemas: {},
@@ -94,7 +101,7 @@ Id _productionModelGetId(ProductionModel object) {
 }
 
 List<IsarLinkBase<dynamic>> _productionModelGetLinks(ProductionModel object) {
-  return [object.workProductions];
+  return [object.workProductions, object.subsales];
 }
 
 void _productionModelAttach(
@@ -102,6 +109,8 @@ void _productionModelAttach(
   object.id = id;
   object.workProductions.attach(
       col, col.isar.collection<WorkProductionModel>(), r'workProductions', id);
+  object.subsales
+      .attach(col, col.isar.collection<SubSaleModel>(), r'subsales', id);
 }
 
 extension ProductionModelQueryWhereSort
@@ -363,6 +372,67 @@ extension ProductionModelQueryLinks
     return QueryBuilder.apply(this, (query) {
       return query.linkLength(
           r'workProductions', lower, includeLower, upper, includeUpper);
+    });
+  }
+
+  QueryBuilder<ProductionModel, ProductionModel, QAfterFilterCondition>
+      subsales(FilterQuery<SubSaleModel> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'subsales');
+    });
+  }
+
+  QueryBuilder<ProductionModel, ProductionModel, QAfterFilterCondition>
+      subsalesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<ProductionModel, ProductionModel, QAfterFilterCondition>
+      subsalesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<ProductionModel, ProductionModel, QAfterFilterCondition>
+      subsalesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<ProductionModel, ProductionModel, QAfterFilterCondition>
+      subsalesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<ProductionModel, ProductionModel, QAfterFilterCondition>
+      subsalesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<ProductionModel, ProductionModel, QAfterFilterCondition>
+      subsalesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'subsales', lower, includeLower, upper, includeUpper);
     });
   }
 }
@@ -1212,6 +1282,11 @@ const ProductionTypeModelSchema = CollectionSchema(
       id: 2,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'price': PropertySchema(
+      id: 3,
+      name: r'price',
+      type: IsarType.double,
     )
   },
   estimateSize: _productionTypeModelEstimateSize,
@@ -1225,6 +1300,13 @@ const ProductionTypeModelSchema = CollectionSchema(
       id: -5726313727196098587,
       name: r'workProductions',
       target: r'WorkProductionModel',
+      single: false,
+      linkName: r'type',
+    ),
+    r'subsales': LinkSchema(
+      id: -152422954719474460,
+      name: r'subsales',
+      target: r'SubSaleModel',
       single: false,
       linkName: r'type',
     )
@@ -1255,6 +1337,7 @@ void _productionTypeModelSerialize(
   writer.writeLong(offsets[0], object.color);
   writer.writeLong(offsets[1], object.daysToBeReady);
   writer.writeString(offsets[2], object.name);
+  writer.writeDouble(offsets[3], object.price);
 }
 
 ProductionTypeModel _productionTypeModelDeserialize(
@@ -1268,6 +1351,7 @@ ProductionTypeModel _productionTypeModelDeserialize(
   object.daysToBeReady = reader.readLong(offsets[1]);
   object.id = id;
   object.name = reader.readString(offsets[2]);
+  object.price = reader.readDouble(offsets[3]);
   return object;
 }
 
@@ -1284,6 +1368,8 @@ P _productionTypeModelDeserializeProp<P>(
       return (reader.readLong(offset)) as P;
     case 2:
       return (reader.readString(offset)) as P;
+    case 3:
+      return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1295,7 +1381,7 @@ Id _productionTypeModelGetId(ProductionTypeModel object) {
 
 List<IsarLinkBase<dynamic>> _productionTypeModelGetLinks(
     ProductionTypeModel object) {
-  return [object.workProductions];
+  return [object.workProductions, object.subsales];
 }
 
 void _productionTypeModelAttach(
@@ -1303,6 +1389,8 @@ void _productionTypeModelAttach(
   object.id = id;
   object.workProductions.attach(
       col, col.isar.collection<WorkProductionModel>(), r'workProductions', id);
+  object.subsales
+      .attach(col, col.isar.collection<SubSaleModel>(), r'subsales', id);
 }
 
 extension ProductionTypeModelQueryWhereSort
@@ -1690,6 +1778,72 @@ extension ProductionTypeModelQueryFilter on QueryBuilder<ProductionTypeModel,
       ));
     });
   }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      priceEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'price',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      priceGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'price',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      priceLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'price',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      priceBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'price',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
 }
 
 extension ProductionTypeModelQueryObject on QueryBuilder<ProductionTypeModel,
@@ -1758,6 +1912,67 @@ extension ProductionTypeModelQueryLinks on QueryBuilder<ProductionTypeModel,
           r'workProductions', lower, includeLower, upper, includeUpper);
     });
   }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      subsales(FilterQuery<SubSaleModel> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'subsales');
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      subsalesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      subsalesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      subsalesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      subsalesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      subsalesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      subsalesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'subsales', lower, includeLower, upper, includeUpper);
+    });
+  }
 }
 
 extension ProductionTypeModelQuerySortBy
@@ -1801,6 +2016,20 @@ extension ProductionTypeModelQuerySortBy
       sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterSortBy>
+      sortByPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'price', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterSortBy>
+      sortByPriceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'price', Sort.desc);
     });
   }
 }
@@ -1862,6 +2091,20 @@ extension ProductionTypeModelQuerySortThenBy
       return query.addSortBy(r'name', Sort.desc);
     });
   }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterSortBy>
+      thenByPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'price', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterSortBy>
+      thenByPriceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'price', Sort.desc);
+    });
+  }
 }
 
 extension ProductionTypeModelQueryWhereDistinct
@@ -1884,6 +2127,13 @@ extension ProductionTypeModelQueryWhereDistinct
       distinctByName({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QDistinct>
+      distinctByPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'price');
     });
   }
 }
@@ -1912,6 +2162,12 @@ extension ProductionTypeModelQueryProperty
   QueryBuilder<ProductionTypeModel, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, double, QQueryOperations> priceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'price');
     });
   }
 }

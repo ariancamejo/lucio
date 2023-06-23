@@ -18,12 +18,14 @@ class _MaterialFormState extends ConsumerState<TypeOfProductionForm> {
   final GlobalKey<FormState> _key = GlobalKey();
   late Color dialogPickerColor;
   late TextEditingController _name;
+  late TextEditingController _price;
   late TextEditingController _daysToByReady;
 
   @override
   void initState() {
     _name = TextEditingController(text: widget.model?.name ?? "");
     _daysToByReady = TextEditingController(text: widget.model?.daysToBeReady.toString() ?? "17");
+    _price = TextEditingController(text: widget.model?.price.toString() ?? "");
     dialogPickerColor = widget.model?.color == null ? Colors.blue : Color(widget.model!.color);
     super.initState();
   }
@@ -48,6 +50,24 @@ class _MaterialFormState extends ConsumerState<TypeOfProductionForm> {
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return "Name required";
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
+                child: TextFormField(
+                  controller: _price,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: "Price per Unit"),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return "Price required";
+                    }
+                    if (double.tryParse(value ?? '-') == null) {
+                      return "Enter a valid number";
                     }
                     return null;
                   },
@@ -100,12 +120,14 @@ class _MaterialFormState extends ConsumerState<TypeOfProductionForm> {
             if (widget.model == null) {
               await ref.read(productionTypeModelProvider.notifier).insert(
                     name: _name.text,
+                    price: double.tryParse(_price.text) ?? 0,
                     daysToBeReady: int.tryParse(_daysToByReady.text) ?? 17,
                     color: dialogPickerColor.value,
                   );
             } else {
               await ref.read(productionTypeModelProvider.notifier).update(widget.model!, values: {
                 "name": _name.text,
+                "price": double.tryParse(_price.text) ?? 0,
                 "daysToBeReady": int.tryParse(_daysToByReady.text) ?? 17,
                 "color": dialogPickerColor.value,
               });

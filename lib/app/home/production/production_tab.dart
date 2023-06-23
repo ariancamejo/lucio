@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucio/app/home/production/form/work_production_form.dart';
 import 'package:lucio/app/home/production/widget/production_item.dart';
+import 'package:lucio/app/widgets/empty.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/production/production_provider.dart';
 import 'package:lucio/domain/scheme/production/production_model.dart';
@@ -45,8 +46,9 @@ class ProductionTab extends ConsumerWidget {
     final productions = ref.watch(productionProvider);
     return Scaffold(
       body: productions.isEmpty
-          ? const Center(
-              child: Text("Empty Productions"),
+          ?  EmptyScreen(
+              name: "Work Production",
+              onTap: () => fireForm(context),
             )
           : RefreshIndicator(
               onRefresh: () async => ref.read(productionProvider.notifier).findData(),

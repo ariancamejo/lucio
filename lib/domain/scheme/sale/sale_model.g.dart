@@ -17,13 +17,18 @@ const SaleModelSchema = CollectionSchema(
   name: r'SaleModel',
   id: 8410161235942925352,
   properties: {
-    r'date': PropertySchema(
+    r'client': PropertySchema(
       id: 0,
+      name: r'client',
+      type: IsarType.string,
+    ),
+    r'date': PropertySchema(
+      id: 1,
       name: r'date',
       type: IsarType.dateTime,
     ),
     r'deposit': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'deposit',
       type: IsarType.bool,
     )
@@ -40,6 +45,13 @@ const SaleModelSchema = CollectionSchema(
       name: r'saleType',
       target: r'SaleTypeModel',
       single: true,
+    ),
+    r'subsales': LinkSchema(
+      id: -1996678040081549157,
+      name: r'subsales',
+      target: r'SubSaleModel',
+      single: false,
+      linkName: r'sale',
     )
   },
   embeddedSchemas: {},
@@ -55,6 +67,7 @@ int _saleModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.client.length * 3;
   return bytesCount;
 }
 
@@ -64,8 +77,9 @@ void _saleModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDateTime(offsets[0], object.date);
-  writer.writeBool(offsets[1], object.deposit);
+  writer.writeString(offsets[0], object.client);
+  writer.writeDateTime(offsets[1], object.date);
+  writer.writeBool(offsets[2], object.deposit);
 }
 
 SaleModel _saleModelDeserialize(
@@ -75,8 +89,9 @@ SaleModel _saleModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = SaleModel();
-  object.date = reader.readDateTime(offsets[0]);
-  object.deposit = reader.readBool(offsets[1]);
+  object.client = reader.readString(offsets[0]);
+  object.date = reader.readDateTime(offsets[1]);
+  object.deposit = reader.readBool(offsets[2]);
   object.id = id;
   return object;
 }
@@ -89,8 +104,10 @@ P _saleModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 1:
+      return (reader.readDateTime(offset)) as P;
+    case 2:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -102,13 +119,15 @@ Id _saleModelGetId(SaleModel object) {
 }
 
 List<IsarLinkBase<dynamic>> _saleModelGetLinks(SaleModel object) {
-  return [object.saleType];
+  return [object.saleType, object.subsales];
 }
 
 void _saleModelAttach(IsarCollection<dynamic> col, Id id, SaleModel object) {
   object.id = id;
   object.saleType
       .attach(col, col.isar.collection<SaleTypeModel>(), r'saleType', id);
+  object.subsales
+      .attach(col, col.isar.collection<SubSaleModel>(), r'subsales', id);
 }
 
 extension SaleModelQueryWhereSort
@@ -190,6 +209,136 @@ extension SaleModelQueryWhere
 
 extension SaleModelQueryFilter
     on QueryBuilder<SaleModel, SaleModel, QFilterCondition> {
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> clientEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'client',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> clientGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'client',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> clientLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'client',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> clientBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'client',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> clientStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'client',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> clientEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'client',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> clientContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'client',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> clientMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'client',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> clientIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'client',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> clientIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'client',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> dateEqualTo(
       DateTime value) {
     return QueryBuilder.apply(this, (query) {
@@ -324,9 +473,81 @@ extension SaleModelQueryLinks
       return query.linkLength(r'saleType', 0, true, 0, true);
     });
   }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> subsales(
+      FilterQuery<SubSaleModel> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'subsales');
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition>
+      subsalesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> subsalesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition>
+      subsalesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition>
+      subsalesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition>
+      subsalesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'subsales', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition>
+      subsalesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'subsales', lower, includeLower, upper, includeUpper);
+    });
+  }
 }
 
 extension SaleModelQuerySortBy on QueryBuilder<SaleModel, SaleModel, QSortBy> {
+  QueryBuilder<SaleModel, SaleModel, QAfterSortBy> sortByClient() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'client', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterSortBy> sortByClientDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'client', Sort.desc);
+    });
+  }
+
   QueryBuilder<SaleModel, SaleModel, QAfterSortBy> sortByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
@@ -354,6 +575,18 @@ extension SaleModelQuerySortBy on QueryBuilder<SaleModel, SaleModel, QSortBy> {
 
 extension SaleModelQuerySortThenBy
     on QueryBuilder<SaleModel, SaleModel, QSortThenBy> {
+  QueryBuilder<SaleModel, SaleModel, QAfterSortBy> thenByClient() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'client', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterSortBy> thenByClientDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'client', Sort.desc);
+    });
+  }
+
   QueryBuilder<SaleModel, SaleModel, QAfterSortBy> thenByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
@@ -393,6 +626,13 @@ extension SaleModelQuerySortThenBy
 
 extension SaleModelQueryWhereDistinct
     on QueryBuilder<SaleModel, SaleModel, QDistinct> {
+  QueryBuilder<SaleModel, SaleModel, QDistinct> distinctByClient(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'client', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<SaleModel, SaleModel, QDistinct> distinctByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'date');
@@ -411,6 +651,12 @@ extension SaleModelQueryProperty
   QueryBuilder<SaleModel, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<SaleModel, String, QQueryOperations> clientProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'client');
     });
   }
 
@@ -443,8 +689,13 @@ const SubSaleModelSchema = CollectionSchema(
       name: r'breaks',
       type: IsarType.long,
     ),
-    r'quantity': PropertySchema(
+    r'datetime': PropertySchema(
       id: 1,
+      name: r'datetime',
+      type: IsarType.dateTime,
+    ),
+    r'quantity': PropertySchema(
+      id: 2,
       name: r'quantity',
       type: IsarType.long,
     )
@@ -498,7 +749,8 @@ void _subSaleModelSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.breaks);
-  writer.writeLong(offsets[1], object.quantity);
+  writer.writeDateTime(offsets[1], object.datetime);
+  writer.writeLong(offsets[2], object.quantity);
 }
 
 SubSaleModel _subSaleModelDeserialize(
@@ -509,8 +761,9 @@ SubSaleModel _subSaleModelDeserialize(
 ) {
   final object = SubSaleModel();
   object.breaks = reader.readLong(offsets[0]);
+  object.datetime = reader.readDateTime(offsets[1]);
   object.id = id;
-  object.quantity = reader.readLong(offsets[1]);
+  object.quantity = reader.readLong(offsets[2]);
   return object;
 }
 
@@ -524,6 +777,8 @@ P _subSaleModelDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
+      return (reader.readDateTime(offset)) as P;
+    case 2:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -675,6 +930,62 @@ extension SubSaleModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'breaks',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition>
+      datetimeEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'datetime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition>
+      datetimeGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'datetime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition>
+      datetimeLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'datetime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition>
+      datetimeBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'datetime',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -852,6 +1163,18 @@ extension SubSaleModelQuerySortBy
     });
   }
 
+  QueryBuilder<SubSaleModel, SubSaleModel, QAfterSortBy> sortByDatetime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SubSaleModel, SubSaleModel, QAfterSortBy> sortByDatetimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime', Sort.desc);
+    });
+  }
+
   QueryBuilder<SubSaleModel, SubSaleModel, QAfterSortBy> sortByQuantity() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quantity', Sort.asc);
@@ -876,6 +1199,18 @@ extension SubSaleModelQuerySortThenBy
   QueryBuilder<SubSaleModel, SubSaleModel, QAfterSortBy> thenByBreaksDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'breaks', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SubSaleModel, SubSaleModel, QAfterSortBy> thenByDatetime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SubSaleModel, SubSaleModel, QAfterSortBy> thenByDatetimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime', Sort.desc);
     });
   }
 
@@ -912,6 +1247,12 @@ extension SubSaleModelQueryWhereDistinct
     });
   }
 
+  QueryBuilder<SubSaleModel, SubSaleModel, QDistinct> distinctByDatetime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'datetime');
+    });
+  }
+
   QueryBuilder<SubSaleModel, SubSaleModel, QDistinct> distinctByQuantity() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'quantity');
@@ -930,6 +1271,12 @@ extension SubSaleModelQueryProperty
   QueryBuilder<SubSaleModel, int, QQueryOperations> breaksProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'breaks');
+    });
+  }
+
+  QueryBuilder<SubSaleModel, DateTime, QQueryOperations> datetimeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'datetime');
     });
   }
 
@@ -965,10 +1312,11 @@ const SaleTypeModelSchema = CollectionSchema(
   indexes: {},
   links: {
     r'sales': LinkSchema(
-      id: 72032713090717981,
+      id: -9180123139455372458,
       name: r'sales',
       target: r'SaleModel',
       single: false,
+      linkName: r'saleType',
     )
   },
   embeddedSchemas: {},

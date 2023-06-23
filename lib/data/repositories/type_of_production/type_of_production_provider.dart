@@ -20,11 +20,12 @@ class TypeOfSaleNotifier extends StateNotifier<List<ProductionTypeModel>> {
   Future<List<ProductionTypeModel>> findData({String? name}) async =>
       state = await DBHelper.isar.productionTypeModels.filter().optional(name != null, (q) => q.nameContains(name ?? "")).findAll();
 
-  Future<ProductionTypeModel?> insert({required String name, required int color,required int daysToBeReady, bool object = false}) async {
-      ref.read(rlP.notifier).start();
+  Future<ProductionTypeModel?> insert({required String name, required int color, required int daysToBeReady, required double price, bool object = false}) async {
+    ref.read(rlP.notifier).start();
     final obj = ProductionTypeModel()
       ..name = name
-      ..daysToBeReady=daysToBeReady
+      ..price = price
+      ..daysToBeReady = daysToBeReady
       ..color = color;
 
     ProductionTypeModel? result;
@@ -39,9 +40,10 @@ class TypeOfSaleNotifier extends StateNotifier<List<ProductionTypeModel>> {
   }
 
   Future<ProductionTypeModel?> update(ProductionTypeModel obj, {required Map<String, dynamic> values, bool object = false}) async {
-      ref.read(rlP.notifier).start();
+    ref.read(rlP.notifier).start();
 
     obj.name = values['name'] ?? obj.name;
+    obj.price = values['price'] ?? obj.price;
     obj.daysToBeReady = values['daysToBeReady'] ?? obj.daysToBeReady;
     obj.color = values['color'] ?? obj.color;
     ProductionTypeModel? result;
@@ -56,7 +58,7 @@ class TypeOfSaleNotifier extends StateNotifier<List<ProductionTypeModel>> {
   }
 
   Future<int> delete(List<ProductionTypeModel> obj) async {
-      ref.read(rlP.notifier).start();
+    ref.read(rlP.notifier).start();
     late int count;
     await DBHelper.isar.writeTxn(() async {
       count = await DBHelper.isar.productionTypeModels.deleteAll(obj.map((e) => e.id).toList());
