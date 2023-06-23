@@ -5,8 +5,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lucio/app/home/start/widgets/bar_chart.dart';
 import 'package:lucio/app/home/start/widgets/pie_chart.dart';
 import 'package:lucio/data/const.dart';
-import 'package:intl/intl.dart';
 import 'package:lucio/data/repositories/employe/employe_provider.dart';
+import 'package:lucio/data/repositories/production/work_production_provider.dart';
 import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
 
 class StartTab extends ConsumerWidget {
@@ -15,6 +15,7 @@ class StartTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final typeProductions = ref.watch(productionTypeModelProvider);
+    final workProductions = ref.watch(workProductionProvider);
     final employees = ref.watch(employeeProvider);
     return Scaffold(
       body: Padding(
@@ -74,7 +75,7 @@ class StartTab extends ConsumerWidget {
                 ),
               ),
             ),
-            const StaggeredGridTile.count(
+            StaggeredGridTile.count(
               crossAxisCellCount: 1,
               mainAxisCellCount: 1,
               child: Center(
@@ -82,7 +83,7 @@ class StartTab extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [Icon(Icons.production_quantity_limits), SizedBox(height: 4, width: double.maxFinite), Text("0")],
+                    children: [const Icon(Icons.production_quantity_limits), const SizedBox(height: 4, width: double.maxFinite), Text(workProductions.length.toString())],
                   ),
                 ),
               ),
