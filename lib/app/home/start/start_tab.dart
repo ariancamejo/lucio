@@ -17,104 +17,121 @@ class StartTab extends ConsumerWidget {
     final typeProductions = ref.watch(productionTypeModelProvider);
     final workProductions = ref.watch(workProductionProvider);
     final employees = ref.watch(employeeProvider);
+    final orientation = MediaQuery.of(context).orientation;
+
+    pie() => const StaggeredGridTile.count(
+          crossAxisCellCount: 2,
+          mainAxisCellCount: 2,
+          child: Card(
+            child: Column(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(2.0),
+                      child: Text(
+                        "Production",
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ),
+                PieChartGraphic()
+              ],
+            ),
+          ),
+        );
+    leyend() => StaggeredGridTile.count(
+          crossAxisCellCount: 2,
+          mainAxisCellCount: 1,
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(kDefaultRefNumber / 2),
+              child: typeProductions.isEmpty
+                  ? LayoutBuilder(
+                      builder: (_, contrain) => const Center(
+                        child: Icon(FontAwesomeIcons.industry),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: typeProductions
+                            .map(
+                              (e) => Padding(
+                                padding: const EdgeInsets.all(1.0),
+                                child: Row(children: [CircleAvatar(radius: 5, backgroundColor: Color(e.color)), const SizedBox(width: 4), Expanded(child: Text(e.name))]),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+            ),
+          ),
+        );
+    productionCount() => StaggeredGridTile.count(
+          crossAxisCellCount: 1,
+          mainAxisCellCount: 1,
+          child: Center(
+            child: Card(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [const Icon(Icons.production_quantity_limits), const SizedBox(height: 4, width: double.maxFinite), Text(workProductions.length.toString())],
+              ),
+            ),
+          ),
+        );
+    employeesCount() => StaggeredGridTile.count(
+          crossAxisCellCount: 1,
+          mainAxisCellCount: 1,
+          child: Center(
+            child: Card(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Icon(FontAwesomeIcons.helmetSafety),
+                  const SizedBox(height: 4, width: double.maxFinite),
+                  Text("${employees.length}"),
+                ],
+              ),
+            ),
+          ),
+        );
+    bar() => const StaggeredGridTile.count(
+          crossAxisCellCount: 4,
+          mainAxisCellCount: 5,
+          child: Card(
+            child: Center(
+              child: BarChartGraphic(),
+            ),
+          ),
+        );
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber / 2),
-        child: StaggeredGrid.count(
-          crossAxisCount: 4,
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
-          axisDirection: AxisDirection.down,
-          children: [
-            const StaggeredGridTile.count(
-              crossAxisCellCount: 2,
-              mainAxisCellCount: 2,
-              child: Card(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(2.0),
-                          child: Text(
-                            "Production",
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    ),
-                    PieChartGraphic()
+        child: SingleChildScrollView(
+          child: StaggeredGrid.count(
+            crossAxisCount: orientation == Orientation.portrait ? 4 : 8,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+            axisDirection: AxisDirection.down,
+            children: orientation == Orientation.portrait
+                ? [
+                    pie(),
+                    leyend(),
+                    productionCount(),
+                    employeesCount(),
+                    bar(),
+                  ]
+                : [
+                    pie(),
+                    leyend(),
+                    bar(),
+                    productionCount(),
+                    employeesCount(),
                   ],
-                ),
-              ),
-            ),
-            StaggeredGridTile.count(
-              crossAxisCellCount: 2,
-              mainAxisCellCount: 1,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(kDefaultRefNumber / 2),
-                  child: typeProductions.isEmpty
-                      ? LayoutBuilder(
-                          builder: (_, contrain) => const Center(
-                            child: Icon(FontAwesomeIcons.industry),
-                          ),
-                        )
-                      : SingleChildScrollView(
-                          child: Column(
-                            children: typeProductions
-                                .map(
-                                  (e) => Padding(
-                                    padding: const EdgeInsets.all(1.0),
-                                    child: Row(children: [CircleAvatar(radius: 5, backgroundColor: Color(e.color)), const SizedBox(width: 4), Expanded(child: Text(e.name))]),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        ),
-                ),
-              ),
-            ),
-            StaggeredGridTile.count(
-              crossAxisCellCount: 1,
-              mainAxisCellCount: 1,
-              child: Center(
-                child: Card(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [const Icon(Icons.production_quantity_limits), const SizedBox(height: 4, width: double.maxFinite), Text(workProductions.length.toString())],
-                  ),
-                ),
-              ),
-            ),
-            StaggeredGridTile.count(
-              crossAxisCellCount: 1,
-              mainAxisCellCount: 1,
-              child: Center(
-                child: Card(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(FontAwesomeIcons.helmetSafety),
-                      const SizedBox(height: 4, width: double.maxFinite),
-                      Text("${employees.length}"),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const StaggeredGridTile.count(
-              crossAxisCellCount: 4,
-              mainAxisCellCount: 5,
-              child: Card(
-                child: Center(
-                  child: BarChartGraphic(),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

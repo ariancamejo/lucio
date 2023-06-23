@@ -33,7 +33,13 @@ class Section extends MultiSliver {
                 delegate: SliverChildListDelegate.fixed(items),
               ),
             ),
-            SliverToBoxAdapter(child: action)
+            SliverToBoxAdapter(child: action),
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
+                child: Divider(),
+              ),
+            )
           ],
         );
 }

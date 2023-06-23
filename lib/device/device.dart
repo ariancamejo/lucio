@@ -20,12 +20,11 @@ class Utils {
   static Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    await SystemChrome.setPreferredOrientations([ DeviceOrientation.portraitUp]);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     await dotenv.load();
     await SecureStorage.init();
     await DBHelper.init();
-
   }
 
   static BuildContext? currentContext(StateNotifierProviderRef? ref) => ref?.read(navigatorProvider).routeInformationParser.configuration.navigatorKey.currentContext;

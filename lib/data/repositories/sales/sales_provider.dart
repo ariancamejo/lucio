@@ -29,10 +29,12 @@ class SaleNotifier extends StateNotifier<List<SaleModel>> {
     return state;
   }
 
-  Future<SaleModel?> insert({required String client, bool object = false}) async {
+  Future<SaleModel?> insert({required String client, required DateTime date, bool object = false}) async {
     ref.read(rlP.notifier).start();
 
-    final obj = SaleModel()..client = client;
+    final obj = SaleModel()
+      ..client = client
+      ..date = date;
 
     SaleModel? result;
     await DBHelper.isar.writeTxn(() async {
@@ -50,6 +52,7 @@ class SaleNotifier extends StateNotifier<List<SaleModel>> {
 
     obj.client = values['client'] ?? obj.client;
     obj.deposit = values['deposit'] ?? obj.deposit;
+    obj.date = values['date'] ?? obj.date;
     SaleModel? result;
     await DBHelper.isar.writeTxn(() async {
       final id = await DBHelper.isar.saleModels.put(obj);
