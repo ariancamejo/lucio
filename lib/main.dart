@@ -65,22 +65,21 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
         debugPrint('appLifeCycleState inactive');
         break;
       case AppLifecycleState.resumed:
-        // var context = ref.read(navigatorProvider).routeInformationParser.configuration.navigatorKey.currentContext;
-        // String? pin = await SecureStorage.read('pin');
-        // String? checkAuthHome = await SecureStorage.read('checkAuthHome');
-        // if (context != null && pin != null && checkAuthHome == null) {
-        //   await SecureStorage.set('checkAuthHome', value: 'checking');
-        //   if (context.mounted) {
-        //     checkAuth(
-        //       context,
-        //       onSuccess: () {
-        //         debugPrint("OK");
-        //       },
-        //       useBiometric: true,
-        //       obli: true,
-        //     ).then((value) => Future.delayed(const Duration(seconds: 2), () => SecureStorage.delete('checkAuthHome')));
-        //   }
-        // }
+        var context = ref.read(navigatorProvider).routeInformationParser.configuration.navigatorKey.currentContext;
+        String? pin = await SecureStorage.read('pin');
+        String? checkAuthHome = await SecureStorage.read('checkAuthHome');
+        if (context != null && pin != null && checkAuthHome == null) {
+          if (context.mounted) {
+            checkAuth(
+              context,
+              onSuccess: () {
+                debugPrint("OK");
+              },
+              useBiometric: true,
+              obli: true,
+            );
+          }
+        }
         debugPrint('appLifeCycleState resumed');
         break;
       case AppLifecycleState.paused:

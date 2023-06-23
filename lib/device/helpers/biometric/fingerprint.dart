@@ -53,6 +53,7 @@ Future<void> checkAuth(
   String? pin = await SecureStorage.read('pin');
 
   if (pin != null && context.mounted) {
+    SecureStorage.set('checkAuthHome', value: 'checking');
     return screenLock(
       context: context,
       title: const Text("Enter unlock PIN"),
@@ -91,6 +92,7 @@ Future<void> checkAuth(
       },
       didUnlocked: () {
         Navigator.pop(context);
+        Future.delayed(const Duration(seconds: 3), () => SecureStorage.delete('checkAuthHome'));
         onSuccess.call();
       },
     );

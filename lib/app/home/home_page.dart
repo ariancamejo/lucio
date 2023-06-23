@@ -31,16 +31,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (context.mounted) {
       checkAuth(
         context,
-        onSuccess: () => Future.delayed(const Duration(seconds: 1), () => SecureStorage.delete('checkAuthHome')),
+        onSuccess: () {},
         useBiometric: true,
         obli: true,
-      ).then(
-        (value) => Future.delayed(
-          const Duration(seconds: 1),
-          () {
-            SecureStorage.delete('checkAuthHome');
-          },
-        ),
       );
     }
   }
