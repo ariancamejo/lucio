@@ -45,7 +45,7 @@ class WorkProductionItem extends ConsumerWidget {
       child: ListTile(
         title: Text(model.employee.value?.name ?? "Employee has deleted"),
         trailing: Container(
-          constraints: const BoxConstraints(maxWidth: 60),
+          constraints: const BoxConstraints(maxWidth: 45),
           height: 30,
           decoration: BoxDecoration(color: Color(model.type.value?.color ?? 0x00000000), borderRadius: BorderRadius.circular(kDefaultRefNumber / 4)),
           child: model.breaks == 0

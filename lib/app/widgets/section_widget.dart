@@ -6,11 +6,13 @@ class Section extends MultiSliver {
   Section({
     Key? key,
     required Widget title,
+    bool titleIsBig = false,
     Widget? subtitle,
     Widget? leading,
     Widget? trailing,
     BoxDecoration? boxDecoration,
     required List<Widget> items,
+    bool divider = false,
     Widget? action,
   }) : super(
           key: key,
@@ -19,12 +21,14 @@ class Section extends MultiSliver {
             SliverPinnedHeader(
               child: Container(
                 decoration: boxDecoration,
-                child: ListTile(
-                  leading: leading,
-                  title: title,
-                  subtitle: subtitle,
-                  trailing: trailing,
-                ),
+                child: titleIsBig
+                    ? title
+                    : ListTile(
+                        leading: leading,
+                        title: title,
+                        subtitle: subtitle,
+                        trailing: trailing,
+                      ),
               ),
             ),
             SliverPadding(
@@ -34,12 +38,13 @@ class Section extends MultiSliver {
               ),
             ),
             SliverToBoxAdapter(child: action),
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
-                child: Divider(),
-              ),
-            )
+            if (divider)
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
+                  child: Divider(),
+                ),
+              )
           ],
         );
 }

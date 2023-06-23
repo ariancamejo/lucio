@@ -3,6 +3,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucio/app/navigator.dart';
 import 'package:lucio/data/const.dart';
+import 'package:lucio/data/repositories/options_provider.dart';
 import 'package:lucio/data/repositories/rlp_provider.dart';
 import 'package:lucio/device/device.dart';
 import 'package:lucio/device/helpers/biometric/fingerprint.dart';
@@ -67,14 +68,11 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         var context = ref.read(navigatorProvider).routeInformationParser.configuration.navigatorKey.currentContext;
         String? pin = await SecureStorage.read('pin');
-        String? checkAuthHome = await SecureStorage.read('checkAuthHome');
-        if (context != null && pin != null && checkAuthHome == null) {
+        if (context != null && pin != null) {
           if (context.mounted) {
             checkAuth(
-              context,
-              onSuccess: () {
-                debugPrint("OK");
-              },
+              ref,
+              message: "Resume application",
               useBiometric: true,
               obli: true,
             );
@@ -104,11 +102,6 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
       routerDelegate: router.routerDelegate,
       routeInformationParser: router.routeInformationParser,
       routeInformationProvider: router.routeInformationProvider,
-      //LOCALE
-      // locale: context.locale,
-      // supportedLocales: context.supportedLocales,
-      // localizationsDelegates: context.localizationDelegates,
-      // localeResolutionCallback: (locale, __) => locale,
       //THEME
       theme: lightTheme(context),
       darkTheme: darkTheme(context),

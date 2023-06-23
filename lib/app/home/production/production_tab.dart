@@ -57,7 +57,8 @@ class ProductionTab extends ConsumerWidget {
                   MultiSliver(
                     pushPinnedChildren: true,
                     children: productions.map((e) => ProductionItem(model: e)).toList(),
-                  )
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 60))
                 ],
               ),
             ),

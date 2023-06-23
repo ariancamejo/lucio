@@ -26,6 +26,7 @@ class ProductionItem extends ConsumerWidget {
         DateFormat(dateFormat).format(model.date),
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
       ),
+      divider: true,
       trailing: workProductionItems.isEmpty
           ? IconButton(
               icon: const Icon(FontAwesomeIcons.trash),

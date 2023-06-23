@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:lucio/data/repositories/consume_materials/consume_material_provider.dart';
 import 'package:lucio/data/repositories/rlp_provider.dart';
 import 'package:lucio/device/helpers/storage/database.dart';
 import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
@@ -35,6 +36,7 @@ class MaterialsNotifier extends StateNotifier<List<MaterialModel>> {
       }
     });
     ref.read(rlP.notifier).stop();
+    ref.refresh(consumeMaterialsProvider);
     return result;
   }
 
@@ -53,6 +55,7 @@ class MaterialsNotifier extends StateNotifier<List<MaterialModel>> {
       }
     });
     ref.read(rlP.notifier).stop();
+    ref.refresh(consumeMaterialsProvider);
     return result;
   }
 
@@ -63,6 +66,7 @@ class MaterialsNotifier extends StateNotifier<List<MaterialModel>> {
       count = await DBHelper.isar.materialModels.deleteAll(obj.map((e) => e.id).toList());
     });
     ref.read(rlP.notifier).stop();
+    ref.refresh(consumeMaterialsProvider);
     return count;
   }
 }

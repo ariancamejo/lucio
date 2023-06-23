@@ -1,4 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,6 +48,13 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
       child: LayoutBuilder(builder: (context, contrain) {
         return Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Consumption Materials",
+                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
             Row(
               children: [
                 Expanded(
@@ -61,8 +69,14 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                                 Color(type.color),
                                 consumption
                                     .where((f) => f.type.value?.id == type.id)
-                                    .map((co) => DataWithColor(
-                                        material: co.material.value, value: co.quantity(PieChartGraphic.quantityOfProductionType(workProductions, type, productTypes).toInt())))
+                                    .map(
+                                      (co) => DataWithColor(
+                                        material: co.material.value,
+                                        value: co.quantity(
+                                          PieChartGraphic.quantityOfProductionType(workProductions, type, productTypes).toInt(),
+                                        ),
+                                      ),
+                                    )
                                     .toList()))
                             .toList();
                         maxValue = dataList
@@ -103,7 +117,7 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                             bottomTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
-                                reservedSize: 36,
+                                reservedSize: 35,
                                 getTitlesWidget: (value, meta) {
                                   final index = value.toInt();
                                   return SideTitleWidget(
@@ -122,6 +136,7 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                           gridData: FlGridData(
                             show: true,
                             drawVerticalLine: false,
+                            drawHorizontalLine: true,
                             getDrawingHorizontalLine: (value) => FlLine(
                               color: scheme.onBackground.withOpacity(0.2),
                               strokeWidth: 1,
@@ -132,12 +147,13 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                             final data = e.value;
                             return BarChartGroupData(
                               x: index,
+                              groupVertically: false,
                               barRods: data.consumptions
                                   .map(
                                     (e) => BarChartRodData(
                                       toY: e.value,
                                       color: Color(e.material?.color ?? 0x00000000),
-                                      width: 6,
+                                      width: 4,
                                     ),
                                   )
                                   .toList(),
@@ -214,15 +230,28 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                   Expanded(
                     child: SingleChildScrollView(
                       child: Wrap(
-                        spacing: 8.0, // espacio horizontal entre los chips
-                        runSpacing: 4.0, // espacio vertical entre las filas de chips
+                        spacing: 4.0, // espacio horizontal entre los chips
+                        runSpacing: -8, // espacio vertical entre las filas de chips
                         children: materials
                             .map(
                               (e) => Chip(
                                 surfaceTintColor: Color(e.color),
-                                avatar: Container(
-                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRefNumber / 4), color: Color(e.color)),
+                                onDeleted: () {},
+                                deleteIcon: ColorIndicator(
+                                  width: 30,
+                                  height: 30,
+                                  borderRadius: 4,
+                                  color: Color(e.color),
+                                  onSelectFocus: false,
+                                  onSelect: () async {
+                                    final Color colorBeforeDialog = Color(e.color);
+                                    Color result = await showColorPickerDialog(context, colorBeforeDialog);
+                                    await ref.read(materialsProvider.notifier).update(e, values: {"color": result.value});
+                                  },
                                 ),
+                                // avatar: Container(
+                                //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRefNumber / 4), color: Color(e.color)),
+                                // ),
                                 label: Text(e.name),
                               ),
                             )
@@ -274,7 +303,11 @@ class _IconWidgetState extends AnimatedWidgetBaseState<_IconWidget> {
     final rotation = math.pi * 4 * _rotationTween!.evaluate(animation);
     final scale = 1 + _rotationTween!.evaluate(animation) * 0.5;
 
-    return CircleAvatar(radius: 10, backgroundColor: widget.color);
+    return Container(
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(color: widget.color, borderRadius: BorderRadius.circular(kDefaultRefNumber)),
+    );
     // return Transform(
     //   transform: Matrix4.rotationZ(rotation).scaled(scale, scale),
     //   origin: const Offset(14, 14),

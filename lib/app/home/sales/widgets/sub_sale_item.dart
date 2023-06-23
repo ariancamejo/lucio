@@ -45,9 +45,8 @@ class SubSaleItem extends ConsumerWidget {
         ],
       ),
       child: ListTile(
-        title: Text(model.type.value?.name ?? "Type of production has deleted"),
         trailing: Container(
-          constraints: const BoxConstraints(maxWidth: 60),
+          constraints: const BoxConstraints(maxWidth: 45),
           height: 30,
           decoration: BoxDecoration(color: Color(model.type.value?.color ?? 0x00000000), borderRadius: BorderRadius.circular(kDefaultRefNumber / 4)),
           child: model.breaks == 0
@@ -61,6 +60,7 @@ class SubSaleItem extends ConsumerWidget {
                 ),
         ),
         subtitle: Text("${model.type.value?.name ?? ""} -->  ${model.quantity}"),
+        title: Text("Lot: ${model.lot.value?.lotName(model.type.value) ?? "Lot has deleted"}"),
         onLongPress: () {},
       ),
     );

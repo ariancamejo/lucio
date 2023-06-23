@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screen_lock/flutter_screen_lock.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lucio/data/repositories/biometric/biometric_provider.dart';
+import 'package:lucio/data/repositories/options_provider.dart';
 import 'package:lucio/device/helpers/biometric/fingerprint.dart';
 
 class BiometricOption extends ConsumerWidget {
@@ -36,9 +37,10 @@ class BiometricOption extends ConsumerWidget {
             );
           } else {
             checkAuth(
-              context,
+              ref,
               obli: false,
               useBiometric: false,
+              message: "Disable Auth required for actions",
               onSuccess: () {
                 //remove pin
                 ref.read(biometricProvider.notifier).pin(value: null);

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screen_lock/flutter_screen_lock.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:lucio/data/repositories/options_provider.dart';
+import 'package:lucio/device/device.dart';
 import 'package:lucio/device/helpers/storage/secure.dart';
 
 abstract class BiometricInfo {
@@ -21,12 +24,12 @@ class BiometricInfoImpl implements BiometricInfo {
   }
 }
 
-Future<void> localAuth(BuildContext context, Function() onSuccess) async {
+Future<void> localAuth(BuildContext context, Function() onSuccess, {String? message}) async {
   final localAuth = LocalAuthentication();
   bool didAuthenticate = false;
 
   didAuthenticate = await localAuth.authenticate(
-    localizedReason: "Authenticate to continue",
+    localizedReason: message ?? "Authenticate to continue",
     options: const AuthenticationOptions(
       useErrorDialogs: true,
       stickyAuth: true,
@@ -39,39 +42,48 @@ Future<void> localAuth(BuildContext context, Function() onSuccess) async {
   }
 }
 
+_authOff(WidgetRef ref, {Duration? duration}) => Future.delayed(duration ?? const Duration(milliseconds: 100), () => ref.read(optionsP.notifier).checkAuth = false);
+
 Future<void> checkAuth(
-  BuildContext context, {
-  bool useBiometric = false,
-  required Function() onSuccess,
-  bool obli = true,
+  WidgetRef ref, {
+  String? message,
+  bool useBiometric = true,
+  Function()? onSuccess,
+  bool obli = false,
 }) async {
   bool finger = await BiometricInfoImpl().hasFingerprint;
   if (useBiometric && !finger) {
     useBiometric = false;
   }
+  BuildContext? context = Utils.currentContext(ref.read(optionsP.notifier).ref);
+  if (context == null) return;
 
   String? pin = await SecureStorage.read('pin');
+  bool checkAuth = ref.read(optionsP).checkAuth;
+  if (checkAuth) return;
 
   if (pin != null && context.mounted) {
-    SecureStorage.set('checkAuthHome', value: 'checking');
+    ref.read(optionsP.notifier).checkAuth = true;
     return screenLock(
       context: context,
-      title: const Text("Enter unlock PIN"),
+      title: Text(message ?? "Enter unlock PIN"),
       correctString: pin,
       canCancel: !obli,
-      customizedButtonChild: useBiometric
-          ? const Icon(
-              Icons.fingerprint,
-            )
-          : null,
+      customizedButtonChild: useBiometric ? const Icon(Icons.fingerprint) : null,
       customizedButtonTap: useBiometric
           ? () async {
               await localAuth(
                 context,
+                message: message,
                 () {
                   Navigator.pop(context);
-                  onSuccess.call();
+                  onSuccess?.call();
                 },
+              ).then(
+                (value) => _authOff(
+                  ref,
+                  duration: const Duration(seconds: 1),
+                ),
               );
             }
           : null,
@@ -82,21 +94,32 @@ Future<void> checkAuth(
           Future.microtask(
             () => localAuth(
               context,
+              message: message,
               () {
                 Navigator.pop(context);
-                onSuccess.call();
+                onSuccess?.call();
               },
+            ).then(
+              (value) => _authOff(
+                ref,
+                duration: const Duration(seconds: 1),
+              ),
             ),
           );
         }
       },
       didUnlocked: () {
         Navigator.pop(context);
-        Future.delayed(const Duration(seconds: 3), () => SecureStorage.delete('checkAuthHome'));
-        onSuccess.call();
+
+        onSuccess?.call();
       },
-    );
+    ).then((value) {
+      print("Finish dialog");
+      if (!useBiometric) _authOff(ref);
+    });
   } else {
-    if (!obli) onSuccess.call();
+    if (!obli) {
+      onSuccess?.call();
+    }
   }
 }

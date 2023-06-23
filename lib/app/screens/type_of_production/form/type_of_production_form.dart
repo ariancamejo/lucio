@@ -135,7 +135,7 @@ class _MaterialFormState extends ConsumerState<TypeOfProductionForm> {
             if (context.mounted) Navigator.pop(context);
           }
         },
-        child: const Icon(Icons.save),
+        child:  Icon(widget.model == null ? Icons.save : Icons.update),
       ),
     );
   }

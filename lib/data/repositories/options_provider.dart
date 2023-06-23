@@ -12,6 +12,7 @@ class OptionsState with _$OptionsState {
   const factory OptionsState({
     required DateTime startFilter,
     required DateTime endFilter,
+    @Default(false) bool checkAuth,
     @Default(0) int daysOfRangeDateProduction,
   }) = _OptionsState;
 
@@ -19,7 +20,11 @@ class OptionsState with _$OptionsState {
 }
 
 class OptionsNotifier extends StateNotifier<OptionsState> {
-  OptionsNotifier()
+  StateNotifierProviderRef<OptionsNotifier, OptionsState> ref;
+
+  set checkAuth(value) => state = state.copyWith(checkAuth: value);
+
+  OptionsNotifier(this.ref)
       : super(
           OptionsState(
             startFilter: DateTime(
@@ -70,5 +75,5 @@ class OptionsNotifier extends StateNotifier<OptionsState> {
 }
 
 final optionsP = StateNotifierProvider<OptionsNotifier, OptionsState>((ref) {
-  return OptionsNotifier();
+  return OptionsNotifier(ref);
 });

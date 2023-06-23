@@ -50,7 +50,7 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
         actions: [
           IconButton(
             onPressed: () {
-              checkAuth(context, obli: false, useBiometric: true, onSuccess: () async {
+              checkAuth(ref, message: "Change Date", onSuccess: () async {
                 DateTime? result = await showDatePicker(
                     context: context, initialDate: dateTime, firstDate: DateTime.now().subtract(Duration(days: options.daysOfRangeDateProduction)), lastDate: DateTime.now());
                 setState(() {
@@ -181,7 +181,7 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
             if (context.mounted) Navigator.pop(context);
           }
         },
-        icon: const Icon(Icons.save),
+        icon: Icon(widget.model == null ? Icons.save : Icons.update),
       ),
     );
   }

@@ -91,6 +91,7 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
                 child: TextFormField(
                   controller: _quantityType,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(labelText: "Quantity Type"),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -108,6 +109,7 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
                 child: TextFormField(
                   controller: _quantityMaterial,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(labelText: "Quantity Material"),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -145,7 +147,7 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
             if (context.mounted) Navigator.pop(context);
           }
         },
-        child: const Icon(Icons.save),
+        child:  Icon(widget.model == null ? Icons.save : Icons.update),
       ),
     );
   }

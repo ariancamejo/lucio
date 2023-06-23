@@ -45,30 +45,43 @@ class _PieChartGraphicState extends ConsumerState<PieChartGraphic> {
             ? Center(
                 child: Icon(FontAwesomeIcons.industry, size: contrain.maxWidth / 2),
               )
-            : PieChart(
-                PieChartData(
-                  sections: prodyctionType
-                      .map(
-                        (e) => PieChartSectionData(
-                          showTitle: false,
-                          value: PieChartGraphic.quantityOfProductionType(workP, e, prodyctionType),
-                          color: Color(e.color).withOpacity(0.8),
-                          title: '${PieChartGraphic.quantityOfProductionType(workP, e, prodyctionType).toStringAsFixed(0)}',
-                          radius: contrain.maxWidth / 4,
-                          titleStyle: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  borderData: FlBorderData(show: true),
-                  sectionsSpace: 0,
-                  centerSpaceRadius: 5,
-                  centerSpaceColor: Theme.of(context).cardColor,
+            : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Production",
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
+                Expanded(
+                  child: PieChart(
+                      PieChartData(
+                        sections: prodyctionType
+                            .map(
+                              (e) => PieChartSectionData(
+                                showTitle: false,
+                                value: PieChartGraphic.quantityOfProductionType(workP, e, prodyctionType),
+                                color: Color(e.color).withOpacity(0.8),
+                                title: PieChartGraphic.quantityOfProductionType(workP, e, prodyctionType).toStringAsFixed(0),
+                                radius: contrain.maxWidth / 4,
+                                titleStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        borderData: FlBorderData(show: true),
+                        sectionsSpace: 0,
+                        centerSpaceRadius: 5,
+                        centerSpaceColor: Theme.of(context).cardColor,
+                      ),
+                    ),
+                ),
+              ],
+            ),
       ),
     );
   }

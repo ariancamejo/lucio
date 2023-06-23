@@ -1,8 +1,10 @@
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lucio/app/home/start/widgets/bar_chart.dart';
+import 'package:lucio/app/home/start/widgets/line_chart.dart';
 import 'package:lucio/app/home/start/widgets/pie_chart.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/employe/employe_provider.dart';
@@ -17,29 +19,11 @@ class StartTab extends ConsumerWidget {
     final typeProductions = ref.watch(productionTypeModelProvider);
     final workProductions = ref.watch(workProductionProvider);
     final employees = ref.watch(employeeProvider);
-    final orientation = MediaQuery.of(context).orientation;
 
     pie() => const StaggeredGridTile.count(
           crossAxisCellCount: 2,
           mainAxisCellCount: 2,
-          child: Card(
-            child: Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(2.0),
-                      child: Text(
-                        "Production",
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                ),
-                PieChartGraphic()
-              ],
-            ),
-          ),
+          child: Card(child: PieChartGraphic()),
         );
     leyend() => StaggeredGridTile.count(
           crossAxisCellCount: 2,
@@ -58,8 +42,25 @@ class StartTab extends ConsumerWidget {
                         children: typeProductions
                             .map(
                               (e) => Padding(
-                                padding: const EdgeInsets.all(1.0),
-                                child: Row(children: [CircleAvatar(radius: 5, backgroundColor: Color(e.color)), const SizedBox(width: 4), Expanded(child: Text(e.name))]),
+                                padding: const EdgeInsets.all(2.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(child: Text(e.name)),
+                                    ColorIndicator(
+                                      width: 20,
+                                      height: 20,
+                                      borderRadius: kDefaultRefNumber,
+                                      color: Color(e.color),
+                                      onSelectFocus: false,
+                                      onSelect: () async {
+                                        final Color colorBeforeDialog = Color(e.color);
+                                        Color result = await showColorPickerDialog(context, colorBeforeDialog);
+                                        await ref.read(productionTypeModelProvider.notifier).update(e, values: {"color": result.value});
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             )
                             .toList(),
@@ -100,37 +101,41 @@ class StartTab extends ConsumerWidget {
         );
     bar() => const StaggeredGridTile.count(
           crossAxisCellCount: 4,
-          mainAxisCellCount: 5,
+          mainAxisCellCount: 4.2,
           child: Card(
             child: Center(
               child: BarChartGraphic(),
             ),
           ),
         );
+
+    line() => const StaggeredGridTile.count(
+          crossAxisCellCount: 4,
+          mainAxisCellCount: 3.5,
+          child: Card(
+            child: Center(
+              child: LineChartGraphic(),
+            ),
+          ),
+        );
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber / 2),
         child: SingleChildScrollView(
           child: StaggeredGrid.count(
-            crossAxisCount: orientation == Orientation.portrait ? 4 : 8,
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
+            crossAxisCount: 4,
+            mainAxisSpacing: 0,
+            crossAxisSpacing: 0,
             axisDirection: AxisDirection.down,
-            children: orientation == Orientation.portrait
-                ? [
-                    pie(),
-                    leyend(),
-                    productionCount(),
-                    employeesCount(),
-                    bar(),
-                  ]
-                : [
-                    pie(),
-                    leyend(),
-                    bar(),
-                    productionCount(),
-                    employeesCount(),
-                  ],
+            children: [
+              pie(),
+              leyend(),
+              productionCount(),
+              employeesCount(),
+              bar(),
+              line(),
+            ],
           ),
         ),
       ),

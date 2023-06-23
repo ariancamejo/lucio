@@ -117,7 +117,7 @@ class _MaterialFormState extends ConsumerState<MaterialForm> {
             if (context.mounted) Navigator.pop(context);
           }
         },
-        child: const Icon(Icons.save),
+        child:  Icon(widget.model == null ? Icons.save : Icons.update),
       ),
     );
   }

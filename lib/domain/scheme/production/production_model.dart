@@ -18,6 +18,10 @@ class ProductionModel {
 
   @Backlink(to: 'lot')
   final subsales = IsarLinks<SubSaleModel>();
+
+  lotName(ProductionTypeModel? type) {
+    return DateFormat("ddMMyyyy").format(date);
+  }
 }
 
 @collection

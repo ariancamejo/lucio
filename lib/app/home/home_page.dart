@@ -6,6 +6,8 @@ import 'package:lucio/app/home/sales/sales_tab.dart';
 import 'package:lucio/app/home/start/start_tab.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:lucio/data/const.dart';
+import 'package:lucio/data/repositories/options_provider.dart';
+import 'package:lucio/data/repositories/sales/sales_provider.dart';
 import 'package:lucio/device/helpers/biometric/fingerprint.dart';
 import 'package:lucio/device/helpers/storage/secure.dart';
 
@@ -27,10 +29,10 @@ class _HomePageState extends ConsumerState<HomePage> {
   ];
 
   _init() async {
-    await SecureStorage.set('checkAuthHome', value: '');
     if (context.mounted) {
       checkAuth(
-        context,
+        ref,
+        message: "Access to application",
         onSuccess: () {},
         useBiometric: true,
         obli: true,

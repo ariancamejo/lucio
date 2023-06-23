@@ -2,18 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:lucio/data/repositories/options_provider.dart';
 import 'package:lucio/device/device.dart';
 import 'package:lucio/device/helpers/biometric/fingerprint.dart';
 import 'package:lucio/device/helpers/storage/database.dart';
 import 'package:path_provider/path_provider.dart';
 
-class BackUp extends StatefulWidget {
+class BackUp extends ConsumerStatefulWidget {
   const BackUp({Key? key}) : super(key: key);
 
   @override
-  State<BackUp> createState() => _BackUpState();
+  ConsumerState<BackUp> createState() => _BackUpState();
 
   static Future<void> createBackUpIsar() async {
     String? selectedDirectoryPath = await FilePicker.platform.getDirectoryPath();
@@ -60,7 +62,7 @@ class BackUp extends StatefulWidget {
   }
 }
 
-class _BackUpState extends State<BackUp> {
+class _BackUpState extends ConsumerState<BackUp> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -78,7 +80,7 @@ class _BackUpState extends State<BackUp> {
               BackUp.createBackUpIsar();
               break;
             case 1:
-              checkAuth(context, obli: false, useBiometric: true, onSuccess: () {
+              checkAuth(ref, message: "Recovery BackUp", onSuccess: () {
                 BackUp.recoveryFromBackUp(context);
               });
               break;

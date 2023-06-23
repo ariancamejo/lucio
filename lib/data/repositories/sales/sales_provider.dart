@@ -5,6 +5,7 @@ import 'package:isar/isar.dart';
 import 'package:lucio/data/repositories/options_provider.dart';
 
 import 'package:lucio/data/repositories/rlp_provider.dart';
+import 'package:lucio/data/repositories/sales/sub_sales_provider.dart';
 
 import 'package:lucio/device/helpers/storage/database.dart';
 import 'package:lucio/domain/scheme/sale/sale_model.dart';
@@ -29,21 +30,24 @@ class SaleNotifier extends StateNotifier<List<SaleModel>> {
     return state;
   }
 
-  Future<SaleModel?> insert({required String client, required DateTime date, bool object = false}) async {
+  Future<SaleModel?> insert({required String client, required DateTime date, required SaleTypeModel saleType, bool object = false}) async {
     ref.read(rlP.notifier).start();
 
     final obj = SaleModel()
       ..client = client
+      ..saleType.value = saleType
       ..date = date;
 
     SaleModel? result;
     await DBHelper.isar.writeTxn(() async {
       final id = await DBHelper.isar.saleModels.put(obj);
+      await obj.saleType.save();
       if (object) {
         result = await DBHelper.isar.saleModels.get(id);
       }
     });
     ref.read(rlP.notifier).stop();
+    ref.refresh(subSalesProvider);
     return result;
   }
 
@@ -51,17 +55,19 @@ class SaleNotifier extends StateNotifier<List<SaleModel>> {
     ref.read(rlP.notifier).start();
 
     obj.client = values['client'] ?? obj.client;
+    obj.saleType.value = values['saleType'] ?? obj.saleType.value;
     obj.deposit = values['deposit'] ?? obj.deposit;
     obj.date = values['date'] ?? obj.date;
     SaleModel? result;
     await DBHelper.isar.writeTxn(() async {
       final id = await DBHelper.isar.saleModels.put(obj);
+      await obj.saleType.save();
       if (object) {
         result = await DBHelper.isar.saleModels.get(id);
       }
     });
     ref.read(rlP.notifier).stop();
-
+    ref.refresh(subSalesProvider);
     return result;
   }
 
@@ -72,6 +78,7 @@ class SaleNotifier extends StateNotifier<List<SaleModel>> {
       count = await DBHelper.isar.saleModels.deleteAll(obj.map((e) => e.id).toList());
     });
     ref.read(rlP.notifier).stop();
+    ref.refresh(subSalesProvider);
     return count;
   }
 }

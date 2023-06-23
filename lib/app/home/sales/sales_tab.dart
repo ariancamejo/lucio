@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lucio/app/home/sales/form/sale_form.dart';
 
@@ -66,7 +67,8 @@ class SalesTab extends ConsumerWidget {
                   MultiSliver(
                     pushPinnedChildren: true,
                     children: sales.map((e) => SaleItem(model: e)).toList(),
-                  )
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 60))
                 ],
               ),
             ),

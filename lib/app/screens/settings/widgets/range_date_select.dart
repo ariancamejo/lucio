@@ -18,7 +18,10 @@ class RangeDateSelectWidget extends ConsumerWidget {
       subtitle: Text("${DateFormat(dateFormat).format(options.startFilter)} ---- ${DateFormat(dateFormat).format(options.endFilter)}"),
       trailing: const Icon(Icons.date_range_sharp),
       onTap: () async {
-        checkAuth(context, obli: false, useBiometric: true, onSuccess: () async {
+        checkAuth(ref,
+            message: "Change date range for show information of application",
+
+            onSuccess: () async {
           DateTimeRange? result = await showDateRangePicker(
               context: context,
               firstDate: DateTime.now().subtract(const Duration(days: 365)),
