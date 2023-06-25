@@ -1,3 +1,4 @@
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -5,6 +6,7 @@ import 'package:lucio/app/home/sales/sales_tab.dart';
 
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/sales/sub_sales_provider.dart';
+import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
 
 import 'package:lucio/domain/scheme/sale/sale_model.dart';
 
@@ -45,22 +47,32 @@ class SubSaleItem extends ConsumerWidget {
         ],
       ),
       child: ListTile(
-        trailing: Container(
-          constraints: const BoxConstraints(maxWidth: 45),
-          height: 30,
-          decoration: BoxDecoration(color: Color(model.type.value?.color ?? 0x00000000), borderRadius: BorderRadius.circular(kDefaultRefNumber / 4)),
-          child: model.breaks == 0
-              ? null
-              : Center(
-                  child: Text(
-                    "- ${model.breaks}",
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-        ),
-        subtitle: Text("${model.type.value?.name ?? ""} -->  ${model.quantity}"),
-        title: Text("Lot: ${model.lot.value?.lotName(model.type.value) ?? "Lot has deleted"}"),
+        trailing: model.breaks == 0
+            ? null
+            : Text(
+                "- ${model.breaks}",
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+        subtitle: Text("${model.quantity}", style: const TextStyle(fontWeight: FontWeight.bold)),
+        leading: model.type.value == null
+            ? null
+            : ColorIndicator(
+                width: 30,
+                height: 30,
+                borderRadius: 4,
+                color: Color(model.type.value!.color),
+                onSelectFocus: false,
+                onSelect: () async {
+                  final Color colorBeforeDialog = Color(model.type.value!.color);
+                  Color result = await showColorPickerDialog(context, colorBeforeDialog);
+                  await ref.read(productionTypeModelProvider.notifier).update(
+                    model.type.value!,
+                    values: {"color": result.value},
+                  );
+                },
+              ),
+        title: Text("Lot: ${model.lot.value?.lotName(model.type.value) ?? "Lot no defined"}"),
         onLongPress: () {},
       ),
     );

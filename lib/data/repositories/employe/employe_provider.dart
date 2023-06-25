@@ -9,9 +9,7 @@ class EmployeesNotifier extends StateNotifier<List<EmployeModel>> {
 
   EmployeesNotifier(this.ref) : super([]) {
     tC.asBroadcastStream();
-    tC.listen((event) {
-      findData();
-    });
+        tC.listen((event) => Future.microtask(() => findData()));
     findData();
   }
 

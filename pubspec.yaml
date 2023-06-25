@@ -2,7 +2,7 @@ name: lucio
 description: A new Flutter project.
 publish_to: 'none'
 
-version: 1.0.1
+version: 1.0.11
 
 environment:
   sdk: '>=3.1.0-129.0.dev <4.0.0'
@@ -25,6 +25,7 @@ dependencies:
   flutter_keyboard_visibility: ^5.4.1
   #DESIGN
   flash: ^3.0.3
+  timeago: ^3.4.0
   fl_chart: ^0.63.0
   animations: ^2.0.7
   animate_do: ^3.0.2
@@ -41,6 +42,7 @@ dependencies:
   path_provider: ^2.0.14
   dropdown_search: ^5.0.6
   permission_handler: ^10.2.0
+  cached_network_image: ^3.2.3
   flutter_secure_storage: ^8.0.0
   #DATABASE
   isar: ^3.1.0+1
@@ -51,6 +53,11 @@ dependencies:
 
   font_awesome_flutter: ^10.4.0
   cupertino_icons: ^1.0.2
+  #GOOGLE DRIVE
+  driven: ^0.1.4
+  google_sign_in: ^5.4.0
+  googleapis: ^9.2.0
+
 
 dev_dependencies:
   flutter_test:

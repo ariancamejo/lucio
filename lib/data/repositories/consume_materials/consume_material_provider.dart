@@ -12,9 +12,7 @@ class ConsumeMaterialsNotifier extends StateNotifier<List<ConsumptionModel>> {
 
   ConsumeMaterialsNotifier(this.ref) : super([]) {
     tC.asBroadcastStream();
-    tC.listen((event) {
-      findData();
-    });
+    tC.listen((event) => Future.microtask(() => findData()));
     findData();
   }
 
@@ -29,7 +27,7 @@ class ConsumeMaterialsNotifier extends StateNotifier<List<ConsumptionModel>> {
     required double quantityMaterial,
     bool object = false,
   }) async {
-      ref.read(rlP.notifier).start(); 
+    ref.read(rlP.notifier).start();
     ConsumptionModel? exist = await DBHelper.isar.consumptionModels.filter().type((q) => q.idEqualTo(type.id)).material((q) => q.idEqualTo(material.id)).findFirst();
     if (exist != null) {
       BuildContext? context = Utils.currentContext(ref);
@@ -64,7 +62,7 @@ class ConsumeMaterialsNotifier extends StateNotifier<List<ConsumptionModel>> {
   }
 
   Future<ConsumptionModel?> update(ConsumptionModel obj, {required Map<String, dynamic> values, bool object = false}) async {
-      ref.read(rlP.notifier).start(); 
+    ref.read(rlP.notifier).start();
     obj.type.value = values['type'] ?? obj.type.value;
     obj.material.value = values['material'] ?? obj.material.value;
     obj.quantityType = values['quantityType'] ?? obj.quantityType;
@@ -84,7 +82,7 @@ class ConsumeMaterialsNotifier extends StateNotifier<List<ConsumptionModel>> {
   }
 
   Future<int> delete(List<ConsumptionModel> obj) async {
-      ref.read(rlP.notifier).start(); 
+    ref.read(rlP.notifier).start();
     late int count;
     await DBHelper.isar.writeTxn(() async {
       count = await DBHelper.isar.consumptionModels.deleteAll(obj.map((e) => e.id).toList());

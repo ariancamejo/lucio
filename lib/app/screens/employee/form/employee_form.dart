@@ -44,7 +44,7 @@ class _MaterialFormState extends ConsumerState<EmployeeForm> {
                 child: TextFormField(
                   controller: _name,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: 'Name'),
+                  decoration: const InputDecoration(labelText: 'Name', hintText: "Name"),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return "Name required";
@@ -59,14 +59,15 @@ class _MaterialFormState extends ConsumerState<EmployeeForm> {
                   controller: _ci,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Ci'),
+                  decoration: const InputDecoration(labelText: 'CI', hintText: "Identity Card"),
                   maxLength: 11,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return "Ci required";
-                    }
-                    if (value!.length != 11) {
-                      return "Enter valid CI with 11 digits";
+                      return null;
+                    } else {
+                      if (value!.length != 11) {
+                        return "Enter valid CI with 11 digits";
+                      }
                     }
 
                     return null;
@@ -78,11 +79,14 @@ class _MaterialFormState extends ConsumerState<EmployeeForm> {
                 child: TextFormField(
                   controller: _plan,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: 'Plan'),
+                  decoration: const InputDecoration(labelText: 'Plan', hintText: "Plan"),
                   keyboardType: TextInputType.number,
                   validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return "Plan required";
+                    }
                     if (int.tryParse(value ?? "-") == null) {
-                      return "Type number";
+                      return "write correct number";
                     }
 
                     return null;
@@ -108,7 +112,7 @@ class _MaterialFormState extends ConsumerState<EmployeeForm> {
             if (context.mounted) Navigator.pop(context);
           }
         },
-        child:  Icon(widget.model == null ? Icons.save : Icons.update),
+        child: Icon(widget.model == null ? Icons.save : Icons.update),
       ),
     );
   }

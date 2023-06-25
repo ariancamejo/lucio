@@ -15,9 +15,7 @@ class ProductionNotifier extends StateNotifier<List<ProductionModel>> {
 
   ProductionNotifier(this.ref) : super([]) {
     tC.asBroadcastStream();
-    tC.listen((event) {
-      findData();
-    });
+        tC.listen((event) => Future.microtask(() => findData()));
     findData();
   }
 

@@ -2,10 +2,13 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucio/app/screens/settings/unit/unit_page.dart';
+import 'package:lucio/app/widgets/dropdowns.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/materials/materials_provider.dart';
 import 'package:lucio/data/repositories/units/units_provider.dart';
 import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class MaterialForm extends ConsumerStatefulWidget {
   final MaterialModel? model;
@@ -67,7 +70,21 @@ class _MaterialFormState extends ConsumerState<MaterialForm> {
                   },
                   selectedItem: unitModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
-                  popupProps: const PopupProps.bottomSheet(),
+                  clearButtonProps: ClearButtonProps(
+                      onPressed: () {
+                        setState(() => unitModel = null);
+                      },
+                      icon: const Icon(Icons.clear),
+                      isVisible: true),
+                  popupProps: popUpsProps<UnitOfMeasurementModel>(
+                    context,
+                    onPressed: () => showCupertinoModalBottomSheet(
+                      context: context,
+                      builder: (_) => const UnitPage(),
+                    ),
+                    iconData: Icons.settings,
+                    title: "Unit Of Measurement",
+                  ),
                   asyncItems: (String filter) => Future.value(units.units),
                   itemAsString: (UnitOfMeasurementModel u) => "${u.value} (${u.key})",
                   onChanged: (UnitOfMeasurementModel? data) => setState(() => unitModel = data),
@@ -117,7 +134,7 @@ class _MaterialFormState extends ConsumerState<MaterialForm> {
             if (context.mounted) Navigator.pop(context);
           }
         },
-        child:  Icon(widget.model == null ? Icons.save : Icons.update),
+        child: Icon(widget.model == null ? Icons.save : Icons.update),
       ),
     );
   }

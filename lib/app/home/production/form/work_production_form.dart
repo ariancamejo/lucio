@@ -2,6 +2,9 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:lucio/app/screens/employee/employee_page.dart';
+import 'package:lucio/app/screens/type_of_production/type_of_production_page.dart';
+import 'package:lucio/app/widgets/dropdowns.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/employe/employe_provider.dart';
 import 'package:lucio/data/repositories/options_provider.dart';
@@ -31,7 +34,7 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
   @override
   void initState() {
     _quantity = TextEditingController(text: widget.model?.quantity.toString() ?? "");
-    _breaks = TextEditingController(text: widget.model?.breaks.toString() ?? "");
+    _breaks = TextEditingController(text: widget.model?.breaks.toString() ?? "0");
     dateTime = widget.model?.datetime ?? dateTime;
     productionTypeModel = widget.model?.type.value;
     employeModel = widget.model?.employee.value;
@@ -84,10 +87,19 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                     }
                     return null;
                   },
+                  clearButtonProps: ClearButtonProps(
+                    isVisible: true,
+                    onPressed: () {
+                      setState(() {
+                        employeModel = null;
+                      });
+                    },
+                    icon: const Icon(Icons.clear),
+                  ),
+                  items: employees,
                   selectedItem: employeModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
-                  popupProps: const PopupProps.bottomSheet(),
-                  asyncItems: (String filter) => Future.value(employees),
+                  popupProps: popUpsProps<EmployeModel>(context, onPressed: () => EmployeePage.fireForm(context), title: "Employees"),
                   itemAsString: (EmployeModel u) => u.name,
                   onChanged: (EmployeModel? data) => setState(() => employeModel = data),
                   dropdownDecoratorProps: const DropDownDecoratorProps(
@@ -106,7 +118,7 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                   },
                   selectedItem: productionTypeModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
-                  popupProps: const PopupProps.bottomSheet(),
+                  popupProps: popUpsProps<ProductionTypeModel>(context, onPressed: () => TypeOfProductionPage.fireForm(context), title: "Production Type"),
                   asyncItems: (String filter) => Future.value(typeProductions),
                   itemAsString: (ProductionTypeModel u) => u.name,
                   onChanged: (ProductionTypeModel? data) => setState(() => productionTypeModel = data),
@@ -120,7 +132,7 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: TextFormField(
                   controller: _quantity,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: "Quantity"),
+                  decoration: const InputDecoration(labelText: "Quantity in units"),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -128,6 +140,9 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                     }
                     if (int.tryParse(value ?? "-") == null) {
                       return "Enter correct number";
+                    }
+                    if ((int.tryParse(value ?? '0') ?? 0) == 0) {
+                      return "Please,specify a number greater than zero";
                     }
 
                     return null;

@@ -1,10 +1,13 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lucio/app/home/sales/sales_tab.dart';
 
 import 'package:lucio/app/home/sales/widgets/sub_sale_item.dart';
+import 'package:lucio/app/screens/type_of_sale/type_of_sale_page.dart';
+import 'package:lucio/app/widgets/dropdowns.dart';
 
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/options_provider.dart';
@@ -30,7 +33,7 @@ class _SaleFormState extends ConsumerState<SaleForm> {
   DateTime dateTime = DateTime.now();
   SaleModel? model;
   SaleTypeModel? saleTypeModel;
-  FocusNode _clientFocus = FocusNode();
+  final FocusNode _clientFocus = FocusNode();
 
   @override
   void initState() {
@@ -49,11 +52,14 @@ class _SaleFormState extends ConsumerState<SaleForm> {
       appBar: AppBar(
         title: Text(model == null ? "New Sale" : "Update Sale"),
         actions: [
+          // if (model?.pendingSales ?? false)
+          //   const Tooltip(
+          //     message: "sales pending for production",
+          //     child: Icon(FontAwesomeIcons.clock),
+          //   ),
           IconButton(
             onPressed: () {
-              checkAuth(ref,
-                  message: "Change Date",
-                  onSuccess: () async {
+              checkAuth(ref, message: "Change Date", onSuccess: () async {
                 DateTime? result = await showDatePicker(
                     context: context, initialDate: dateTime, firstDate: DateTime.now().subtract(Duration(days: options.daysOfRangeDateProduction)), lastDate: DateTime.now());
                 setState(() {
@@ -102,9 +108,18 @@ class _SaleFormState extends ConsumerState<SaleForm> {
                     }
                     return null;
                   },
+                  clearButtonProps: ClearButtonProps(
+                    isVisible: true,
+                    onPressed: () {
+                      setState(() {
+                        saleTypeModel = null;
+                      });
+                    },
+                    icon: const Icon(Icons.clear),
+                  ),
                   selectedItem: saleTypeModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
-                  popupProps: const PopupProps.bottomSheet(),
+                  popupProps: popUpsProps<SaleTypeModel>(context, onPressed: () => TypeOfSalePage.fireForm(context), title: "Type of Sales"),
                   asyncItems: (String filter) => Future.value(salesTypes),
                   itemAsString: (SaleTypeModel u) => u.name,
                   onChanged: (SaleTypeModel? data) => setState(() => saleTypeModel = data),
@@ -121,9 +136,7 @@ class _SaleFormState extends ConsumerState<SaleForm> {
                       Checkbox(
                           value: model!.deposit,
                           onChanged: (value) async {
-                            checkAuth(ref,
-                                message: "${value == true ? "Check" : "Uncheck"} Deposit of sale",
-                                onSuccess: () async {
+                            checkAuth(ref, message: "${value == true ? "Check" : "Uncheck"} Deposit of sale", onSuccess: () async {
                               final object = await ref.read(saleProvider.notifier).update(widget.model!, values: {"deposit": value}, object: true);
                               setState(() => model = object);
                             });

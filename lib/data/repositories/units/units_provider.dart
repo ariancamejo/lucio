@@ -19,9 +19,7 @@ class UnitsNotifier extends StateNotifier<UnitsState> {
 
   UnitsNotifier(this.ref) : super(const UnitsState()) {
     tC.asBroadcastStream();
-    tC.listen((event) {
-      findData();
-    });
+        tC.listen((event) => Future.microtask(() => findData()));
     findData().then((value) => state = state.copyWith(selected: value.isEmpty ? null : value.first));
   }
 

@@ -8,6 +8,7 @@ import 'package:lucio/app/widgets/section_widget.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/sales/sales_provider.dart';
 import 'package:lucio/data/repositories/sales/sub_sales_provider.dart';
+import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
 import 'package:lucio/device/helpers/biometric/fingerprint.dart';
 
 import 'package:lucio/domain/scheme/sale/sale_model.dart';
@@ -34,53 +35,90 @@ class _SaleItemState extends ConsumerState<SaleItem> {
   @override
   Widget build(BuildContext context) {
     final subSales = ref.watch(subSalesProvider);
-
+    final productionTypes = ref.watch(productionTypeModelProvider);
     final filteredSales = subSales.where((sale) => sale.sale.value?.id == widget.model.id);
     final salesItems = filteredSales.map((saleItem) => SubSaleItem(model: saleItem)).toList();
     final scheme = Theme.of(context).colorScheme;
     return Section(
+      key: Key(widget.model.id.toString()),
       titleIsBig: true,
-      title: ListTile(
-        title: Text(
-          widget.model.client,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-        ),
-        subtitle: Text(
-          DateFormat("$dateFormat hh:mm a").format(widget.model.date),
-        ),
-        leading: Checkbox(
-          value: widget.model.deposit,
-          visualDensity: VisualDensity.compact,
-          onChanged: (value) {
-            checkAuth(ref, message: "${value == true ? "Check" : "Uncheck"} Deposit of sale", onSuccess: () {
-              ref.read(saleProvider.notifier).update(widget.model, values: {"deposit": value});
-            });
-          },
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () => SalesTab.fireForm(context, model: widget.model),
-              icon: const Icon(FontAwesomeIcons.pencil),
+      title: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: Text(
+              widget.model.client,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
-            if (salesItems.isEmpty)
-              IconButton(
-                onPressed: () {
-                  ref.read(saleProvider.notifier).delete([widget.model]);
-                },
-                icon: const Icon(FontAwesomeIcons.trash),
-              ),
-            IconButton(
-              onPressed: () => setState(
-                () {
-                  showChildren = !showChildren;
-                },
-              ),
-              icon: Icon(showChildren ? FontAwesomeIcons.circleChevronUp : FontAwesomeIcons.circleChevronDown),
+            subtitle: Text(
+              DateFormat("$dateFormat hh:mm a").format(widget.model.date),
             ),
-          ],
-        ),
+            leading: Checkbox(
+              value: widget.model.deposit,
+              visualDensity: VisualDensity.compact,
+              onChanged: (value) {
+                checkAuth(ref, message: "${value == true ? "Check" : "Uncheck"} Deposit of sale", onSuccess: () {
+                  ref.read(saleProvider.notifier).update(widget.model, values: {"deposit": value});
+                });
+              },
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () => SalesTab.fireForm(context, model: widget.model),
+                  icon: const Icon(FontAwesomeIcons.pencil),
+                ),
+                if (salesItems.isEmpty)
+                  IconButton(
+                    onPressed: () {
+                      ref.read(saleProvider.notifier).delete([widget.model]);
+                    },
+                    icon: const Icon(FontAwesomeIcons.trash),
+                  ),
+                IconButton(
+                  onPressed: () => setState(
+                    () {
+                      showChildren = !showChildren;
+                    },
+                  ),
+                  icon: Icon(showChildren ? FontAwesomeIcons.circleChevronUp : FontAwesomeIcons.circleChevronDown),
+                ),
+              ],
+            ),
+          ),
+          Text(widget.model.pendingSales ? "Pending for production" : "Saled"),
+          FutureBuilder(
+              future: widget.model.types(),
+              builder: (context, typess) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
+                  child: Wrap(
+                    spacing: 5,
+                    children: (typess.data ?? [])
+                        .map(
+                          (e) => FutureBuilder<int>(
+                            future: widget.model.saled(e, pending: widget.model.pendingSales),
+                            builder: (_, snap) => Tooltip(
+                              message: e.name,
+                              child: Chip(
+                                label: Text(snap.data.toString()),
+                                avatar: CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor: Color(e.color),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                );
+              }),
+          const SizedBox(
+            height: kDefaultRefNumber,
+          )
+        ],
       ),
       action: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

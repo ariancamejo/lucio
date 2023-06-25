@@ -15,9 +15,7 @@ class SaleNotifier extends StateNotifier<List<SaleModel>> {
 
   SaleNotifier(this.ref) : super([]) {
     tC.asBroadcastStream();
-    tC.listen((event) {
-      findData();
-    });
+        tC.listen((event) => Future.microtask(() => findData()));
     findData();
   }
 
@@ -58,6 +56,7 @@ class SaleNotifier extends StateNotifier<List<SaleModel>> {
     obj.saleType.value = values['saleType'] ?? obj.saleType.value;
     obj.deposit = values['deposit'] ?? obj.deposit;
     obj.date = values['date'] ?? obj.date;
+    obj.pendingSales = values['pendingSales'] ?? obj.pendingSales;
     SaleModel? result;
     await DBHelper.isar.writeTxn(() async {
       final id = await DBHelper.isar.saleModels.put(obj);

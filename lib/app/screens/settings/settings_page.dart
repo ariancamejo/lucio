@@ -3,9 +3,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lucio/app/screens/settings/widgets/backup.dart';
 import 'package:lucio/app/screens/settings/widgets/biometric.dart';
 import 'package:lucio/app/screens/settings/widgets/daysChangeWork.dart';
+import 'package:lucio/app/screens/settings/widgets/google.dart';
 import 'package:lucio/app/screens/settings/widgets/range_date_select.dart';
 import 'package:lucio/app/screens/settings/widgets/theme_select.dart';
 import 'package:lucio/app/screens/settings/widgets/units.dart';
+import 'package:lucio/data/const.dart';
 
 class SettingsPage extends StatefulWidget {
   static String name = 'SettingsPage';
@@ -24,6 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
+        actions: const [GoogleWidget(), SizedBox(width: kDefaultRefNumber)],
       ),
       body: SingleChildScrollView(
         child: Column(

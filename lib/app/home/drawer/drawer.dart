@@ -17,7 +17,7 @@ class MyDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final brightness = Theme.of(context).brightness;
     final theme = ref.watch(themeProvider);
-    final scheme = Theme.of(context).colorScheme;
+
     final size = MediaQuery.of(context).size;
     return Drawer(
       child: SizedBox(
@@ -25,19 +25,30 @@ class MyDrawer extends ConsumerWidget {
         child: Column(
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(color: scheme.primary, image: const DecorationImage(image: AssetImage("assets/icon.png"))),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/icon.png"),
+                ),
+              ),
+              child: Column(
                 children: [
-                  const Expanded(child: SizedBox(height: double.maxFinite)),
-                  InkWell(
-                    onTap: () => ref.read(themeProvider.notifier).set(themeMode: brightness == Brightness.light ? ThemeMode.dark : ThemeMode.light),
-                    child: Icon(theme.name == 'system'
-                        ? Icons.brightness_auto
-                        : brightness == Brightness.light
-                            ? Icons.brightness_4_outlined
-                            : Icons.brightness_4),
-                  )
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Expanded(child: SizedBox(height: double.maxFinite)),
+                        InkWell(
+                          onTap: () => ref.read(themeProvider.notifier).set(themeMode: brightness == Brightness.light ? ThemeMode.dark : ThemeMode.light),
+                          child: Icon(theme.name == 'system'
+                              ? Icons.brightness_auto
+                              : brightness == Brightness.light
+                                  ? Icons.brightness_4_outlined
+                                  : Icons.brightness_4),
+                        )
+                      ],
+                    ),
+                  ),
+                  const Text("Simple Production Control", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20))
                 ],
               ),
             ),

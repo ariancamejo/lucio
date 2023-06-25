@@ -11,15 +11,13 @@ class EmptyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: SizedBox(
+      child: Container(
         width: double.maxFinite,
         height: double.maxFinite,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset("assets/empty.png"),
-          ],
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/empty.png"),
+          ),
         ),
       ),
     );

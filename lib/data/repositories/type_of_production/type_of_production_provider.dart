@@ -9,9 +9,7 @@ class TypeOfSaleNotifier extends StateNotifier<List<ProductionTypeModel>> {
 
   TypeOfSaleNotifier(this.ref) : super([]) {
     tC.asBroadcastStream();
-    tC.listen((event) {
-      findData();
-    });
+        tC.listen((event) => Future.microtask(() => findData()));
     findData();
   }
 

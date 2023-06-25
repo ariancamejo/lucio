@@ -19,8 +19,34 @@ class ProductionModel {
   @Backlink(to: 'lot')
   final subsales = IsarLinks<SubSaleModel>();
 
+  Future<List<ProductionTypeModel>> types() async {
+    final object = await DBHelper.isar.productionModels.filter().idEqualTo(id).findFirst();
+
+    return object?.workProductions.where((element) => element.type.value != null).map((e) => e.type.value!).toSet().toList() ?? [];
+  }
+
   lotName(ProductionTypeModel? type) {
     return DateFormat("ddMMyyyy").format(date);
+  }
+
+  Future<int> forSale(ProductionTypeModel? type, {bool available = true}) async {
+    if (type == null) return 0;
+
+    if (!available) {
+      List<WorkProductionModel> stock =
+          await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleGreaterThan(DateTime.now()).findAll();
+      int stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
+      return stockSum;
+    }
+
+    List<WorkProductionModel> stock =
+        await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleLessThan(DateTime.now()).findAll();
+
+    List<SubSaleModel> sold = await DBHelper.isar.subSaleModels.filter().lot((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+    int stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
+    int soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+    int result = stockSum - soldSum;
+    return result;
   }
 }
 
@@ -35,14 +61,8 @@ class WorkProductionModel {
   late int quantity;
   late int breaks;
 
-  static Future<List<WorkProductionModel>> all({DateTime? dateTimeParam}) async {
-    List<WorkProductionModel> list = await DBHelper.isar.workProductionModels.where().findAll();
-    if (dateTimeParam != null) {
-      DateFormat format = DateFormat(dateFormat);
-      list = list.where((element) => format.format(element.datetime) == format.format(dateTimeParam)).toList();
-    }
-
-    return list;
+  DateTime? readyIn() {
+    return listForSale.isAfter(DateTime.now()) ? listForSale : null;
   }
 }
 

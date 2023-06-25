@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:lucio/device/helpers/storage/database.dart';
 import 'package:lucio/domain/scheme/production/production_model.dart';
 
 part 'employe_model.g.dart';
@@ -7,9 +8,15 @@ part 'employe_model.g.dart';
 class EmployeModel {
   Id id = Isar.autoIncrement;
   late String name;
-  late String ci;
+  String? ci;
   late int plan;
 
   @Backlink(to: 'employee')
   final workProductions = IsarLinks<WorkProductionModel>();
+
+  Future<int> real({required DateTime startFilter, required DateTime endFilter}) async {
+    int real = (await DBHelper.isar.workProductionModels.filter().datetimeBetween(startFilter, endFilter).employee((q) => q.idEqualTo(id)).findAll())
+        .fold(0, (sum, item) => sum + item.quantity);
+    return real;
+  }
 }

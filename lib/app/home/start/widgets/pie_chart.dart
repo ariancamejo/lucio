@@ -41,21 +41,21 @@ class _PieChartGraphicState extends ConsumerState<PieChartGraphic> {
     return LayoutBuilder(
       builder: (_, contrain) => AspectRatio(
         aspectRatio: 1.2,
-        child: prodyctionType.isEmpty || workP.isEmpty
-            ? Center(
-                child: Icon(FontAwesomeIcons.industry, size: contrain.maxWidth / 2),
-              )
-            : Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "Production",
-                    style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Expanded(
-                  child: PieChart(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Production",
+                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Expanded(
+              child: prodyctionType.isEmpty || workP.isEmpty
+                  ? Center(
+                      child: Icon(FontAwesomeIcons.industry, size: contrain.maxWidth / 2),
+                    )
+                  : PieChart(
                       PieChartData(
                         sections: prodyctionType
                             .map(
@@ -79,9 +79,9 @@ class _PieChartGraphicState extends ConsumerState<PieChartGraphic> {
                         centerSpaceColor: Theme.of(context).cardColor,
                       ),
                     ),
-                ),
-              ],
             ),
+          ],
+        ),
       ),
     );
   }

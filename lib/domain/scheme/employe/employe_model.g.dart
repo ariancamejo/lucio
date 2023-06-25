@@ -61,7 +61,12 @@ int _employeModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.ci.length * 3;
+  {
+    final value = object.ci;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.name.length * 3;
   return bytesCount;
 }
@@ -84,7 +89,7 @@ EmployeModel _employeModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = EmployeModel();
-  object.ci = reader.readString(offsets[0]);
+  object.ci = reader.readStringOrNull(offsets[0]);
   object.id = id;
   object.name = reader.readString(offsets[1]);
   object.plan = reader.readLong(offsets[2]);
@@ -99,7 +104,7 @@ P _employeModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
@@ -205,8 +210,25 @@ extension EmployeModelQueryWhere
 
 extension EmployeModelQueryFilter
     on QueryBuilder<EmployeModel, EmployeModel, QFilterCondition> {
+  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> ciIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'ci',
+      ));
+    });
+  }
+
+  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition>
+      ciIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'ci',
+      ));
+    });
+  }
+
   QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> ciEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -219,7 +241,7 @@ extension EmployeModelQueryFilter
   }
 
   QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> ciGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -234,7 +256,7 @@ extension EmployeModelQueryFilter
   }
 
   QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> ciLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -249,8 +271,8 @@ extension EmployeModelQueryFilter
   }
 
   QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> ciBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -767,7 +789,7 @@ extension EmployeModelQueryProperty
     });
   }
 
-  QueryBuilder<EmployeModel, String, QQueryOperations> ciProperty() {
+  QueryBuilder<EmployeModel, String?, QQueryOperations> ciProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'ci');
     });

@@ -3,6 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:lucio/data/repositories/consume_materials/consume_material_provider.dart';
+import 'package:lucio/data/repositories/production/production_provider.dart';
+import 'package:lucio/data/repositories/production/work_production_provider.dart';
+import 'package:lucio/data/repositories/sales/sales_provider.dart';
+import 'package:lucio/data/repositories/sales/sub_sales_provider.dart';
 import 'package:lucio/device/helpers/storage/secure.dart';
 
 part 'options_provider.freezed.dart';
@@ -54,6 +59,11 @@ class OptionsNotifier extends StateNotifier<OptionsState> {
         endFilter: DateTime(dateTimeRange.end.year, dateTimeRange.end.month, dateTimeRange.end.day, 23, 59, 59, 999),
       );
       _save();
+
+      ref.read(productionProvider.notifier).findData();
+      ref.read(workProductionProvider.notifier).findData();
+      ref.read(saleProvider.notifier).findData();
+      ref.read(subSalesProvider.notifier).findData();
     }
     return;
   }

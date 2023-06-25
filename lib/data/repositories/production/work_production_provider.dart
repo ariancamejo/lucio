@@ -14,7 +14,7 @@ class WorkProductionNotifier extends StateNotifier<List<WorkProductionModel>> {
 
   WorkProductionNotifier(this.ref) : super([]) {
     tC.asBroadcastStream();
-    tC.listen((event) => findData());
+    tC.listen((event) => Future.microtask(() => findData()));
     findData();
   }
 
@@ -36,7 +36,7 @@ class WorkProductionNotifier extends StateNotifier<List<WorkProductionModel>> {
     required int breaks,
     bool object = false,
   }) async {
-      ref.read(rlP.notifier).start(); 
+    ref.read(rlP.notifier).start();
     DateTime now = dateTimeParam ?? DateTime.now();
     DateTime dateTime = DateTime(now.year, now.month, now.day);
 
@@ -54,7 +54,7 @@ class WorkProductionNotifier extends StateNotifier<List<WorkProductionModel>> {
       ..employee.value = employee
       ..type.value = type
       ..datetime = now
-      ..listForSale = dateTime.add(const Duration(days: 17))
+      ..listForSale = dateTime.add(Duration(days: type.daysToBeReady))
       ..quantity = quantity
       ..breaks = breaks;
 
@@ -74,7 +74,7 @@ class WorkProductionNotifier extends StateNotifier<List<WorkProductionModel>> {
   }
 
   Future<WorkProductionModel?> update(WorkProductionModel obj, {required Map<String, dynamic> values, bool object = false}) async {
-      ref.read(rlP.notifier).start(); 
+    ref.read(rlP.notifier).start();
 
     obj.quantity = values['quantity'] ?? obj.quantity;
     obj.breaks = values['breaks'] ?? obj.breaks;
@@ -96,7 +96,7 @@ class WorkProductionNotifier extends StateNotifier<List<WorkProductionModel>> {
   }
 
   Future<int> delete(List<WorkProductionModel> obj) async {
-      ref.read(rlP.notifier).start(); 
+    ref.read(rlP.notifier).start();
     late int count;
     await DBHelper.isar.writeTxn(() async {
       count = await DBHelper.isar.workProductionModels.deleteAll(obj.map((e) => e.id).toList());

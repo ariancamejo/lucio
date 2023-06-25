@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:lucio/data/const.dart';
-import 'package:lucio/data/repositories/sales/sales_provider.dart';
 
 import 'package:lucio/data/repositories/sales/sub_sales_provider.dart';
 import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
@@ -13,8 +12,7 @@ class _LineChart extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sales = ref.watch(saleProvider);
-    final subsales = ref.watch(subSalesProvider);
+    final subsales = ref.watch(subSalesProvider).where((element) => !(element.sale.value?.pendingSales ?? true)).toList();
 
     final productionTypes = ref.watch(productionTypeModelProvider);
     final scheme = Theme.of(context).colorScheme;

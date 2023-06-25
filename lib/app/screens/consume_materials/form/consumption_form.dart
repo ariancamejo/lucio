@@ -1,6 +1,9 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucio/app/screens/materials/materials_page.dart';
+import 'package:lucio/app/screens/type_of_production/type_of_production_page.dart';
+import 'package:lucio/app/widgets/dropdowns.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/consume_materials/consume_material_provider.dart';
 import 'package:lucio/data/repositories/materials/materials_provider.dart';
@@ -57,7 +60,14 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
                   },
                   selectedItem: productionTypeModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
-                  popupProps: const PopupProps.bottomSheet(),
+                  clearButtonProps: ClearButtonProps(
+                      onPressed: () {
+                        _quantityType.text = '';
+                        setState(() => productionTypeModel = null);
+                      },
+                      icon: const Icon(Icons.clear),
+                      isVisible: true),
+                  popupProps: popUpsProps<ProductionTypeModel>(context, onPressed: () => TypeOfProductionPage.fireForm(context), title: "Production Type"),
                   asyncItems: (String filter) => Future.value(productTypes),
                   itemAsString: (ProductionTypeModel u) => u.name,
                   onChanged: (ProductionTypeModel? data) => setState(() => productionTypeModel = data),
@@ -77,7 +87,15 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
                   },
                   selectedItem: materialModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
-                  popupProps: const PopupProps.bottomSheet(),
+                  clearButtonProps: ClearButtonProps(
+                      onPressed: () {
+                        _quantityMaterial.text = '';
+                        setState(() => materialModel = null);
+                      },
+                      icon: const Icon(Icons.clear),
+                      isVisible: true),
+                  popupProps: popUpsProps<MaterialModel>(context, onPressed: () => MaterialsPage.fireForm(context), title: "Materials"),
+
                   asyncItems: (String filter) => Future.value(materials),
                   itemAsString: (MaterialModel u) => u.name,
                   onChanged: (MaterialModel? data) => setState(() => materialModel = data),
@@ -147,7 +165,7 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
             if (context.mounted) Navigator.pop(context);
           }
         },
-        child:  Icon(widget.model == null ? Icons.save : Icons.update),
+        child: Icon(widget.model == null ? Icons.save : Icons.update),
       ),
     );
   }

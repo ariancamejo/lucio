@@ -13,7 +13,7 @@ import 'package:lucio/domain/scheme/sale/sale_model.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-class SalesTab extends ConsumerWidget {
+class SalesTab extends ConsumerStatefulWidget {
   const SalesTab({Key? key}) : super(key: key);
 
   static fireSubForm(BuildContext context, SaleModel? sale, {SubSaleModel? model}) => showCupertinoModalBottomSheet(
@@ -52,27 +52,82 @@ class SalesTab extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SalesTab> createState() => _SalesTabState();
+}
+
+class _SalesTabState extends ConsumerState<SalesTab> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    _tabController = TabController(length: 2, vsync: this);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final sales = ref.watch(saleProvider);
+    final dones = sales.where((element) => !element.pendingSales).toList();
+    final pendings = sales.where((element) => element.pendingSales).toList();
+
     return Scaffold(
-      body: sales.isEmpty
-          ? EmptyScreen(
-              name: "Sale",
-              onTap: () => fireForm(context),
-            )
-          : RefreshIndicator(
-              onRefresh: () async => ref.read(saleProvider.notifier).findData(),
-              child: CustomScrollView(
-                slivers: [
-                  MultiSliver(
-                    pushPinnedChildren: true,
-                    children: sales.map((e) => SaleItem(model: e)).toList(),
+      body: RefreshIndicator(
+        onRefresh: () async => ref.read(saleProvider.notifier).findData(),
+        child: SizedBox(
+          height: double.maxFinite,
+          child: Column(
+            children: [
+              TabBar(
+                controller: _tabController,
+                tabs: const [
+                  Tab(
+                    icon: Icon(FontAwesomeIcons.listCheck),
                   ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 60))
+                  Tab(
+                    icon: Icon(FontAwesomeIcons.clock),
+                  ),
                 ],
               ),
-            ),
-      floatingActionButton: FloatingActionButton.small(onPressed: () => fireForm(context), child: const Icon(Icons.add)),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    dones.isEmpty
+                        ? EmptyScreen(
+                            name: "Sale",
+                            onTap: () => SalesTab.fireForm(context),
+                          )
+                        : CustomScrollView(
+                            slivers: [
+                              MultiSliver(
+                                pushPinnedChildren: true,
+                                children: dones.map((e) => SaleItem(model: e)).toList(),
+                              ),
+                              const SliverToBoxAdapter(child: SizedBox(height: 60))
+                            ],
+                          ),
+                    pendings.isEmpty
+                        ? EmptyScreen(
+                            name: "Sale",
+                            onTap: () => SalesTab.fireForm(context),
+                          )
+                        : CustomScrollView(
+                            slivers: [
+                              MultiSliver(
+                                pushPinnedChildren: true,
+                                children: pendings.map((e) => SaleItem(model: e)).toList(),
+                              ),
+                              const SliverToBoxAdapter(child: SizedBox(height: 60))
+                            ],
+                          ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.small(onPressed: () => SalesTab.fireForm(context), child: const Icon(Icons.add)),
     );
   }
 }

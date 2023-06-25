@@ -31,6 +31,11 @@ const SaleModelSchema = CollectionSchema(
       id: 2,
       name: r'deposit',
       type: IsarType.bool,
+    ),
+    r'pendingSales': PropertySchema(
+      id: 3,
+      name: r'pendingSales',
+      type: IsarType.bool,
     )
   },
   estimateSize: _saleModelEstimateSize,
@@ -80,6 +85,7 @@ void _saleModelSerialize(
   writer.writeString(offsets[0], object.client);
   writer.writeDateTime(offsets[1], object.date);
   writer.writeBool(offsets[2], object.deposit);
+  writer.writeBool(offsets[3], object.pendingSales);
 }
 
 SaleModel _saleModelDeserialize(
@@ -93,6 +99,7 @@ SaleModel _saleModelDeserialize(
   object.date = reader.readDateTime(offsets[1]);
   object.deposit = reader.readBool(offsets[2]);
   object.id = id;
+  object.pendingSales = reader.readBool(offsets[3]);
   return object;
 }
 
@@ -108,6 +115,8 @@ P _saleModelDeserializeProp<P>(
     case 1:
       return (reader.readDateTime(offset)) as P;
     case 2:
+      return (reader.readBool(offset)) as P;
+    case 3:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -454,6 +463,16 @@ extension SaleModelQueryFilter
       ));
     });
   }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterFilterCondition> pendingSalesEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'pendingSales',
+        value: value,
+      ));
+    });
+  }
 }
 
 extension SaleModelQueryObject
@@ -571,6 +590,18 @@ extension SaleModelQuerySortBy on QueryBuilder<SaleModel, SaleModel, QSortBy> {
       return query.addSortBy(r'deposit', Sort.desc);
     });
   }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterSortBy> sortByPendingSales() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pendingSales', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterSortBy> sortByPendingSalesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pendingSales', Sort.desc);
+    });
+  }
 }
 
 extension SaleModelQuerySortThenBy
@@ -622,6 +653,18 @@ extension SaleModelQuerySortThenBy
       return query.addSortBy(r'id', Sort.desc);
     });
   }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterSortBy> thenByPendingSales() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pendingSales', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QAfterSortBy> thenByPendingSalesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pendingSales', Sort.desc);
+    });
+  }
 }
 
 extension SaleModelQueryWhereDistinct
@@ -642,6 +685,12 @@ extension SaleModelQueryWhereDistinct
   QueryBuilder<SaleModel, SaleModel, QDistinct> distinctByDeposit() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'deposit');
+    });
+  }
+
+  QueryBuilder<SaleModel, SaleModel, QDistinct> distinctByPendingSales() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'pendingSales');
     });
   }
 }
@@ -669,6 +718,12 @@ extension SaleModelQueryProperty
   QueryBuilder<SaleModel, bool, QQueryOperations> depositProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'deposit');
+    });
+  }
+
+  QueryBuilder<SaleModel, bool, QQueryOperations> pendingSalesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'pendingSales');
     });
   }
 }

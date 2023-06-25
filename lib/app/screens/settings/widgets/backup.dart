@@ -5,7 +5,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:lucio/data/repositories/options_provider.dart';
+import 'package:lucio/data/const.dart';
+import 'package:lucio/data/repositories/google_auth/google_auth_provider.dart';
+import 'package:lucio/data/repositories/rlp_provider.dart';
 import 'package:lucio/device/device.dart';
 import 'package:lucio/device/helpers/biometric/fingerprint.dart';
 import 'package:lucio/device/helpers/storage/database.dart';
@@ -17,27 +19,68 @@ class BackUp extends ConsumerStatefulWidget {
   @override
   ConsumerState<BackUp> createState() => _BackUpState();
 
-  static Future<void> createBackUpIsar() async {
+  static Future<String> _savedFile(String folder) async {
+    DateTime now = DateTime.now();
+    String fullPath = '$folder/backup-lucio-${DateFormat(dateFormat).format(now)}-${now.millisecondsSinceEpoch}.isar';
+    await DBHelper.isar.copyToFile(fullPath);
+    return fullPath;
+  }
+
+  static Future<String?> createBackUpIsar(BuildContext context, WidgetRef ref, {Function()? onStart, Function()? onFinish}) async {
+    onStart?.call();
+    if (ref.read(googleAuthProvider) != null) {
+      final directory = await getApplicationDocumentsDirectory();
+
+      String pathFile = await _savedFile(directory.path);
+      if (context.mounted) await ref.read(googleAuthProvider.notifier).saveFile(context, file: File(pathFile));
+      onFinish?.call();
+      return pathFile;
+    }
+
     String? selectedDirectoryPath = await FilePicker.platform.getDirectoryPath();
 
     if (selectedDirectoryPath == null) {
-      return;
+      onFinish?.call();
+      return null;
     }
-    DateTime now = DateTime.now();
-    await DBHelper.isar.copyToFile('$selectedDirectoryPath/backup-lucio-${DateFormat("dd-MMMM-YYYY").format(now)}-${now.millisecondsSinceEpoch}.isar');
+    String? s;
+    try {
+      s = await _savedFile(selectedDirectoryPath);
+    } catch (e) {
+      print(e);
+      if (context.mounted) {
+        Utils.showSnack(context, title: "Operation Error", message: "You dont have permissions for save file on selected folder, please select other", type: FlashType.error);
+      }
+    }
+    if (context.mounted) Utils.showSnack(context, title: "Backup", message: "File has saved", type: FlashType.success);
+    onFinish?.call();
+    return s;
   }
 
-  static Future<void> recoveryFromBackUp(BuildContext context) async {
-    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles();
+  static Future<void> recoveryFromBackUp(BuildContext context, WidgetRef ref, {Function()? onStart, Function()? onFinish}) async {
+    File? backupFile;
+    onStart?.call();
+    if (ref.read(googleAuthProvider) != null) {
+      backupFile = await ref.read(googleAuthProvider.notifier).pickFile(context);
+    } else {
+      FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles();
 
-    if (filePickerResult == null) {
+      if (filePickerResult == null) {
+        onFinish?.call();
+        return;
+      }
+
+      backupFile = File(filePickerResult.files.single.path!);
+    }
+    if (backupFile == null) {
+      onFinish?.call();
       return;
     }
 
-    final backupFile = File(filePickerResult.files.single.path!);
     String extension = backupFile.path.split('.').last;
     if (extension != 'isar') {
       if (context.mounted) Utils.showSnack(context, title: "Type not supported", message: "the selected file is not a database backup", type: FlashType.error);
+      onFinish?.call();
       return;
     }
 
@@ -49,6 +92,7 @@ class BackUp extends ConsumerStatefulWidget {
 
     await DBHelper.isar.close(deleteFromDisk: false);
     await DBHelper.init();
+    onFinish?.call();
     if (context.mounted) {
       showDialog(
         context: context,
@@ -65,23 +109,51 @@ class BackUp extends ConsumerStatefulWidget {
 class _BackUpState extends ConsumerState<BackUp> {
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(googleAuthProvider);
     return ListTile(
       title: const Text("BackUp"),
       subtitle: const Text("Create a file with the information"),
       trailing: PopupMenuButton(
-        icon: const Icon(Icons.cloud),
+        icon: const Icon(Icons.more_vert),
         itemBuilder: (_) => [
           {"value": 0, "text": "Save"},
           {"value": 1, "text": "Recovery"}
-        ].map((e) => PopupMenuItem(value: e['value'], child: Text(e['text'].toString()))).toList(),
+        ]
+            .map(
+              (e) => PopupMenuItem(
+                value: e['value'],
+                child: Text(
+                  e['text'].toString(),
+                ),
+              ),
+            )
+            .toList(),
         onSelected: (value) {
           switch (value) {
             case 0:
-              BackUp.createBackUpIsar();
+              BackUp.createBackUpIsar(
+                context,
+                ref,
+                onStart: () {
+                  ref.read(rlP.notifier).start();
+                },
+                onFinish: () {
+                  ref.read(rlP.notifier).stop();
+                },
+              );
               break;
             case 1:
               checkAuth(ref, message: "Recovery BackUp", onSuccess: () {
-                BackUp.recoveryFromBackUp(context);
+                BackUp.recoveryFromBackUp(
+                  context,
+                  ref,
+                  onStart: () {
+                    ref.read(rlP.notifier).start();
+                  },
+                  onFinish: () {
+                    ref.read(rlP.notifier).stop();
+                  },
+                );
               });
               break;
             default:
@@ -89,7 +161,42 @@ class _BackUpState extends ConsumerState<BackUp> {
           }
         },
       ),
-      leading: const Icon(FontAwesomeIcons.floppyDisk),
+      leading: user == null ? const Icon(FontAwesomeIcons.floppyDisk) : RotatingBox(),
+    );
+  }
+}
+
+class RotatingBox extends ConsumerStatefulWidget {
+  const RotatingBox({Key? key}) : super(key: key);
+
+  @override
+  _RotatingBoxState createState() => _RotatingBoxState();
+}
+
+class _RotatingBoxState extends ConsumerState<RotatingBox> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loading = ref.watch(rlP);
+    return RotationTransition(
+      turns: loading ? _controller : const AlwaysStoppedAnimation(0),
+      child: const Icon(FontAwesomeIcons.googleDrive),
     );
   }
 }
