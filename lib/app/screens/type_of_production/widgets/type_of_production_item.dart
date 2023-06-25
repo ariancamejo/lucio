@@ -9,8 +9,10 @@ import 'package:lucio/domain/scheme/production/production_model.dart';
 
 class TypeOfProductionItem extends ConsumerWidget {
   final ProductionTypeModel model;
+  final bool showColors;
+  final Widget? trailing;
 
-  const TypeOfProductionItem({Key? key, required this.model}) : super(key: key);
+  const TypeOfProductionItem({Key? key, required this.model, this.showColors = false, this.trailing}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,24 +48,25 @@ class TypeOfProductionItem extends ConsumerWidget {
       child: ListTile(
         title: Text(
           model.name,
-          style: TextStyle(color: Color(model.color)),
+          style: TextStyle(color: showColors ? Color(model.color) : null),
         ),
         subtitle: Text(
           "Days to be ready (${model.daysToBeReady})",
-          style: TextStyle(color: Color(model.color), fontSize: 14),
+          style: TextStyle(color: showColors ? Color(model.color) : null, fontSize: 14),
         ),
-        trailing: ColorIndicator(
-          width: 30,
-          height: 30,
-          borderRadius: 4,
-          color: Color(model.color),
-          onSelectFocus: false,
-          onSelect: () async {
-            final Color colorBeforeDialog = Color(model.color);
-            Color result = await showColorPickerDialog(context, colorBeforeDialog);
-            await ref.read(productionTypeModelProvider.notifier).update(model, values: {"color": result.value});
-          },
-        ),
+        trailing: trailing ??
+            ColorIndicator(
+              width: 30,
+              height: 30,
+              borderRadius: 4,
+              color: Color(model.color),
+              onSelectFocus: false,
+              onSelect: () async {
+                final Color colorBeforeDialog = Color(model.color);
+                Color result = await showColorPickerDialog(context, colorBeforeDialog);
+                await ref.read(productionTypeModelProvider.notifier).update(model, values: {"color": result.value});
+              },
+            ),
         onLongPress: () => TypeOfProductionPage.fireForm(context, model: model),
       ),
     );

@@ -16,8 +16,9 @@ import 'package:lucio/domain/scheme/production/production_model.dart';
 
 class WorkProductionForm extends ConsumerStatefulWidget {
   final WorkProductionModel? model;
+  final Map<String, dynamic>? initial;
 
-  const WorkProductionForm({Key? key, this.model}) : super(key: key);
+  const WorkProductionForm({Key? key, this.model, this.initial}) : super(key: key);
 
   @override
   ConsumerState<WorkProductionForm> createState() => _WorkProductionFormState();
@@ -33,11 +34,12 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
 
   @override
   void initState() {
-    _quantity = TextEditingController(text: widget.model?.quantity.toString() ?? "");
-    _breaks = TextEditingController(text: widget.model?.breaks.toString() ?? "0");
+    final Map<String, dynamic> initialData = widget.initial ?? {};
+    _quantity = TextEditingController(text: widget.model?.quantity.toString() ?? initialData['quantity'] ?? "");
+    _breaks = TextEditingController(text: widget.model?.breaks.toString() ?? initialData['breaks'] ?? "0");
     dateTime = widget.model?.datetime ?? dateTime;
-    productionTypeModel = widget.model?.type.value;
-    employeModel = widget.model?.employee.value;
+    productionTypeModel = widget.model?.type.value ?? initialData['type'];
+    employeModel = widget.model?.employee.value ?? initialData['employee'];
 
     super.initState();
   }

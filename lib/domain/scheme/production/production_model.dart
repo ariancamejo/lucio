@@ -1,11 +1,13 @@
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
-import 'package:lucio/data/const.dart';
+
 import 'package:lucio/device/helpers/storage/database.dart';
 import 'package:lucio/domain/scheme/employe/employe_model.dart';
 import 'package:lucio/domain/scheme/sale/sale_model.dart';
 
 part 'production_model.g.dart';
+
+enum ProductionTypeResult { all, process, available, sold, quantity, breaks }
 
 @collection
 class ProductionModel {
@@ -21,32 +23,66 @@ class ProductionModel {
 
   Future<List<ProductionTypeModel>> types() async {
     final object = await DBHelper.isar.productionModels.filter().idEqualTo(id).findFirst();
+    final types = object?.workProductions.where((element) => element.type.value != null).map((e) => e.type.value!).toList() ?? [];
 
-    return object?.workProductions.where((element) => element.type.value != null).map((e) => e.type.value!).toSet().toList() ?? [];
+    final uniqueTypes = <ProductionTypeModel>{};
+    for (final type in types) {
+      if (!uniqueTypes.any((t) => t.id == type.id)) {
+        uniqueTypes.add(type);
+      }
+    }
+
+    return uniqueTypes.toList();
   }
 
   lotName(ProductionTypeModel? type) {
     return DateFormat("ddMMyyyy").format(date);
   }
 
-  Future<int> forSale(ProductionTypeModel? type, {bool available = true}) async {
+  Future<int> details(ProductionTypeModel? type, {required ProductionTypeResult typeResult}) async {
     if (type == null) return 0;
 
-    if (!available) {
+    if (typeResult == ProductionTypeResult.available) {
+      List<WorkProductionModel> stock =
+          await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleLessThan(DateTime.now()).findAll();
+
+      List<SubSaleModel> sold = await DBHelper.isar.subSaleModels.filter().lot((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+      int stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+      int soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      int result = stockSum - soldSum;
+      return result;
+    }
+
+    if (typeResult == ProductionTypeResult.process) {
       List<WorkProductionModel> stock =
           await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleGreaterThan(DateTime.now()).findAll();
-      int stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
+      int stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
       return stockSum;
     }
 
-    List<WorkProductionModel> stock =
-        await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleLessThan(DateTime.now()).findAll();
+    if (typeResult == ProductionTypeResult.all) {
+      List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+      int stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
+      return stockSum;
+    }
+    if (typeResult == ProductionTypeResult.sold) {
+      List<SubSaleModel> sold = await DBHelper.isar.subSaleModels.filter().lot((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+      int soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      return soldSum;
+    }
 
-    List<SubSaleModel> sold = await DBHelper.isar.subSaleModels.filter().lot((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-    int stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
-    int soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
-    int result = stockSum - soldSum;
-    return result;
+    if (typeResult == ProductionTypeResult.quantity) {
+      List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+      int stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+      return stockSum;
+    }
+    if (typeResult == ProductionTypeResult.breaks) {
+      List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+      int stockSum = stock.fold(0, (sum, item) => sum + item.breaks);
+      return stockSum;
+    }
+
+    return 0;
   }
 }
 

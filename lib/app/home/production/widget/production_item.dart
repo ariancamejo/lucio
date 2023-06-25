@@ -1,14 +1,17 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:lucio/app/home/production/production_tab.dart';
 import 'package:lucio/app/home/production/widget/work_prodction_item.dart';
-import 'package:lucio/app/widgets/section_widget.dart';
+import 'package:lucio/app/screens/type_of_production/widgets/type_of_production_item.dart';
 import 'package:lucio/data/const.dart';
-import 'package:lucio/data/repositories/production/production_provider.dart';
+import 'package:lucio/data/repositories/employe/employe_provider.dart';
 import 'package:lucio/data/repositories/production/work_production_provider.dart';
-import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
+import 'package:lucio/domain/scheme/employe/employe_model.dart';
 import 'package:lucio/domain/scheme/production/production_model.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:collection/collection.dart';
 
 class ProductionItem extends ConsumerStatefulWidget {
   final ProductionModel model;
@@ -21,129 +24,214 @@ class ProductionItem extends ConsumerStatefulWidget {
 }
 
 class _ProductionItemState extends ConsumerState<ProductionItem> {
-  bool showChildren = false;
-
   @override
   void initState() {
-    showChildren = widget.showChildren;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final workProductions = ref.watch(workProductionProvider);
-    final productionTypes = ref.watch(productionTypeModelProvider);
-    final filteredWorkProductions =
-        workProductions.where((workProduction) => DateFormat(dateFormat).format(workProduction.datetime) == DateFormat(dateFormat).format(widget.model.date));
-    final workProductionItems = filteredWorkProductions.map((workProduction) => WorkProductionItem(model: workProduction)).toList();
-    return Section(
-      key: Key(widget.model.id.toString()),
-      titleIsBig: true,
-      title: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            title: Text(
-              DateFormat(dateFormat).format(widget.model.date),
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                workProductionItems.isEmpty
-                    ? IconButton(
-                        icon: const Icon(FontAwesomeIcons.trash),
-                        onPressed: () => ref.read(productionProvider.notifier).delete([widget.model]),
-                      )
-                    : const SizedBox(),
-                IconButton(
-                  onPressed: () => setState(
-                    () {
-                      showChildren = !showChildren;
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber / 2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(
+                DateFormat(dateFormat).format(widget.model.date),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      showCupertinoModalBottomSheet(context: context, builder: (_) => _WorkProduction(model: widget.model));
                     },
+                    icon: const Icon(Icons.production_quantity_limits),
                   ),
-                  icon: Icon(showChildren ? FontAwesomeIcons.circleChevronUp : FontAwesomeIcons.circleChevronDown),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          FutureBuilder(
-              future: widget.model.types(),
-              builder: (context, typess) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            if ((typess.data ?? []).isNotEmpty) const Text("In process"),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
-                              child: Wrap(
-                                spacing: 5,
-                                children: (typess.data ?? [])
-                                    .map(
-                                      (e) => FutureBuilder<int>(
-                                        future: widget.model.forSale(e, available: false),
-                                        builder: (_, snap) => Tooltip(
-                                          message: e.name,
-                                          child: Chip(
-                                            label: Text(snap.data.toString()),
-                                            avatar: CircleAvatar(
-                                              radius: 10,
-                                              backgroundColor: Color(e.color),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            if ((typess.data ?? []).isNotEmpty) const Text("Available"),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
-                              child: Wrap(
-                                spacing: 5,
-                                children: (typess.data ?? [])
-                                    .map(
-                                      (e) => FutureBuilder<int>(
-                                        future: widget.model.forSale(e),
-                                        builder: (_, snap) => Tooltip(
-                                          message: e.name,
-                                          child: Chip(
-                                            label: Text(snap.data.toString()),
-                                            avatar: CircleAvatar(
-                                              radius: 10,
-                                              backgroundColor: Color(e.color),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }),
-        ],
+            FadeIn(child: _InfoProduction(model: widget.model))
+          ],
+        ),
       ),
-      divider: false,
-      boxDecoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-      items: showChildren ? workProductionItems : [],
     );
+  }
+}
+
+class _WorkProduction extends ConsumerWidget {
+  final ProductionModel model;
+
+  const _WorkProduction({Key? key, required this.model}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final workProductions = ref.watch(workProductionProvider);
+    final employees = ref.watch(employeeProvider);
+    final filteredWorkProductions =
+        workProductions.where((workProduction) => DateFormat(dateFormat).format(workProduction.datetime) == DateFormat(dateFormat).format(model.date)).toList();
+
+    // Agrupar la lista de trabajo por empleados
+    final employeeWorkProductions = groupBy(filteredWorkProductions, (workProduction) => workProduction.employee.value?.id);
+
+    // Crear una lista de tabs y vistas
+    final tabs = employeeWorkProductions.keys
+        .map((employeeID) => Tab(
+              key: Key(employeeID.toString()),
+              text: employees.firstWhere((element) => element.id == employeeID).name,
+            ))
+        .toList();
+
+    final views = employeeWorkProductions.entries.map((entry) {
+      final productionItems = entry.value
+          .map(
+            (workProduction) => WorkProductionItem(model: workProduction, showProductionType: true),
+          )
+          .toList();
+      return ListView(
+        children: productionItems,
+      );
+    }).toList();
+
+    return DefaultTabController(
+      length: tabs.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Work Production"),
+          bottom: TabBar(
+            tabs: tabs,
+          ),
+        ),
+        body: TabBarView(
+          children: views,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            ProductionTab.fireForm(context, initial: {});
+          },
+          child: const Icon(Icons.add),
+        ),
+      ),
+    );
+  }
+}
+
+class _InfoProduction extends StatelessWidget {
+  final ProductionModel model;
+
+  const _InfoProduction({Key? key, required this.model}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return FutureBuilder(
+        future: model.types(),
+        builder: (context, typess) {
+          return SingleChildScrollView(
+            child: Column(
+              children: (typess.data ?? [])
+                  .map(
+                    (e) => Card(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TypeOfProductionItem(
+                            model: e,
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    const Text("Quantity"),
+                                    FutureBuilder(
+                                      future: model.details(e, typeResult: ProductionTypeResult.quantity),
+                                      builder: (_, snap) => Text(
+                                        "${snap.data ?? ""}",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(fontSize: 22),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(width: kDefaultRefNumber),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    const Text("Breaks"),
+                                    FutureBuilder(
+                                      future: model.details(e, typeResult: ProductionTypeResult.breaks),
+                                      builder: (_, snap) => Text(
+                                        "${snap.data ?? ""}",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(fontSize: 22),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(),
+                          Table(
+                            columnWidths: {
+                              0: FixedColumnWidth(size.width * 0.22),
+                              1: FixedColumnWidth(size.width * 0.22),
+                              2: FixedColumnWidth(size.width * 0.22),
+                              3: FixedColumnWidth(size.width * 0.22),
+                            },
+                            children: [
+                              const TableRow(children: [
+                                Text("Total", textAlign: TextAlign.center),
+                                Text("In Progress", textAlign: TextAlign.center),
+                                Text("Available", textAlign: TextAlign.center),
+                                Text("Sold", textAlign: TextAlign.center),
+                              ]),
+                              TableRow(children: [
+                                FutureBuilder(
+                                  future: model.details(e, typeResult: ProductionTypeResult.all),
+                                  builder: (_, snap) => Text(
+                                    "${snap.data ?? ""}",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                FutureBuilder(
+                                  future: model.details(e, typeResult: ProductionTypeResult.process),
+                                  builder: (_, snap) => Text(
+                                    "${snap.data ?? ""}",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                FutureBuilder(
+                                  future: model.details(e, typeResult: ProductionTypeResult.available),
+                                  builder: (_, snap) => Text(
+                                    "${snap.data ?? ""}",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                FutureBuilder(
+                                  future: model.details(e, typeResult: ProductionTypeResult.sold),
+                                  builder: (_, snap) => Text(
+                                    "${snap.data ?? ""}",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ]),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: kDefaultRefNumber,
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          );
+        });
   }
 }

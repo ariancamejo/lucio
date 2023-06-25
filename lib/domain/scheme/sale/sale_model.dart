@@ -4,6 +4,8 @@ import 'package:lucio/domain/scheme/production/production_model.dart';
 
 part 'sale_model.g.dart';
 
+enum SaleTypeResult { all, withoutlot, withlot, quantity, breaks }
+
 @collection
 class SaleModel {
   Id id = Isar.autoIncrement;
@@ -23,23 +25,45 @@ class SaleModel {
 
   Future<List<ProductionTypeModel>> types() async {
     final object = await DBHelper.isar.saleModels.filter().idEqualTo(id).findFirst();
+    final types = object?.subsales.where((element) => element.type.value != null).map((e) => e.type.value!).toList() ?? [];
 
-    return object?.subsales.where((element) => element.type.value != null).map((e) => e.type.value!).toSet().toList() ?? [];
+    final uniqueTypes = <ProductionTypeModel>{};
+    for (final type in types) {
+      if (!uniqueTypes.any((t) => t.id == type.id)) {
+        uniqueTypes.add(type);
+      }
+    }
+    return uniqueTypes.toList();
   }
 
   Future<bool> checkPendingSales() async {
     return await DBHelper.isar.subSaleModels.filter().sale((q) => q.idEqualTo(id)).lotIsNull().count() > 0;
   }
 
-  Future<int> saled(ProductionTypeModel type, {bool pending = false}) async {
+  Future<int> saled(ProductionTypeModel type, {required SaleTypeResult typeResult}) async {
     SaleModel? sale = await DBHelper.isar.saleModels.filter().idEqualTo(id).findFirst();
     if (sale == null) return 0;
 
-    List<SubSaleModel> sold = [];
-    if (pending) {
-      sold = sale.subsales.where((element) => element.lot.value == null && element.type.value?.id == type.id).toList();
-    } else {
-      sold = sale.subsales.where((element) => element.lot.value != null && element.type.value?.id == type.id).toList();
+    List<SubSaleModel> sold = sale.subsales.where((element) => element.type.value?.id == type.id).toList();
+    if (typeResult == SaleTypeResult.all) {
+      int soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      return soldSum;
+    }
+    if (typeResult == SaleTypeResult.quantity) {
+      int soldSum = sold.fold(0, (sum, item) => sum + item.quantity);
+      return soldSum;
+    }
+    if (typeResult == SaleTypeResult.breaks) {
+      int soldSum = sold.fold(0, (sum, item) => sum + item.breaks);
+      return soldSum;
+    }
+
+    if (typeResult == SaleTypeResult.withoutlot) {
+      sold = sold.where((element) => element.lot.value == null).toList();
+    }
+
+    if (typeResult == SaleTypeResult.withlot) {
+      sold = sold.where((element) => element.lot.value != null).toList();
     }
 
     int soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);

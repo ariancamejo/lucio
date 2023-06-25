@@ -13,10 +13,11 @@ import 'package:sliver_tools/sliver_tools.dart';
 class ProductionTab extends ConsumerWidget {
   const ProductionTab({Key? key}) : super(key: key);
 
-  static fireForm(BuildContext context, {WorkProductionModel? model}) => showCupertinoModalBottomSheet(
+  static fireForm(BuildContext context, {WorkProductionModel? model,Map<String, dynamic>? initial}) => showCupertinoModalBottomSheet(
         context: context,
         builder: (_) => WorkProductionForm(
           model: model,
+          initial: initial,
         ),
       );
 

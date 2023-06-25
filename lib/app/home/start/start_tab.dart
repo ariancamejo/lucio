@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucio/app/home/start/widgets/bar_chart.dart';
 import 'package:lucio/app/home/start/widgets/line_chart.dart';
 import 'package:lucio/app/home/start/widgets/pie_chart.dart';
+import 'package:lucio/app/screens/employee/employee_page.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/employe/employe_provider.dart';
 import 'package:lucio/data/repositories/production/work_production_provider.dart';
@@ -86,15 +88,21 @@ class StartTab extends ConsumerWidget {
           crossAxisCellCount: 1,
           mainAxisCellCount: 1,
           child: Center(
-            child: Card(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Icon(FontAwesomeIcons.helmetSafety),
-                  const SizedBox(height: 4, width: double.maxFinite),
-                  Text("${employees.length}"),
-                ],
+            child: InkWell(
+              borderRadius: BorderRadius.circular(kDefaultRefNumber),
+              onTap: (){
+                context.go(context.namedLocation(EmployeePage.name));
+              },
+              child: Card(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(FontAwesomeIcons.helmetSafety),
+                    const SizedBox(height: 4, width: double.maxFinite),
+                    Text("${employees.length}"),
+                  ],
+                ),
               ),
             ),
           ),

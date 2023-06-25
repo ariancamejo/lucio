@@ -103,7 +103,7 @@ class MyDrawer extends ConsumerWidget {
             ),
             const Divider(height: 1),
             ListTile(
-              leading: const Icon(Icons.settings),
+              leading: const Icon(FontAwesomeIcons.cogs),
               title: const Text('Settings'),
               onTap: () {
                 Navigator.pop(context);

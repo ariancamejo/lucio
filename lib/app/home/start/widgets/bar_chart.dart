@@ -3,7 +3,9 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucio/app/home/start/widgets/pie_chart.dart';
+import 'package:lucio/app/screens/consume_materials/consume_materials_page.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/consume_materials/consume_material_provider.dart';
 import 'package:lucio/data/repositories/materials/materials_provider.dart';
@@ -50,9 +52,14 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Consumption Materials",
-                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
+              child: GestureDetector(
+                onTap: (){
+                  context.go(context.namedLocation(ConsumeMaterialsPage.name));
+                },
+                child: Text(
+                  "Consumption Materials",
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             Row(

@@ -2,10 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lucio/app/screens/settings/settings_page.dart';
 import 'package:lucio/data/repositories/google_auth/google_auth_provider.dart';
 
 class GoogleWidget extends ConsumerWidget {
-  const GoogleWidget({Key? key}) : super(key: key);
+  final bool settings;
+
+  const GoogleWidget({Key? key, this.settings = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,6 +24,9 @@ class GoogleWidget extends ConsumerWidget {
           case 1:
             ref.read(googleAuthProvider.notifier).logout();
             break;
+          case 2:
+            context.go(context.namedLocation(SettingsPage.name));
+            break;
           default:
             break;
         }
@@ -32,6 +39,14 @@ class GoogleWidget extends ConsumerWidget {
             trailing: Icon(user == null ? FontAwesomeIcons.signIn : FontAwesomeIcons.signOut),
           ),
         ),
+        if (settings)
+          const PopupMenuItem(
+            value: 2,
+            child: ListTile(
+              title: Text("Settings"),
+              trailing: Icon(FontAwesomeIcons.cogs),
+            ),
+          ),
       ],
       icon: CachedNetworkImage(
         imageUrl: user?.photoUrl ?? "",

@@ -3,7 +3,6 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucio/app/navigator.dart';
 import 'package:lucio/data/const.dart';
-import 'package:lucio/data/repositories/options_provider.dart';
 import 'package:lucio/data/repositories/rlp_provider.dart';
 import 'package:lucio/device/device.dart';
 import 'package:lucio/device/helpers/biometric/fingerprint.dart';

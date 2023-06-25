@@ -59,7 +59,7 @@ class TypeOfProductionPage extends ConsumerWidget {
               )
             : ListView.separated(
                 separatorBuilder: (_, index) => const SizedBox(height: 1),
-                itemBuilder: (_, index) => TypeOfProductionItem(model: typeOfProductions[index]),
+                itemBuilder: (_, index) => TypeOfProductionItem(model: typeOfProductions[index],showColors: true),
                 itemCount: typeOfProductions.length,
               ),
       ),

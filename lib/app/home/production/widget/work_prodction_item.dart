@@ -13,8 +13,9 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class WorkProductionItem extends ConsumerWidget {
   final WorkProductionModel model;
+  final bool showProductionType;
 
-  const WorkProductionItem({Key? key, required this.model}) : super(key: key);
+  const WorkProductionItem({Key? key, required this.model, this.showProductionType = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -62,7 +63,7 @@ class WorkProductionItem extends ConsumerWidget {
           ],
         ),
         child: ListTile(
-          title: Text(model.employee.value?.name ?? "Employee has deleted"),
+          title: showProductionType ? Text(model.type.value?.name ?? "Production Type has delete", style: TextStyle(color: Color(model.type.value?.color?? 0x00000000)),) : Text(model.employee.value?.name ?? "Employee has deleted"),
           leading: model.type.value == null
               ? null
               : ColorIndicator(

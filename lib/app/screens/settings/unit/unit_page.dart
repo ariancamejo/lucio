@@ -3,16 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/units/units_provider.dart';
+import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
 
 class _MyUnitForm {
   late GlobalKey<FormState> state;
   late TextEditingController key;
   late TextEditingController value;
+  UnitOfMeasurementModel? edited;
 
-  _MyUnitForm() {
+  _MyUnitForm({this.edited}) {
     state = GlobalKey<FormState>();
-    key = TextEditingController(text: '');
-    value = TextEditingController(text: '');
+    key = TextEditingController(text: edited?.key ?? "");
+    value = TextEditingController(text: edited?.value ?? "");
   }
 }
 
@@ -37,32 +39,47 @@ class _UnitPageState extends ConsumerState<UnitPage> {
         child: Column(
           children: [
             ...units.units.map(
-              (e) => ListTile(
-                leading: CircleAvatar(child: Text(e.key)),
-                title: Text(e.value),
-                trailing: IconButton(
-                  onPressed: () async {
-                    bool? result = await showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: Text("Remove ${e.value} (${e.key})"),
-                        actions: [
-                          TextButton(
-                              onPressed: () => Navigator.pop(context, false),
-                              child: Text(
-                                "Cancel",
-                                style: TextStyle(color: Theme.of(context).colorScheme.error),
-                              )),
-                          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Delete")),
+              (e) => _forms.where((element) => element.edited != null).map((e) => e.edited!.id).contains(e.id)
+                  ? SizedBox()
+                  : ListTile(
+                      leading: CircleAvatar(child: Text(e.key)),
+                      title: Text(e.value),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              _forms.add(_MyUnitForm(edited: e));
+                              setState(() {});
+                            },
+                            icon: const Icon(FontAwesomeIcons.pen),
+                          ),
+                          IconButton(
+                            onPressed: () async {
+                              bool? result = await showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: Text("Remove ${e.value} (${e.key})"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context, false),
+                                      child: Text(
+                                        "Cancel",
+                                        style: TextStyle(color: Theme.of(context).colorScheme.error),
+                                      ),
+                                    ),
+                                    TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Delete")),
+                                  ],
+                                ),
+                              );
+
+                              result == true ? ref.read(unitsProvider.notifier).delete([e]) : print("canceled");
+                            },
+                            icon: const Icon(FontAwesomeIcons.trash),
+                          )
                         ],
                       ),
-                    );
-
-                    result == true ? ref.read(unitsProvider.notifier).delete([e]) : print("canceled");
-                  },
-                  icon: const Icon(FontAwesomeIcons.trash),
-                ),
-              ),
+                    ),
             ),
             ..._forms.map(
               (e) => Form(
@@ -108,14 +125,20 @@ class _UnitPageState extends ConsumerState<UnitPage> {
                               style: TextStyle(color: Theme.of(context).colorScheme.error),
                             )),
                         TextButton(
-                            onPressed: () {
-                              if (e.state.currentState?.validate() ?? false) {
+                          onPressed: () {
+                            if (e.state.currentState?.validate() ?? false) {
+                              if (e.edited == null) {
                                 ref.read(unitsProvider.notifier).insert(key: e.key.text, value: e.value.text);
-                                _forms.removeWhere((element) => element.state == e.state);
-                                setState(() {});
+                              } else {
+                                ref.read(unitsProvider.notifier).update(e.edited!, values: {"key": e.key.text, "value": e.value.text});
                               }
-                            },
-                            child: Text("Save")),
+
+                              _forms.removeWhere((element) => element.state == e.state);
+                              setState(() {});
+                            }
+                          },
+                          child: Text("Save"),
+                        ),
                         const SizedBox(width: kDefaultRefNumber),
                       ],
                     ),
