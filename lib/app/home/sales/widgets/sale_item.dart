@@ -87,37 +87,38 @@ class _SaleItemState extends ConsumerState<SaleItem> {
               ],
             ),
           ),
-          Text(widget.model.pendingSales ? "Pending for production" : "Saled"),
           FutureBuilder(
               future: widget.model.types(),
               builder: (context, typess) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
-                  child: Wrap(
-                    spacing: 5,
-                    children: (typess.data ?? [])
-                        .map(
-                          (e) => FutureBuilder<int>(
-                            future: widget.model.saled(e, pending: widget.model.pendingSales),
-                            builder: (_, snap) => Tooltip(
-                              message: e.name,
-                              child: Chip(
-                                label: Text(snap.data.toString()),
-                                avatar: CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Color(e.color),
+                return Column(
+                  children: [
+                    if ((typess.data ?? []).isNotEmpty) Text(widget.model.pendingSales ? "Pending for production" : "Saled"),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
+                      child: Wrap(
+                        spacing: 5,
+                        children: (typess.data ?? [])
+                            .map(
+                              (e) => FutureBuilder<int>(
+                                future: widget.model.saled(e, pending: widget.model.pendingSales),
+                                builder: (_, snap) => Tooltip(
+                                  message: e.name,
+                                  child: Chip(
+                                    label: Text(snap.data.toString()),
+                                    avatar: CircleAvatar(
+                                      radius: 10,
+                                      backgroundColor: Color(e.color),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ],
                 );
               }),
-          const SizedBox(
-            height: kDefaultRefNumber,
-          )
         ],
       ),
       action: Row(

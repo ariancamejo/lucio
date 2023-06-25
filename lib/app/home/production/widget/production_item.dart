@@ -76,7 +76,7 @@ class _ProductionItemState extends ConsumerState<ProductionItem> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            const Text("In process"),
+                            if ((typess.data ?? []).isNotEmpty) const Text("In process"),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
                               child: Wrap(
@@ -108,7 +108,7 @@ class _ProductionItemState extends ConsumerState<ProductionItem> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            const Text("Available"),
+                            if ((typess.data ?? []).isNotEmpty) const Text("Available"),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
                               child: Wrap(
@@ -139,12 +139,9 @@ class _ProductionItemState extends ConsumerState<ProductionItem> {
                   ],
                 );
               }),
-          const SizedBox(
-            height: kDefaultRefNumber,
-          )
         ],
       ),
-      divider: true,
+      divider: false,
       boxDecoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
       items: showChildren ? workProductionItems : [],
     );
