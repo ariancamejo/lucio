@@ -1,0 +1,21 @@
+{
+  "settings": {
+    "theme": {
+      "title": "Tema de la aplicación",
+      "subtitle": "Presione para seleccionar",
+      "options": {
+        "system": "Sistema",
+        "light": "Claro",
+        "dark": "Oscuro"
+      }
+    },
+    "language": {
+      "title": "Idioma de la aplicación",
+      "subtitle": "Presione para seleccionar",
+      "options": {
+        "en": "English",
+        "es": "Español"
+      }
+    }
+  }
+}

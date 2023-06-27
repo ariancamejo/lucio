@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flash/flash.dart';
@@ -20,8 +21,9 @@ class Utils {
   static Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    await SystemChrome.setPreferredOrientations([ DeviceOrientation.portraitUp]);
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    await EasyLocalization.ensureInitialized();
     await dotenv.load();
     await SecureStorage.init();
     await DBHelper.init();

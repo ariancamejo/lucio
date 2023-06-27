@@ -1317,6 +1317,12 @@ const ProductionTypeModelSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {
+    r'unit': LinkSchema(
+      id: 1015572263476669975,
+      name: r'unit',
+      target: r'UnitOfMeasurementModel',
+      single: true,
+    ),
     r'workProductions': LinkSchema(
       id: -5726313727196098587,
       name: r'workProductions',
@@ -1402,12 +1408,14 @@ Id _productionTypeModelGetId(ProductionTypeModel object) {
 
 List<IsarLinkBase<dynamic>> _productionTypeModelGetLinks(
     ProductionTypeModel object) {
-  return [object.workProductions, object.subsales];
+  return [object.unit, object.workProductions, object.subsales];
 }
 
 void _productionTypeModelAttach(
     IsarCollection<dynamic> col, Id id, ProductionTypeModel object) {
   object.id = id;
+  object.unit
+      .attach(col, col.isar.collection<UnitOfMeasurementModel>(), r'unit', id);
   object.workProductions.attach(
       col, col.isar.collection<WorkProductionModel>(), r'workProductions', id);
   object.subsales
@@ -1872,6 +1880,20 @@ extension ProductionTypeModelQueryObject on QueryBuilder<ProductionTypeModel,
 
 extension ProductionTypeModelQueryLinks on QueryBuilder<ProductionTypeModel,
     ProductionTypeModel, QFilterCondition> {
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      unit(FilterQuery<UnitOfMeasurementModel> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'unit');
+    });
+  }
+
+  QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
+      unitIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'unit', 0, true, 0, true);
+    });
+  }
+
   QueryBuilder<ProductionTypeModel, ProductionTypeModel, QAfterFilterCondition>
       workProductions(FilterQuery<WorkProductionModel> q) {
     return QueryBuilder.apply(this, (query) {

@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 
 import 'package:lucio/device/helpers/storage/database.dart';
+import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
 import 'package:lucio/domain/scheme/employe/employe_model.dart';
 import 'package:lucio/domain/scheme/sale/sale_model.dart';
 
@@ -109,6 +110,7 @@ class ProductionTypeModel {
   late int color;
   int daysToBeReady = 17;
   late double price;
+  IsarLink<UnitOfMeasurementModel> unit = IsarLink<UnitOfMeasurementModel>();
 
   @Backlink(to: 'type')
   final workProductions = IsarLinks<WorkProductionModel>();

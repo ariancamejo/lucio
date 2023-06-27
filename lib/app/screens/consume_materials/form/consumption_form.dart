@@ -69,7 +69,7 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
                       isVisible: true),
                   popupProps: popUpsProps<ProductionTypeModel>(context, onPressed: () => TypeOfProductionPage.fireForm(context), title: "Production Type"),
                   asyncItems: (String filter) => Future.value(productTypes),
-                  itemAsString: (ProductionTypeModel u) => u.name,
+                  itemAsString: (ProductionTypeModel u) => "${u.name} ${u.unit.value == null ? "" : "(${u.unit.value?.key ?? ""})"}",
                   onChanged: (ProductionTypeModel? data) => setState(() => productionTypeModel = data),
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(labelText: "Production Type"),
@@ -95,9 +95,8 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
                       icon: const Icon(Icons.clear),
                       isVisible: true),
                   popupProps: popUpsProps<MaterialModel>(context, onPressed: () => MaterialsPage.fireForm(context), title: "Materials"),
-
                   asyncItems: (String filter) => Future.value(materials),
-                  itemAsString: (MaterialModel u) => u.name,
+                  itemAsString: (MaterialModel u) => "${u.name} ${u.unit.value == null ? "" : "(${u.unit.value?.key ?? ""})"}",
                   onChanged: (MaterialModel? data) => setState(() => materialModel = data),
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(labelText: "Material"),

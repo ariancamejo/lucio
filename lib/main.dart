@@ -11,9 +11,26 @@ import 'package:lucio/device/helpers/theme/theme.dart';
 import 'package:lucio/device/repositories/repositories.dart';
 import 'package:responsive_framework/breakpoint.dart';
 import 'package:responsive_framework/responsive_breakpoints.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+GlobalKey localeKey = GlobalKey();
+
+const locales = [
+  Locale('es', 'ES'),
+  Locale('en', 'US'),
+];
 
 void main() async => await Utils.init().then(
-      (value) => runApp(const ProviderScope(child: KeyboardVisibilityProvider(child: MainApp()))),
+      (value) {
+        final app = EasyLocalization(
+          key: localeKey,
+          supportedLocales: locales,
+          path: 'assets/translations',
+          fallbackLocale: locales[0],
+          child: const ProviderScope(child: KeyboardVisibilityProvider(child: MainApp())),
+        );
+        runApp(app);
+      },
     );
 
 class MainApp extends ConsumerStatefulWidget {
@@ -105,6 +122,11 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
       theme: lightTheme(context),
       darkTheme: darkTheme(context),
       themeMode: theme,
+      //LOCALE
+      locale: context.locale,
+      supportedLocales: context.supportedLocales,
+      localizationsDelegates: context.localizationDelegates,
+      localeResolutionCallback: (locale, __) => locale,
       //RESPONSIBE
       builder: (context, child) => ResponsiveBreakpoints.builder(
         child: Scaffold(

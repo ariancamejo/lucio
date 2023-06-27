@@ -41,6 +41,7 @@ dependencies:
   file_picker: ^5.3.0
   path_provider: ^2.0.14
   dropdown_search: ^5.0.6
+  easy_localization: ^3.0.1
   permission_handler: ^10.2.0
   cached_network_image: ^3.2.3
   flutter_secure_storage: ^8.0.0
@@ -80,4 +81,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/translations/
     - .env

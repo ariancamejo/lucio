@@ -118,7 +118,7 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                       isVisible: true),
                   popupProps: popUpsProps<ProductionTypeModel>(context, onPressed: () => TypeOfProductionPage.fireForm(context), title: "Production Type"),
                   asyncItems: (String filter) => Future.value(typeProductions),
-                  itemAsString: (ProductionTypeModel u) => u.name,
+                  itemAsString: (ProductionTypeModel u) => "${u.name} ${u.unit.value == null ? "" : "(${u.unit.value?.key ?? ""})"}",
                   onChanged: (ProductionTypeModel? data) => setState(() => productionTypeModel = data),
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(labelText: "Production Type"),

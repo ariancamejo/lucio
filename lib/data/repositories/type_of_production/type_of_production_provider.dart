@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:lucio/data/repositories/rlp_provider.dart';
 import 'package:lucio/device/helpers/storage/database.dart';
+import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
 import 'package:lucio/domain/scheme/production/production_model.dart';
 
 class TypeOfSaleNotifier extends StateNotifier<List<ProductionTypeModel>> {
@@ -9,7 +10,7 @@ class TypeOfSaleNotifier extends StateNotifier<List<ProductionTypeModel>> {
 
   TypeOfSaleNotifier(this.ref) : super([]) {
     tC.asBroadcastStream();
-        tC.listen((event) => Future.microtask(() => findData()));
+    tC.listen((event) => Future.microtask(() => findData()));
     findData();
   }
 
@@ -18,17 +19,20 @@ class TypeOfSaleNotifier extends StateNotifier<List<ProductionTypeModel>> {
   Future<List<ProductionTypeModel>> findData({String? name}) async =>
       state = await DBHelper.isar.productionTypeModels.filter().optional(name != null, (q) => q.nameContains(name ?? "")).findAll();
 
-  Future<ProductionTypeModel?> insert({required String name, required int color, required int daysToBeReady, required double price, bool object = false}) async {
+  Future<ProductionTypeModel?> insert(
+      {required String name, required int color, required int daysToBeReady, required double price, UnitOfMeasurementModel? unit, bool object = false}) async {
     ref.read(rlP.notifier).start();
     final obj = ProductionTypeModel()
       ..name = name
       ..price = price
       ..daysToBeReady = daysToBeReady
+      ..unit.value = unit
       ..color = color;
 
     ProductionTypeModel? result;
     await DBHelper.isar.writeTxn(() async {
       final id = await DBHelper.isar.productionTypeModels.put(obj);
+      await obj.unit.save();
       if (object) {
         result = await DBHelper.isar.productionTypeModels.get(id);
       }
@@ -43,10 +47,12 @@ class TypeOfSaleNotifier extends StateNotifier<List<ProductionTypeModel>> {
     obj.name = values['name'] ?? obj.name;
     obj.price = values['price'] ?? obj.price;
     obj.daysToBeReady = values['daysToBeReady'] ?? obj.daysToBeReady;
+    obj.unit.value = values['unit'] ?? obj.unit.value;
     obj.color = values['color'] ?? obj.color;
     ProductionTypeModel? result;
     await DBHelper.isar.writeTxn(() async {
       final id = await DBHelper.isar.productionTypeModels.put(obj);
+      await obj.unit.save();
       if (object) {
         result = await DBHelper.isar.productionTypeModels.get(id);
       }
