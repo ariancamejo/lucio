@@ -15,7 +15,7 @@ class EmployeesNotifier extends StateNotifier<List<EmployeModel>> {
 
   late StateNotifierProviderRef<StateNotifier, List<EmployeModel>> ref;
 
-  Future<List<EmployeModel>> findData({String? name, String? ci, int? plan}) async => state = await DBHelper.isar.employeModels
+  Future<List<EmployeModel>> findData({String? name, String? ci, double? plan}) async => state = await DBHelper.isar.employeModels
       .filter()
       .optional(
         name != null,
@@ -31,7 +31,7 @@ class EmployeesNotifier extends StateNotifier<List<EmployeModel>> {
       )
       .findAll();
 
-  Future<EmployeModel?> insert({required String name, required String ci, required int plan, bool object = false}) async {
+  Future<EmployeModel?> insert({required String name, required String ci, required double plan, bool object = false}) async {
       ref.read(rlP.notifier).start();
     final obj = EmployeModel()
       ..name = name

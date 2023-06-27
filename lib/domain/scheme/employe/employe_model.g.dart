@@ -30,7 +30,7 @@ const EmployeModelSchema = CollectionSchema(
     r'plan': PropertySchema(
       id: 2,
       name: r'plan',
-      type: IsarType.long,
+      type: IsarType.double,
     )
   },
   estimateSize: _employeModelEstimateSize,
@@ -79,7 +79,7 @@ void _employeModelSerialize(
 ) {
   writer.writeString(offsets[0], object.ci);
   writer.writeString(offsets[1], object.name);
-  writer.writeLong(offsets[2], object.plan);
+  writer.writeDouble(offsets[2], object.plan);
 }
 
 EmployeModel _employeModelDeserialize(
@@ -92,7 +92,7 @@ EmployeModel _employeModelDeserialize(
   object.ci = reader.readStringOrNull(offsets[0]);
   object.id = id;
   object.name = reader.readString(offsets[1]);
-  object.plan = reader.readLong(offsets[2]);
+  object.plan = reader.readDouble(offsets[2]);
   return object;
 }
 
@@ -108,7 +108,7 @@ P _employeModelDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -546,47 +546,55 @@ extension EmployeModelQueryFilter
   }
 
   QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> planEqualTo(
-      int value) {
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'plan',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition>
       planGreaterThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'plan',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> planLessThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'plan',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> planBetween(
-    int lower,
-    int upper, {
+    double lower,
+    double upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -595,6 +603,7 @@ extension EmployeModelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -801,7 +810,7 @@ extension EmployeModelQueryProperty
     });
   }
 
-  QueryBuilder<EmployeModel, int, QQueryOperations> planProperty() {
+  QueryBuilder<EmployeModel, double, QQueryOperations> planProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'plan');
     });

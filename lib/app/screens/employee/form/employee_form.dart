@@ -85,7 +85,7 @@ class _MaterialFormState extends ConsumerState<EmployeeForm> {
                     if (value?.isEmpty ?? true) {
                       return "Plan required";
                     }
-                    if (int.tryParse(value ?? "-") == null) {
+                    if (double.tryParse(value ?? "-") == null) {
                       return "write correct number";
                     }
 
@@ -101,12 +101,12 @@ class _MaterialFormState extends ConsumerState<EmployeeForm> {
         onPressed: () async {
           if (_key.currentState?.validate() ?? false) {
             if (widget.model == null) {
-              await ref.read(employeeProvider.notifier).insert(name: _name.text, ci: _ci.text, plan: int.tryParse(_plan.text) ?? 0);
+              await ref.read(employeeProvider.notifier).insert(name: _name.text, ci: _ci.text, plan: double.tryParse(_plan.text) ?? 0);
             } else {
               await ref.read(employeeProvider.notifier).update(widget.model!, values: {
                 "name": _name.text,
                 "ci": _ci.text,
-                "plan": int.tryParse(_plan.text) ?? 0,
+                "plan": double.tryParse(_plan.text) ?? 0,
               });
             }
             if (context.mounted) Navigator.pop(context);

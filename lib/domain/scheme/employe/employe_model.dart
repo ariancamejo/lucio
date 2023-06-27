@@ -9,13 +9,13 @@ class EmployeModel {
   Id id = Isar.autoIncrement;
   late String name;
   String? ci;
-  late int plan;
+  late double plan;
 
   @Backlink(to: 'employee')
   final workProductions = IsarLinks<WorkProductionModel>();
 
-  Future<int> real({required DateTime startFilter, required DateTime endFilter}) async {
-    int real = (await DBHelper.isar.workProductionModels.filter().datetimeBetween(startFilter, endFilter).employee((q) => q.idEqualTo(id)).findAll())
+  Future<double> real({required DateTime startFilter, required DateTime endFilter}) async {
+    double real = (await DBHelper.isar.workProductionModels.filter().datetimeBetween(startFilter, endFilter).employee((q) => q.idEqualTo(id)).findAll())
         .fold(0, (sum, item) => sum + item.quantity);
     return real;
   }
