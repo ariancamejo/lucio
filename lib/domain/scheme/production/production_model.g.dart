@@ -520,7 +520,7 @@ const WorkProductionModelSchema = CollectionSchema(
     r'breaks': PropertySchema(
       id: 0,
       name: r'breaks',
-      type: IsarType.long,
+      type: IsarType.double,
     ),
     r'datetime': PropertySchema(
       id: 1,
@@ -535,7 +535,7 @@ const WorkProductionModelSchema = CollectionSchema(
     r'quantity': PropertySchema(
       id: 3,
       name: r'quantity',
-      type: IsarType.long,
+      type: IsarType.double,
     )
   },
   estimateSize: _workProductionModelEstimateSize,
@@ -586,10 +586,10 @@ void _workProductionModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.breaks);
+  writer.writeDouble(offsets[0], object.breaks);
   writer.writeDateTime(offsets[1], object.datetime);
   writer.writeDateTime(offsets[2], object.listForSale);
-  writer.writeLong(offsets[3], object.quantity);
+  writer.writeDouble(offsets[3], object.quantity);
 }
 
 WorkProductionModel _workProductionModelDeserialize(
@@ -599,11 +599,11 @@ WorkProductionModel _workProductionModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = WorkProductionModel();
-  object.breaks = reader.readLong(offsets[0]);
+  object.breaks = reader.readDouble(offsets[0]);
   object.datetime = reader.readDateTime(offsets[1]);
   object.id = id;
   object.listForSale = reader.readDateTime(offsets[2]);
-  object.quantity = reader.readLong(offsets[3]);
+  object.quantity = reader.readDouble(offsets[3]);
   return object;
 }
 
@@ -615,13 +615,13 @@ P _workProductionModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 1:
       return (reader.readDateTime(offset)) as P;
     case 2:
       return (reader.readDateTime(offset)) as P;
     case 3:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -730,49 +730,58 @@ extension WorkProductionModelQueryWhere
 extension WorkProductionModelQueryFilter on QueryBuilder<WorkProductionModel,
     WorkProductionModel, QFilterCondition> {
   QueryBuilder<WorkProductionModel, WorkProductionModel, QAfterFilterCondition>
-      breaksEqualTo(int value) {
+      breaksEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'breaks',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<WorkProductionModel, WorkProductionModel, QAfterFilterCondition>
       breaksGreaterThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'breaks',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<WorkProductionModel, WorkProductionModel, QAfterFilterCondition>
       breaksLessThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'breaks',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<WorkProductionModel, WorkProductionModel, QAfterFilterCondition>
       breaksBetween(
-    int lower,
-    int upper, {
+    double lower,
+    double upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -781,6 +790,7 @@ extension WorkProductionModelQueryFilter on QueryBuilder<WorkProductionModel,
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -954,49 +964,58 @@ extension WorkProductionModelQueryFilter on QueryBuilder<WorkProductionModel,
   }
 
   QueryBuilder<WorkProductionModel, WorkProductionModel, QAfterFilterCondition>
-      quantityEqualTo(int value) {
+      quantityEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'quantity',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<WorkProductionModel, WorkProductionModel, QAfterFilterCondition>
       quantityGreaterThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'quantity',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<WorkProductionModel, WorkProductionModel, QAfterFilterCondition>
       quantityLessThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'quantity',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<WorkProductionModel, WorkProductionModel, QAfterFilterCondition>
       quantityBetween(
-    int lower,
-    int upper, {
+    double lower,
+    double upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1005,6 +1024,7 @@ extension WorkProductionModelQueryFilter on QueryBuilder<WorkProductionModel,
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -1229,7 +1249,7 @@ extension WorkProductionModelQueryProperty
     });
   }
 
-  QueryBuilder<WorkProductionModel, int, QQueryOperations> breaksProperty() {
+  QueryBuilder<WorkProductionModel, double, QQueryOperations> breaksProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'breaks');
     });
@@ -1249,7 +1269,8 @@ extension WorkProductionModelQueryProperty
     });
   }
 
-  QueryBuilder<WorkProductionModel, int, QQueryOperations> quantityProperty() {
+  QueryBuilder<WorkProductionModel, double, QQueryOperations>
+      quantityProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'quantity');
     });

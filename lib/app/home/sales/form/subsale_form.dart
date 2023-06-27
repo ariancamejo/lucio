@@ -125,7 +125,7 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                   ),
                 ),
               ),
-              FutureBuilder<int?>(
+              FutureBuilder<double?>(
                   future: productionModel == null ? Future.value(null) : productionModel!.details(productionTypeModel,typeResult: ProductionTypeResult.available),
                   builder: (context, snapshot) {
                     return Padding(

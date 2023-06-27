@@ -39,7 +39,7 @@ class ProductionModel {
     return DateFormat("ddMMyyyy").format(date);
   }
 
-  Future<int> details(ProductionTypeModel? type, {required ProductionTypeResult typeResult}) async {
+  Future<double> details(ProductionTypeModel? type, {required ProductionTypeResult typeResult}) async {
     if (type == null) return 0;
 
     if (typeResult == ProductionTypeResult.available) {
@@ -47,38 +47,38 @@ class ProductionModel {
           await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleLessThan(DateTime.now()).findAll();
 
       List<SubSaleModel> sold = await DBHelper.isar.subSaleModels.filter().lot((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-      int stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
-      int soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
-      int result = stockSum - soldSum;
+      double stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+      double soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      double result = stockSum - soldSum;
       return result;
     }
 
     if (typeResult == ProductionTypeResult.process) {
       List<WorkProductionModel> stock =
           await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleGreaterThan(DateTime.now()).findAll();
-      int stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+      double stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
       return stockSum;
     }
 
     if (typeResult == ProductionTypeResult.all) {
       List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-      int stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
+      double stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
       return stockSum;
     }
     if (typeResult == ProductionTypeResult.sold) {
       List<SubSaleModel> sold = await DBHelper.isar.subSaleModels.filter().lot((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-      int soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      double soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
       return soldSum;
     }
 
     if (typeResult == ProductionTypeResult.quantity) {
       List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-      int stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+      double stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
       return stockSum;
     }
     if (typeResult == ProductionTypeResult.breaks) {
       List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-      int stockSum = stock.fold(0, (sum, item) => sum + item.breaks);
+      double stockSum = stock.fold(0, (sum, item) => sum + item.breaks);
       return stockSum;
     }
 
@@ -94,8 +94,8 @@ class WorkProductionModel {
   IsarLink<EmployeModel> employee = IsarLink<EmployeModel>();
   late DateTime datetime;
   late DateTime listForSale;
-  late int quantity;
-  late int breaks;
+  late double quantity;
+  late double breaks;
 
   DateTime? readyIn() {
     return listForSale.isAfter(DateTime.now()) ? listForSale : null;

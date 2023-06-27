@@ -140,10 +140,10 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                     if (value?.isEmpty ?? true) {
                       return "Quantity required";
                     }
-                    if (int.tryParse(value ?? "-") == null) {
+                    if (double.tryParse(value ?? "-") == null) {
                       return "Enter correct number";
                     }
-                    if ((int.tryParse(value ?? '0') ?? 0) == 0) {
+                    if ((double.tryParse(value ?? '0') ?? 0) == 0) {
                       return "Please,specify a number greater than zero";
                     }
 
@@ -162,7 +162,7 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                     if (value?.isEmpty ?? true) {
                       return "Breaks required";
                     }
-                    if (int.tryParse(value ?? "-") == null) {
+                    if (double.tryParse(value ?? "-") == null) {
                       return "Enter correct number";
                     }
 
@@ -182,17 +182,17 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
               await ref.read(workProductionProvider.notifier).insert(
                     employee: employeModel!,
                     type: productionTypeModel!,
-                    quantity: int.tryParse(_quantity.text) ?? 0,
+                    quantity: double.tryParse(_quantity.text) ?? 0,
                     dateTimeParam: dateTime,
-                    breaks: int.tryParse(_breaks.text) ?? 0,
+                    breaks: double.tryParse(_breaks.text) ?? 0,
                   );
             } else {
               await ref.read(workProductionProvider.notifier).update(widget.model!, values: {
                 "employee": employeModel!,
                 "type": productionTypeModel!,
                 "dateTimeParam": dateTime,
-                "quantity": int.tryParse(_quantity.text) ?? 0,
-                "breaks": int.tryParse(_breaks.text) ?? 0,
+                "quantity": double.tryParse(_quantity.text) ?? 0,
+                "breaks": double.tryParse(_breaks.text) ?? 0,
               });
             }
             if (context.mounted) Navigator.pop(context);

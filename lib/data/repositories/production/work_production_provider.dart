@@ -32,8 +32,8 @@ class WorkProductionNotifier extends StateNotifier<List<WorkProductionModel>> {
     required EmployeModel employee,
     required ProductionTypeModel type,
     DateTime? dateTimeParam,
-    required int quantity,
-    required int breaks,
+    required double quantity,
+    required double breaks,
     bool object = false,
   }) async {
     ref.read(rlP.notifier).start();
