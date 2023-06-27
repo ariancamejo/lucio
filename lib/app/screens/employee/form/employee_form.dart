@@ -18,13 +18,12 @@ class _MaterialFormState extends ConsumerState<EmployeeForm> {
 
   late TextEditingController _name;
   late TextEditingController _ci;
-  late TextEditingController _plan;
 
   @override
   void initState() {
     _name = TextEditingController(text: widget.model?.name ?? "");
     _ci = TextEditingController(text: widget.model?.ci ?? "");
-    _plan = TextEditingController(text: widget.model?.plan.toString() ?? "");
+
     super.initState();
   }
 
@@ -74,25 +73,6 @@ class _MaterialFormState extends ConsumerState<EmployeeForm> {
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
-                child: TextFormField(
-                  controller: _plan,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: 'Plan', hintText: "Plan"),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return "Plan required";
-                    }
-                    if (double.tryParse(value ?? "-") == null) {
-                      return "write correct number";
-                    }
-
-                    return null;
-                  },
-                ),
-              ),
             ],
           ),
         ),
@@ -101,12 +81,11 @@ class _MaterialFormState extends ConsumerState<EmployeeForm> {
         onPressed: () async {
           if (_key.currentState?.validate() ?? false) {
             if (widget.model == null) {
-              await ref.read(employeeProvider.notifier).insert(name: _name.text, ci: _ci.text, plan: double.tryParse(_plan.text) ?? 0);
+              await ref.read(employeeProvider.notifier).insert(name: _name.text, ci: _ci.text);
             } else {
               await ref.read(employeeProvider.notifier).update(widget.model!, values: {
                 "name": _name.text,
                 "ci": _ci.text,
-                "plan": double.tryParse(_plan.text) ?? 0,
               });
             }
             if (context.mounted) Navigator.pop(context);

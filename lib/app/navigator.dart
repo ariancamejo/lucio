@@ -4,6 +4,7 @@ import 'package:lucio/app/home/home_page.dart';
 import 'package:lucio/app/screens/404/not_found.dart';
 import 'package:lucio/app/screens/consume_materials/consume_materials_page.dart';
 import 'package:lucio/app/screens/employee/employee_page.dart';
+import 'package:lucio/app/screens/employee/plan/plan_page.dart';
 import 'package:lucio/app/screens/materials/materials_page.dart';
 import 'package:lucio/app/screens/settings/settings_page.dart';
 import 'package:lucio/app/screens/settings/unit/unit_page.dart';
@@ -71,6 +72,13 @@ class RouterNotifier extends ChangeNotifier {
               name: EmployeePage.name,
               path: 'employee',
               pageBuilder: (context, _) => slideTransition(const EmployeePage(), _),
+              routes: [
+                GoRoute(
+                  name: PlanPage.name,
+                  path: 'plan',
+                  pageBuilder: (context, _) => slideTransition(const PlanPage(), _),
+                )
+              ],
             ),
           ],
         ),

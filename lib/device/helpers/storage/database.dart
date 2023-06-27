@@ -10,6 +10,7 @@ class DBHelper {
 
   static List<CollectionSchema> schemes = [
     EmployeModelSchema,
+    EmployeePlanModelSchema,
     ProductionModelSchema,
     WorkProductionModelSchema,
     ProductionTypeModelSchema,
@@ -18,7 +19,7 @@ class DBHelper {
     SaleTypeModelSchema,
     ConsumptionModelSchema,
     MaterialModelSchema,
-    UnitOfMeasurementModelSchema
+    UnitOfMeasurementModelSchema,
   ];
 
   static Future<void> init() async {

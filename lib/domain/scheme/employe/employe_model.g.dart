@@ -26,11 +26,6 @@ const EmployeModelSchema = CollectionSchema(
       id: 1,
       name: r'name',
       type: IsarType.string,
-    ),
-    r'plan': PropertySchema(
-      id: 2,
-      name: r'plan',
-      type: IsarType.double,
     )
   },
   estimateSize: _employeModelEstimateSize,
@@ -79,7 +74,6 @@ void _employeModelSerialize(
 ) {
   writer.writeString(offsets[0], object.ci);
   writer.writeString(offsets[1], object.name);
-  writer.writeDouble(offsets[2], object.plan);
 }
 
 EmployeModel _employeModelDeserialize(
@@ -92,7 +86,6 @@ EmployeModel _employeModelDeserialize(
   object.ci = reader.readStringOrNull(offsets[0]);
   object.id = id;
   object.name = reader.readString(offsets[1]);
-  object.plan = reader.readDouble(offsets[2]);
   return object;
 }
 
@@ -107,8 +100,6 @@ P _employeModelDeserializeProp<P>(
       return (reader.readStringOrNull(offset)) as P;
     case 1:
       return (reader.readString(offset)) as P;
-    case 2:
-      return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -544,69 +535,6 @@ extension EmployeModelQueryFilter
       ));
     });
   }
-
-  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> planEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'plan',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition>
-      planGreaterThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'plan',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> planLessThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'plan',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> planBetween(
-    double lower,
-    double upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'plan',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
-    });
-  }
 }
 
 extension EmployeModelQueryObject
@@ -702,18 +630,6 @@ extension EmployeModelQuerySortBy
       return query.addSortBy(r'name', Sort.desc);
     });
   }
-
-  QueryBuilder<EmployeModel, EmployeModel, QAfterSortBy> sortByPlan() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'plan', Sort.asc);
-    });
-  }
-
-  QueryBuilder<EmployeModel, EmployeModel, QAfterSortBy> sortByPlanDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'plan', Sort.desc);
-    });
-  }
 }
 
 extension EmployeModelQuerySortThenBy
@@ -753,18 +669,6 @@ extension EmployeModelQuerySortThenBy
       return query.addSortBy(r'name', Sort.desc);
     });
   }
-
-  QueryBuilder<EmployeModel, EmployeModel, QAfterSortBy> thenByPlan() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'plan', Sort.asc);
-    });
-  }
-
-  QueryBuilder<EmployeModel, EmployeModel, QAfterSortBy> thenByPlanDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'plan', Sort.desc);
-    });
-  }
 }
 
 extension EmployeModelQueryWhereDistinct
@@ -780,12 +684,6 @@ extension EmployeModelQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<EmployeModel, EmployeModel, QDistinct> distinctByPlan() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'plan');
     });
   }
 }
@@ -809,8 +707,419 @@ extension EmployeModelQueryProperty
       return query.addPropertyName(r'name');
     });
   }
+}
 
-  QueryBuilder<EmployeModel, double, QQueryOperations> planProperty() {
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+extension GetEmployeePlanModelCollection on Isar {
+  IsarCollection<EmployeePlanModel> get employeePlanModels => this.collection();
+}
+
+const EmployeePlanModelSchema = CollectionSchema(
+  name: r'EmployeePlanModel',
+  id: -1775472168628476647,
+  properties: {
+    r'plan': PropertySchema(
+      id: 0,
+      name: r'plan',
+      type: IsarType.double,
+    )
+  },
+  estimateSize: _employeePlanModelEstimateSize,
+  serialize: _employeePlanModelSerialize,
+  deserialize: _employeePlanModelDeserialize,
+  deserializeProp: _employeePlanModelDeserializeProp,
+  idName: r'id',
+  indexes: {},
+  links: {
+    r'employee': LinkSchema(
+      id: 5080544669868915141,
+      name: r'employee',
+      target: r'EmployeModel',
+      single: true,
+    ),
+    r'type': LinkSchema(
+      id: -379538991873910233,
+      name: r'type',
+      target: r'ProductionTypeModel',
+      single: true,
+    )
+  },
+  embeddedSchemas: {},
+  getId: _employeePlanModelGetId,
+  getLinks: _employeePlanModelGetLinks,
+  attach: _employeePlanModelAttach,
+  version: '3.1.0+1',
+);
+
+int _employeePlanModelEstimateSize(
+  EmployeePlanModel object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
+}
+
+void _employeePlanModelSerialize(
+  EmployeePlanModel object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeDouble(offsets[0], object.plan);
+}
+
+EmployeePlanModel _employeePlanModelDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = EmployeePlanModel();
+  object.id = id;
+  object.plan = reader.readDouble(offsets[0]);
+  return object;
+}
+
+P _employeePlanModelDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readDouble(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+Id _employeePlanModelGetId(EmployeePlanModel object) {
+  return object.id;
+}
+
+List<IsarLinkBase<dynamic>> _employeePlanModelGetLinks(
+    EmployeePlanModel object) {
+  return [object.employee, object.type];
+}
+
+void _employeePlanModelAttach(
+    IsarCollection<dynamic> col, Id id, EmployeePlanModel object) {
+  object.id = id;
+  object.employee
+      .attach(col, col.isar.collection<EmployeModel>(), r'employee', id);
+  object.type
+      .attach(col, col.isar.collection<ProductionTypeModel>(), r'type', id);
+}
+
+extension EmployeePlanModelQueryWhereSort
+    on QueryBuilder<EmployeePlanModel, EmployeePlanModel, QWhere> {
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterWhere> anyId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+}
+
+extension EmployeePlanModelQueryWhere
+    on QueryBuilder<EmployeePlanModel, EmployeePlanModel, QWhereClause> {
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterWhereClause>
+      idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterWhereClause>
+      idNotEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterWhereClause>
+      idGreaterThan(Id id, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterWhereClause>
+      idLessThan(Id id, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterWhereClause>
+      idBetween(
+    Id lowerId,
+    Id upperId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension EmployeePlanModelQueryFilter
+    on QueryBuilder<EmployeePlanModel, EmployeePlanModel, QFilterCondition> {
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      idEqualTo(Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      idGreaterThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      idLessThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      idBetween(
+    Id lower,
+    Id upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      planEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plan',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      planGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plan',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      planLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plan',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      planBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plan',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+}
+
+extension EmployeePlanModelQueryObject
+    on QueryBuilder<EmployeePlanModel, EmployeePlanModel, QFilterCondition> {}
+
+extension EmployeePlanModelQueryLinks
+    on QueryBuilder<EmployeePlanModel, EmployeePlanModel, QFilterCondition> {
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      employee(FilterQuery<EmployeModel> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'employee');
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      employeeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'employee', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      type(FilterQuery<ProductionTypeModel> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'type');
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterFilterCondition>
+      typeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'type', 0, true, 0, true);
+    });
+  }
+}
+
+extension EmployeePlanModelQuerySortBy
+    on QueryBuilder<EmployeePlanModel, EmployeePlanModel, QSortBy> {
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterSortBy>
+      sortByPlan() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plan', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterSortBy>
+      sortByPlanDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plan', Sort.desc);
+    });
+  }
+}
+
+extension EmployeePlanModelQuerySortThenBy
+    on QueryBuilder<EmployeePlanModel, EmployeePlanModel, QSortThenBy> {
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterSortBy> thenById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterSortBy>
+      thenByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterSortBy>
+      thenByPlan() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plan', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QAfterSortBy>
+      thenByPlanDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plan', Sort.desc);
+    });
+  }
+}
+
+extension EmployeePlanModelQueryWhereDistinct
+    on QueryBuilder<EmployeePlanModel, EmployeePlanModel, QDistinct> {
+  QueryBuilder<EmployeePlanModel, EmployeePlanModel, QDistinct>
+      distinctByPlan() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'plan');
+    });
+  }
+}
+
+extension EmployeePlanModelQueryProperty
+    on QueryBuilder<EmployeePlanModel, EmployeePlanModel, QQueryProperty> {
+  QueryBuilder<EmployeePlanModel, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<EmployeePlanModel, double, QQueryOperations> planProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'plan');
     });

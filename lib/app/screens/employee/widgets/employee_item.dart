@@ -3,10 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lucio/app/screens/employee/employee_page.dart';
+import 'package:lucio/app/screens/employee/plan/plan_page.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/employe/employe_provider.dart';
-import 'package:lucio/data/repositories/options_provider.dart';
-
 import 'package:lucio/domain/scheme/employe/employe_model.dart';
 
 class EmployeeItem extends ConsumerWidget {
@@ -17,12 +16,8 @@ class EmployeeItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
-    final options = ref.watch(optionsP);
     return Slidable(
-      // Specify a key if the Slidable is dismissible.
       key: ValueKey(model.id),
-
-      // The end action pane is the one at the right or the bottom side.
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
@@ -46,19 +41,16 @@ class EmployeeItem extends ConsumerWidget {
           const SizedBox(width: 1),
         ],
       ),
-      child: FutureBuilder(
-          future: model.real(startFilter: options.startFilter, endFilter: options.endFilter),
-          builder: (_, real) {
-            bool cumplido = (real.data ?? 0) >= model.plan;
-
-            return ListTile(
-              title: Text(model.name),
-              subtitle: Text("Plan: ${real.data == null ? "" : "${real.data} /"} ${model.plan}"),
-              onLongPress: () => EmployeePage.fireForm(context, model: model),
-              leading: Icon(cumplido ? FontAwesomeIcons.check : FontAwesomeIcons.clock, color: cumplido ? scheme.primary : scheme.error),
-              trailing: cumplido ? null : Text("${model.plan - (real.data ?? 0)}"),
-            );
-          }),
+      child: ListTile(
+        title: Text(model.name),
+        subtitle: Text("CI: ${model.ci ?? ""}"),
+        trailing: IconButton(
+          onPressed: () {
+            PlanPage.fireForm(context, employeModelInitial: model);
+          },
+          icon: const Icon(FontAwesomeIcons.listCheck),
+        ),
+      ),
     );
   }
 }

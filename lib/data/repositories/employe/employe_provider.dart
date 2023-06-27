@@ -25,18 +25,13 @@ class EmployeesNotifier extends StateNotifier<List<EmployeModel>> {
         ci != null,
         (q) => q.ciContains(ci ?? ""),
       )
-      .optional(
-        plan != null,
-        (q) => q.planGreaterThan(plan ?? 0),
-      )
       .findAll();
 
-  Future<EmployeModel?> insert({required String name, required String ci, required double plan, bool object = false}) async {
+  Future<EmployeModel?> insert({required String name, required String ci, bool object = false}) async {
       ref.read(rlP.notifier).start();
     final obj = EmployeModel()
       ..name = name
-      ..ci = ci
-      ..plan = plan;
+      ..ci = ci;
 
     EmployeModel? result;
     await DBHelper.isar.writeTxn(() async {
@@ -55,7 +50,6 @@ class EmployeesNotifier extends StateNotifier<List<EmployeModel>> {
 
     obj.name = values['name'] ?? obj.name;
     obj.ci = values['ci'] ?? obj.ci;
-    obj.plan = values['plan'] ?? obj.plan;
     EmployeModel? result;
     await DBHelper.isar.writeTxn(() async {
       final id = await DBHelper.isar.employeModels.put(obj);

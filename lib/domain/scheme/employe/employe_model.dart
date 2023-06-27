@@ -9,14 +9,29 @@ class EmployeModel {
   Id id = Isar.autoIncrement;
   late String name;
   String? ci;
-  late double plan;
+
+  @Backlink(to: 'employee')
+  final plans = IsarLinks<EmployeePlanModel>();
 
   @Backlink(to: 'employee')
   final workProductions = IsarLinks<WorkProductionModel>();
 
-  Future<double> real({required DateTime startFilter, required DateTime endFilter}) async {
-    double real = (await DBHelper.isar.workProductionModels.filter().datetimeBetween(startFilter, endFilter).employee((q) => q.idEqualTo(id)).findAll())
-        .fold(0, (sum, item) => sum + item.quantity);
+  Future<double> real(
+    ProductionTypeModel type, {
+    required DateTime startFilter,
+    required DateTime endFilter,
+  }) async {
+    double real =
+        (await DBHelper.isar.workProductionModels.filter().type((q) => q.idEqualTo(type.id)).datetimeBetween(startFilter, endFilter).employee((q) => q.idEqualTo(id)).findAll())
+            .fold(0, (sum, item) => sum + item.quantity);
     return real;
   }
+}
+
+@collection
+class EmployeePlanModel {
+  Id id = Isar.autoIncrement;
+  IsarLink<EmployeModel> employee = IsarLink<EmployeModel>();
+  IsarLink<ProductionTypeModel> type = IsarLink<ProductionTypeModel>();
+  double plan = 0;
 }

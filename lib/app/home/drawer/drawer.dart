@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucio/app/screens/consume_materials/consume_materials_page.dart';
 import 'package:lucio/app/screens/employee/employee_page.dart';
+import 'package:lucio/app/screens/employee/plan/plan_page.dart';
 import 'package:lucio/app/screens/materials/materials_page.dart';
 import 'package:lucio/app/screens/settings/settings_page.dart';
 import 'package:lucio/app/screens/type_of_production/type_of_production_page.dart';
@@ -63,6 +64,14 @@ class MyDrawer extends ConsumerWidget {
                     onTap: () {
                       Navigator.pop(context);
                       context.go(context.namedLocation(EmployeePage.name));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(FontAwesomeIcons.listCheck),
+                    title: const Text('Employee Plan'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.go(context.namedLocation(PlanPage.name));
                     },
                   ),
                   ListTile(
