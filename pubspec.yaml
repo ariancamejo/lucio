@@ -2,7 +2,7 @@ name: lucio
 description: A new Flutter project.
 publish_to: 'none'
 
-version: 1.0.12
+version: 1.0.13
 
 environment:
   sdk: '>=3.1.0-129.0.dev <4.0.0'

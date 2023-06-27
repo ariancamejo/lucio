@@ -40,21 +40,21 @@ class SaleModel {
     return await DBHelper.isar.subSaleModels.filter().sale((q) => q.idEqualTo(id)).lotIsNull().count() > 0;
   }
 
-  Future<double> saled(ProductionTypeModel type, {required SaleTypeResult typeResult}) async {
+  Future<float> saled(ProductionTypeModel type, {required SaleTypeResult typeResult}) async {
     SaleModel? sale = await DBHelper.isar.saleModels.filter().idEqualTo(id).findFirst();
     if (sale == null) return 0;
 
     List<SubSaleModel> sold = sale.subsales.where((element) => element.type.value?.id == type.id).toList();
     if (typeResult == SaleTypeResult.all) {
-      double soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      float soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
       return soldSum;
     }
     if (typeResult == SaleTypeResult.quantity) {
-      double soldSum = sold.fold(0, (sum, item) => sum + item.quantity);
+      float soldSum = sold.fold(0, (sum, item) => sum + item.quantity);
       return soldSum;
     }
     if (typeResult == SaleTypeResult.breaks) {
-      double soldSum = sold.fold(0, (sum, item) => sum + item.breaks);
+      float soldSum = sold.fold(0, (sum, item) => sum + item.breaks);
       return soldSum;
     }
 
@@ -66,7 +66,7 @@ class SaleModel {
       sold = sold.where((element) => element.lot.value != null).toList();
     }
 
-    double soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+    float soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
     return soldSum;
   }
 }

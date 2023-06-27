@@ -8,7 +8,6 @@ import 'package:lucio/app/screens/type_of_production/widgets/type_of_production_
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/employe/employe_provider.dart';
 import 'package:lucio/data/repositories/production/work_production_provider.dart';
-import 'package:lucio/domain/scheme/employe/employe_model.dart';
 import 'package:lucio/domain/scheme/production/production_model.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:collection/collection.dart';
@@ -140,6 +139,7 @@ class _InfoProduction extends StatelessWidget {
                         children: [
                           TypeOfProductionItem(
                             model: e,
+                            item: true,
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [

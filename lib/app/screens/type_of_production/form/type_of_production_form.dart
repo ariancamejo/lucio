@@ -61,7 +61,7 @@ class _MaterialFormState extends ConsumerState<TypeOfProductionForm> {
                   controller: _price,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: "Price per Unit"),
+                  decoration: const InputDecoration(labelText: "Price"),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return "Price required";

@@ -106,6 +106,7 @@ class _InfoSale extends StatelessWidget {
                           children: [
                             TypeOfProductionItem(
                               model: e,
+                              item: true,
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [

@@ -134,7 +134,7 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: TextFormField(
                   controller: _quantity,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: "Quantity in units"),
+                  decoration: const InputDecoration(labelText: "Quantity"),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {

@@ -126,7 +126,7 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                 ),
               ),
               FutureBuilder<double?>(
-                  future: productionModel == null ? Future.value(null) : productionModel!.details(productionTypeModel,typeResult: ProductionTypeResult.available),
+                  future: productionModel == null ? Future.value(null) : productionModel!.details(productionTypeModel, typeResult: ProductionTypeResult.available),
                   builder: (context, snapshot) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
@@ -134,19 +134,19 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                         controller: _quantity,
                         enabled: productionTypeModel != null,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
-                        decoration: const InputDecoration(labelText: "Quantity in units"),
+                        decoration: const InputDecoration(labelText: "Quantity"),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value?.isEmpty ?? true) {
                             return "Quantity required";
                           }
-                          if (int.tryParse(value ?? "-") == null) {
+                          if (double.tryParse(value ?? "-") == null) {
                             return "Enter correct number";
                           }
-                          if (int.tryParse(value ?? "0") == 0) {
+                          if (double.tryParse(value ?? "0") == 0) {
                             return "Please,specify a number greater than zero";
                           }
-                          if (snapshot.data != null && (int.tryParse(value ?? "0") ?? 0) > (snapshot.data ?? 0)) {
+                          if (snapshot.data != null && (double.tryParse(value ?? "0") ?? 0) > (snapshot.data ?? 0)) {
                             if ((snapshot.data ?? 0) == 0) {
                               return "No available";
                             }
@@ -170,7 +170,7 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                     if (value?.isEmpty ?? true) {
                       return "Breaks required";
                     }
-                    if (int.tryParse(value ?? "-") == null) {
+                    if (double.tryParse(value ?? "-") == null) {
                       return "Enter correct number";
                     }
 

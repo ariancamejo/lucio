@@ -71,60 +71,63 @@ class _SalesTabState extends ConsumerState<SalesTab> with SingleTickerProviderSt
     final pendings = sales.where((element) => element.pendingSales).toList();
 
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async => ref.read(saleProvider.notifier).findData(),
-        child: SizedBox(
-          height: double.maxFinite,
-          child: Column(
-            children: [
-              TabBar(
+      body: SizedBox(
+        height: double.maxFinite,
+        child: Column(
+          children: [
+            TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(
+                  icon: Icon(FontAwesomeIcons.listCheck),
+                ),
+                Tab(
+                  icon: Icon(FontAwesomeIcons.clock),
+                ),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
                 controller: _tabController,
-                tabs: const [
-                  Tab(
-                    icon: Icon(FontAwesomeIcons.listCheck),
+                children: [
+                  dones.isEmpty
+                      ? EmptyScreen(
+                    name: "Sale",
+                    onTap: () => SalesTab.fireForm(context),
+                  )
+                      : RefreshIndicator(
+                    onRefresh: () async => ref.read(saleProvider.notifier).findData(),
+                    child: CustomScrollView(
+                      slivers: [
+                        MultiSliver(
+                          pushPinnedChildren: true,
+                          children: dones.map((e) => SaleItem(model: e)).toList(),
+                        ),
+                        const SliverToBoxAdapter(child: SizedBox(height: 60))
+                      ],
+                    ),
                   ),
-                  Tab(
-                    icon: Icon(FontAwesomeIcons.clock),
+                  pendings.isEmpty
+                      ? EmptyScreen(
+                    name: "Sale",
+                    onTap: () => SalesTab.fireForm(context),
+                  )
+                      : RefreshIndicator(
+                    onRefresh: () async => ref.read(saleProvider.notifier).findData(),
+                    child: CustomScrollView(
+                      slivers: [
+                        MultiSliver(
+                          pushPinnedChildren: true,
+                          children: pendings.map((e) => SaleItem(model: e)).toList(),
+                        ),
+                        const SliverToBoxAdapter(child: SizedBox(height: 60))
+                      ],
+                    ),
                   ),
                 ],
               ),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    dones.isEmpty
-                        ? EmptyScreen(
-                            name: "Sale",
-                            onTap: () => SalesTab.fireForm(context),
-                          )
-                        : CustomScrollView(
-                            slivers: [
-                              MultiSliver(
-                                pushPinnedChildren: true,
-                                children: dones.map((e) => SaleItem(model: e)).toList(),
-                              ),
-                              const SliverToBoxAdapter(child: SizedBox(height: 60))
-                            ],
-                          ),
-                    pendings.isEmpty
-                        ? EmptyScreen(
-                            name: "Sale",
-                            onTap: () => SalesTab.fireForm(context),
-                          )
-                        : CustomScrollView(
-                            slivers: [
-                              MultiSliver(
-                                pushPinnedChildren: true,
-                                children: pendings.map((e) => SaleItem(model: e)).toList(),
-                              ),
-                              const SliverToBoxAdapter(child: SizedBox(height: 60))
-                            ],
-                          ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton.small(onPressed: () => SalesTab.fireForm(context), child: const Icon(Icons.add)),

@@ -69,7 +69,7 @@ class WorkProductionNotifier extends StateNotifier<List<WorkProductionModel>> {
       }
     });
     ref.read(rlP.notifier).stop();
-
+    ref.refresh(productionProvider);
     return result;
   }
 
@@ -91,7 +91,7 @@ class WorkProductionNotifier extends StateNotifier<List<WorkProductionModel>> {
       }
     });
     ref.read(rlP.notifier).stop();
-
+    ref.refresh(productionProvider);
     return result;
   }
 
@@ -102,7 +102,7 @@ class WorkProductionNotifier extends StateNotifier<List<WorkProductionModel>> {
       count = await DBHelper.isar.workProductionModels.deleteAll(obj.map((e) => e.id).toList());
     });
     ref.read(rlP.notifier).stop();
-
+    ref.refresh(productionProvider);
     return count;
   }
 }

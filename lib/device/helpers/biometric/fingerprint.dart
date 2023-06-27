@@ -63,7 +63,6 @@ Future<void> checkAuth(
   if (checkAuth) return;
 
   if (pin != null && context.mounted) {
-    ref.read(optionsP.notifier).checkAuth = true;
     return screenLock(
       context: context,
       title: Text(message ?? "Enter unlock PIN"),
@@ -72,6 +71,7 @@ Future<void> checkAuth(
       customizedButtonChild: useBiometric ? const Icon(Icons.fingerprint) : null,
       customizedButtonTap: useBiometric
           ? () async {
+              ref.read(optionsP.notifier).checkAuth = true;
               await localAuth(
                 context,
                 message: message,
@@ -91,6 +91,7 @@ Future<void> checkAuth(
       didOpened: () async {
         if (useBiometric) {
           await Future.delayed(const Duration(milliseconds: 200));
+          ref.read(optionsP.notifier).checkAuth = true;
           Future.microtask(
             () => localAuth(
               context,
