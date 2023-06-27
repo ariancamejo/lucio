@@ -24,8 +24,9 @@ class _LineChart extends ConsumerWidget {
         final List<FlSpot> flSpots = [];
 
         groupedSubSales.forEach((day, subsales) {
-          final sum = subsales.fold<int>(0, (previousValue, subSale) => previousValue + subSale.quantity);
-          flSpots.add(FlSpot(day.toDouble(), sum.toDouble()));
+          final sum = subsales.fold<double>(0, (previousValue, subSale) => previousValue + subSale.quantity);
+
+          flSpots.add(FlSpot(day.toDouble(), sum));
         });
 
         return LineChartBarData(

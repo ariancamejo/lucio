@@ -742,7 +742,7 @@ const SubSaleModelSchema = CollectionSchema(
     r'breaks': PropertySchema(
       id: 0,
       name: r'breaks',
-      type: IsarType.long,
+      type: IsarType.double,
     ),
     r'datetime': PropertySchema(
       id: 1,
@@ -752,7 +752,7 @@ const SubSaleModelSchema = CollectionSchema(
     r'quantity': PropertySchema(
       id: 2,
       name: r'quantity',
-      type: IsarType.long,
+      type: IsarType.double,
     )
   },
   estimateSize: _subSaleModelEstimateSize,
@@ -803,9 +803,9 @@ void _subSaleModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.breaks);
+  writer.writeDouble(offsets[0], object.breaks);
   writer.writeDateTime(offsets[1], object.datetime);
-  writer.writeLong(offsets[2], object.quantity);
+  writer.writeDouble(offsets[2], object.quantity);
 }
 
 SubSaleModel _subSaleModelDeserialize(
@@ -815,10 +815,10 @@ SubSaleModel _subSaleModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = SubSaleModel();
-  object.breaks = reader.readLong(offsets[0]);
+  object.breaks = reader.readDouble(offsets[0]);
   object.datetime = reader.readDateTime(offsets[1]);
   object.id = id;
-  object.quantity = reader.readLong(offsets[2]);
+  object.quantity = reader.readDouble(offsets[2]);
   return object;
 }
 
@@ -830,11 +830,11 @@ P _subSaleModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 1:
       return (reader.readDateTime(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -939,48 +939,56 @@ extension SubSaleModelQueryWhere
 extension SubSaleModelQueryFilter
     on QueryBuilder<SubSaleModel, SubSaleModel, QFilterCondition> {
   QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition> breaksEqualTo(
-      int value) {
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'breaks',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition>
       breaksGreaterThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'breaks',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition>
       breaksLessThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'breaks',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition> breaksBetween(
-    int lower,
-    int upper, {
+    double lower,
+    double upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -989,6 +997,7 @@ extension SubSaleModelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -1103,49 +1112,58 @@ extension SubSaleModelQueryFilter
   }
 
   QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition>
-      quantityEqualTo(int value) {
+      quantityEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'quantity',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition>
       quantityGreaterThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'quantity',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition>
       quantityLessThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'quantity',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SubSaleModel, SubSaleModel, QAfterFilterCondition>
       quantityBetween(
-    int lower,
-    int upper, {
+    double lower,
+    double upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1154,6 +1172,7 @@ extension SubSaleModelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -1323,7 +1342,7 @@ extension SubSaleModelQueryProperty
     });
   }
 
-  QueryBuilder<SubSaleModel, int, QQueryOperations> breaksProperty() {
+  QueryBuilder<SubSaleModel, double, QQueryOperations> breaksProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'breaks');
     });
@@ -1335,7 +1354,7 @@ extension SubSaleModelQueryProperty
     });
   }
 
-  QueryBuilder<SubSaleModel, int, QQueryOperations> quantityProperty() {
+  QueryBuilder<SubSaleModel, double, QQueryOperations> quantityProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'quantity');
     });

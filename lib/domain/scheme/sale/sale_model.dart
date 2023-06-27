@@ -40,21 +40,21 @@ class SaleModel {
     return await DBHelper.isar.subSaleModels.filter().sale((q) => q.idEqualTo(id)).lotIsNull().count() > 0;
   }
 
-  Future<int> saled(ProductionTypeModel type, {required SaleTypeResult typeResult}) async {
+  Future<double> saled(ProductionTypeModel type, {required SaleTypeResult typeResult}) async {
     SaleModel? sale = await DBHelper.isar.saleModels.filter().idEqualTo(id).findFirst();
     if (sale == null) return 0;
 
     List<SubSaleModel> sold = sale.subsales.where((element) => element.type.value?.id == type.id).toList();
     if (typeResult == SaleTypeResult.all) {
-      int soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      double soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
       return soldSum;
     }
     if (typeResult == SaleTypeResult.quantity) {
-      int soldSum = sold.fold(0, (sum, item) => sum + item.quantity);
+      double soldSum = sold.fold(0, (sum, item) => sum + item.quantity);
       return soldSum;
     }
     if (typeResult == SaleTypeResult.breaks) {
-      int soldSum = sold.fold(0, (sum, item) => sum + item.breaks);
+      double soldSum = sold.fold(0, (sum, item) => sum + item.breaks);
       return soldSum;
     }
 
@@ -66,7 +66,7 @@ class SaleModel {
       sold = sold.where((element) => element.lot.value != null).toList();
     }
 
-    int soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+    double soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
     return soldSum;
   }
 }
@@ -79,8 +79,8 @@ class SubSaleModel {
   IsarLink<SaleModel> sale = IsarLink<SaleModel>();
   IsarLink<ProductionTypeModel> type = IsarLink<ProductionTypeModel>();
   late DateTime datetime;
-  late int quantity;
-  late int breaks;
+  late double quantity;
+  late double breaks;
 
   SubSaleModel() {
     datetime = DateTime.now();

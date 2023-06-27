@@ -30,8 +30,8 @@ class SubSalesNotifier extends StateNotifier<List<SubSaleModel>> {
     required SaleModel sale,
     ProductionModel? lot,
     required ProductionTypeModel type,
-    required int quantity,
-    required int breaks,
+    required double quantity,
+    required double breaks,
     bool object = false,
   }) async {
     ref.read(rlP.notifier).start();

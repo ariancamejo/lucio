@@ -190,16 +190,16 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                     type: productionTypeModel!,
                     lot: productionModel,
                     sale: saleModel!,
-                    quantity: int.tryParse(_quantity.text) ?? 0,
-                    breaks: int.tryParse(_breaks.text) ?? 0,
+                    quantity: double.tryParse(_quantity.text) ?? 0,
+                    breaks: double.tryParse(_breaks.text) ?? 0,
                   );
             } else {
               ref.read(subSalesProvider.notifier).update(widget.model!, values: {
                 "type": productionTypeModel!,
                 "lot": productionModel,
                 "sale": saleModel!,
-                "quantity": int.tryParse(_quantity.text) ?? 0,
-                "breaks": int.tryParse(_breaks.text) ?? 0,
+                "quantity": double.tryParse(_quantity.text) ?? 0,
+                "breaks": double.tryParse(_breaks.text) ?? 0,
               });
             }
             if (context.mounted) Navigator.pop(context);
