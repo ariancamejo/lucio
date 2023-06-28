@@ -45,7 +45,20 @@ class _GoogleDriveIsarFilesPageState extends State<GoogleDriveIsarFilesPage> {
                           Navigator.of(context).pop(file);
                         },
                         trailing: deleting == file.id
-                            ? const CircularProgressIndicator(strokeWidth: 2)
+                            ? const SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: Center(
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation(Colors.red),
+                                    ),
+                                  ),
+                                ),
+                              )
                             : IconButton(
                                 icon: const Icon(Icons.delete),
                                 onPressed: () async {
