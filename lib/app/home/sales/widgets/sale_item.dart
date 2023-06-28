@@ -57,15 +57,46 @@ class _SaleItemState extends ConsumerState<SaleItem> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                onPressed: () => SalesTab.fireForm(context, model: widget.model),
-                icon: const Icon(FontAwesomeIcons.pencil),
-              ),
-              IconButton(
-                onPressed: () {
-                  showCupertinoModalBottomSheet(context: context, builder: (_) => _SubSale(model: widget.model));
+              PopupMenuButton(
+                onSelected: (value) {
+                  switch (value) {
+                    case 0:
+                      showCupertinoModalBottomSheet(context: context, builder: (_) => _SubSale(model: widget.model));
+                      break;
+                    case 1:
+                      SalesTab.fireForm(context, model: widget.model);
+                      break;
+
+                    case 2:
+                      SalesTab.fireDelete(context, model: widget.model).then((value) {
+                        if (value == true) {
+
+                          ref.read(saleProvider.notifier).delete([widget.model]);
+                        }
+                      });
+                      break;
+                  }
                 },
-                icon: const Icon(Icons.shopify),
+                itemBuilder: (_) => const [
+                  PopupMenuItem(
+                    value: 0,
+                    child: Row(
+                      children: [Icon(FontAwesomeIcons.shopify), const SizedBox(width: kDefaultRefNumber), Text("View SubSales")],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 1,
+                    child: Row(
+                      children: [Icon(FontAwesomeIcons.pencil), const SizedBox(width: kDefaultRefNumber), Text("Edit")],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 2,
+                    child: Row(
+                      children: [Icon(FontAwesomeIcons.trash), const SizedBox(width: kDefaultRefNumber), Text("Remove")],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

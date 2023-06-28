@@ -29,6 +29,27 @@ class SalesTab extends ConsumerStatefulWidget {
         builder: (_) => SaleForm(model: model),
       );
 
+  static Future<bool> fireDelete(BuildContext context, {required SaleModel model}) async {
+    bool? res = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Can you sure ?"),
+        content: Text("Press 'Delete' for remove sale of ${model.client} on ${DateFormat("$dateFormat hh:mm a").format(model.date)}"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              "Delete",
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    );
+    return res ?? false;
+  }
+
   static Future<bool> fireSubDelete(BuildContext context, {required SubSaleModel model}) async {
     bool? res = await showDialog<bool>(
       context: context,
@@ -92,38 +113,38 @@ class _SalesTabState extends ConsumerState<SalesTab> with SingleTickerProviderSt
                 children: [
                   dones.isEmpty
                       ? EmptyScreen(
-                    name: "Sale",
-                    onTap: () => SalesTab.fireForm(context),
-                  )
+                          name: "Sale",
+                          onTap: () => SalesTab.fireForm(context),
+                        )
                       : RefreshIndicator(
-                    onRefresh: () async => ref.read(saleProvider.notifier).findData(),
-                    child: CustomScrollView(
-                      slivers: [
-                        MultiSliver(
-                          pushPinnedChildren: true,
-                          children: dones.map((e) => SaleItem(model: e)).toList(),
+                          onRefresh: () async => ref.read(saleProvider.notifier).findData(),
+                          child: CustomScrollView(
+                            slivers: [
+                              MultiSliver(
+                                pushPinnedChildren: true,
+                                children: dones.map((e) => SaleItem(model: e)).toList(),
+                              ),
+                              const SliverToBoxAdapter(child: SizedBox(height: 60))
+                            ],
+                          ),
                         ),
-                        const SliverToBoxAdapter(child: SizedBox(height: 60))
-                      ],
-                    ),
-                  ),
                   pendings.isEmpty
                       ? EmptyScreen(
-                    name: "Sale",
-                    onTap: () => SalesTab.fireForm(context),
-                  )
+                          name: "Sale",
+                          onTap: () => SalesTab.fireForm(context),
+                        )
                       : RefreshIndicator(
-                    onRefresh: () async => ref.read(saleProvider.notifier).findData(),
-                    child: CustomScrollView(
-                      slivers: [
-                        MultiSliver(
-                          pushPinnedChildren: true,
-                          children: pendings.map((e) => SaleItem(model: e)).toList(),
+                          onRefresh: () async => ref.read(saleProvider.notifier).findData(),
+                          child: CustomScrollView(
+                            slivers: [
+                              MultiSliver(
+                                pushPinnedChildren: true,
+                                children: pendings.map((e) => SaleItem(model: e)).toList(),
+                              ),
+                              const SliverToBoxAdapter(child: SizedBox(height: 60))
+                            ],
+                          ),
                         ),
-                        const SliverToBoxAdapter(child: SizedBox(height: 60))
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),

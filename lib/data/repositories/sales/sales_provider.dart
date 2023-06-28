@@ -15,7 +15,7 @@ class SaleNotifier extends StateNotifier<List<SaleModel>> {
 
   SaleNotifier(this.ref) : super([]) {
     tC.asBroadcastStream();
-        tC.listen((event) => Future.microtask(() => findData()));
+    tC.listen((event) => Future.microtask(() => findData()));
     findData();
   }
 
@@ -73,9 +73,11 @@ class SaleNotifier extends StateNotifier<List<SaleModel>> {
   Future<int> delete(List<SaleModel> obj) async {
     ref.read(rlP.notifier).start();
     late int count;
+
     await DBHelper.isar.writeTxn(() async {
       count = await DBHelper.isar.saleModels.deleteAll(obj.map((e) => e.id).toList());
     });
+
     ref.read(rlP.notifier).stop();
     ref.refresh(subSalesProvider);
     return count;

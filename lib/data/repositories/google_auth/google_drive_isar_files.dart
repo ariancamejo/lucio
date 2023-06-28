@@ -62,13 +62,41 @@ class _GoogleDriveIsarFilesPageState extends State<GoogleDriveIsarFilesPage> {
                             : IconButton(
                                 icon: const Icon(Icons.delete),
                                 onPressed: () async {
-                                  setState(() {
-                                    deleting = file.id;
-                                  });
-                                  await widget.driveApi.files.delete(file.id!).whenComplete(() {
-                                    files.remove(file);
-                                    setState(() => deleting = null);
-                                  });
+                                  bool? res = await showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                      title: const Text("Can you sure ?"),
+                                      content: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [Text("Backup of ${DateFormat("$dateFormat hh:mm a").format(file.createdTime!)} will be deleted")],
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, false),
+                                          child: const Text("Cancel"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, true),
+                                          child: Text(
+                                            "Delete",
+                                            style: TextStyle(color: Theme.of(context).colorScheme.error),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  if (res ?? false) {
+                                    setState(() {
+                                      deleting = file.id;
+                                    });
+                                    await widget.driveApi.files.delete(file.id!).whenComplete(() {
+                                      files.remove(file);
+                                      setState(() => deleting = null);
+                                    });
+                                  }
                                 },
                               ),
                       ),

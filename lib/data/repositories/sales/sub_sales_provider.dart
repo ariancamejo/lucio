@@ -21,8 +21,9 @@ class SubSalesNotifier extends StateNotifier<List<SubSaleModel>> {
   Future<List<SubSaleModel>> findData() async {
     DateTime startFilter = ref.read(optionsP).startFilter;
     DateTime endFilter = ref.read(optionsP).endFilter;
-    state = await DBHelper.isar.subSaleModels.filter().datetimeBetween(startFilter, endFilter).findAll();
     DBHelper.isar.writeTxn(() async => DBHelper.isar.subSaleModels.filter().saleIsNull().deleteAll());
+    state = await DBHelper.isar.subSaleModels.filter().datetimeBetween(startFilter, endFilter).findAll();
+
     return state;
   }
 
