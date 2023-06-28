@@ -135,7 +135,7 @@ class _InfoProduction extends StatelessWidget {
               children: (typess.data ?? [])
                   .map(
                     (e) => Card(
-                      child: Column(
+                      child:Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TypeOfProductionItem(
@@ -147,7 +147,7 @@ class _InfoProduction extends StatelessWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
-                                    Text("home.production.widgets.production_item.quantity".tr()),
+                                    Text("home.production.widgets.production_item.quantity".tr(),overflow: TextOverflow.ellipsis,),
                                     FutureBuilder(
                                       future: model.details(e, typeResult: ProductionTypeResult.quantity),
                                       builder: (_, snap) => Text(
@@ -162,7 +162,7 @@ class _InfoProduction extends StatelessWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
-                                    Text("home.production.widgets.production_item.breaks".tr()),
+                                    Text("home.production.widgets.production_item.breaks".tr(), overflow: TextOverflow.ellipsis,),
                                     FutureBuilder(
                                       future: model.details(e, typeResult: ProductionTypeResult.breaks),
                                       builder: (_, snap) => Text(
@@ -186,10 +186,10 @@ class _InfoProduction extends StatelessWidget {
                             },
                             children: [
                               TableRow(children: [
-                                Text("home.production.widgets.production_item.status.total".tr(), textAlign: TextAlign.center),
-                                Text("home.production.widgets.production_item.status.in_progress".tr(), textAlign: TextAlign.center),
-                                Text("home.production.widgets.production_item.status.available".tr(), textAlign: TextAlign.center),
-                                Text("home.production.widgets.production_item.status.sold".tr(), textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.total".tr(), overflow: TextOverflow.ellipsis,textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.in_progress".tr(), overflow: TextOverflow.ellipsis,textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.available".tr(), overflow: TextOverflow.ellipsis,textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.sold".tr(), overflow: TextOverflow.ellipsis,textAlign: TextAlign.center),
                               ]),
                               TableRow(children: [
                                 FutureBuilder(

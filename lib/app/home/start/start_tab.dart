@@ -90,7 +90,7 @@ class StartTab extends ConsumerWidget {
           child: Center(
             child: InkWell(
               borderRadius: BorderRadius.circular(kDefaultRefNumber),
-              onTap: (){
+              onTap: () {
                 context.go(context.namedLocation(EmployeePage.name));
               },
               child: Card(
@@ -131,6 +131,7 @@ class StartTab extends ConsumerWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber / 2),
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: StaggeredGrid.count(
             crossAxisCount: 4,
             mainAxisSpacing: 0,
