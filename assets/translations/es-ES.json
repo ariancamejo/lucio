@@ -1,4 +1,14 @@
 {
+  "home": {
+    "drawer": {
+      "app": "Control de Producción simple",
+      "employees": "Empleados",
+      "materials_consumption": "Consumo de materiales",
+      "productions_type": "Tipos de producción",
+      "sales_type": "Tipos de ventas",
+      "materials": "Materials"
+    }
+  },
   "settings": {
     "theme": {
       "title": "Tema de la aplicación",
