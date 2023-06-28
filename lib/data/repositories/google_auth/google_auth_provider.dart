@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart' as signIn;
 import 'package:http/http.dart' as http;
 import 'package:lucio/app/widgets/empty.dart';
 import 'package:lucio/data/const.dart';
+import 'package:lucio/data/repositories/google_auth/google_drive_isar_files.dart';
 import 'package:lucio/data/repositories/rlp_provider.dart';
 import 'package:lucio/device/device.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -38,6 +40,7 @@ class GoogleAuthNotifier extends StateNotifier<signIn.GoogleSignInAccount?> {
   Future<void> login() async {
     state = await googleSignIn.signIn();
   }
+
   Future<void> logout() async {
     state = await googleSignIn.signOut();
   }
@@ -96,29 +99,7 @@ class GoogleAuthNotifier extends StateNotifier<signIn.GoogleSignInAccount?> {
       drive.File? result = await showCupertinoModalBottomSheet(
         context: context,
         builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Select a file'),
-              actions: const [Icon(FontAwesomeIcons.googleDrive), SizedBox(width: kDefaultRefNumber)],
-            ),
-            body: items.isEmpty
-                ? const EmptyScreen(name: "BackUp File on GoogleDrive")
-                : SingleChildScrollView(
-                    child: Column(
-                      children: items
-                          .map(
-                            (file) => ListTile(
-                              title: Text(file.name!),
-                              subtitle: Text(file.createdTime!.toString()),
-                              onTap: () {
-                                Navigator.of(context).pop(file);
-                              },
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-          );
+          return GoogleDriveIsarFilesPage(driveApi: driveApi, files: items ?? []);
         },
       );
       ref.read(rlP.notifier).start();

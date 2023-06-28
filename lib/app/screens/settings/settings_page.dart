@@ -25,7 +25,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("settings.title".tr()),
-        actions: const [GoogleWidget(settings: false), SizedBox(width: kDefaultRefNumber)],
+        actions: const [GoogleWidget(settings: false), SizedBox(width:   kDefaultRefNumber)],
       ),
       body: SingleChildScrollView(
         child: Column(

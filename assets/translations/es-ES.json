@@ -65,6 +65,7 @@
     }
   },
   "settings": {
+    "title": "Ajustes",
     "theme": {
       "title": "Tema de la aplicación",
       "subtitle": "Presione para seleccionar",

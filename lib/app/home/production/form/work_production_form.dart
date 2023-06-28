@@ -96,7 +96,7 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: DropdownSearch<EmployeModel>(
                   validator: (EmployeModel? value) {
                     if (value == null) {
-                      return "home.production.form.employee.mistakes.required".tr();
+                      return "home.production.form.fields.employee.mistakes.required".tr();
                     }
                     return null;
                   },
@@ -112,11 +112,11 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                   items: employees,
                   selectedItem: employeModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
-                  popupProps: popUpsProps<EmployeModel>(context, onPressed: () => EmployeePage.fireForm(context), title: "home.production.form.employee.title".tr()),
+                  popupProps: popUpsProps<EmployeModel>(context, onPressed: () => EmployeePage.fireForm(context), title: "home.production.form.fields.employee.title".tr()),
                   itemAsString: (EmployeModel u) => u.name,
                   onChanged: (EmployeModel? data) => setState(() => employeModel = data),
                   dropdownDecoratorProps: DropDownDecoratorProps(
-                    dropdownSearchDecoration: InputDecoration(labelText: "home.production.form.employee.title".tr()),
+                    dropdownSearchDecoration: InputDecoration(labelText: "home.production.form.fields.employee.title".tr()),
                   ),
                 ),
               ),
@@ -125,19 +125,19 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: DropdownSearch<ProductionTypeModel>(
                   validator: (ProductionTypeModel? value) {
                     if (value == null) {
-                      return "home.production.form.production_type.mistakes.required".tr();
+                      return "home.production.form.fields.production_type.mistakes.required".tr();
                     }
                     return null;
                   },
                   selectedItem: productionTypeModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
                   popupProps:
-                      popUpsProps<ProductionTypeModel>(context, onPressed: () => TypeOfProductionPage.fireForm(context), title: "home.production.form.production_type.title".tr()),
+                      popUpsProps<ProductionTypeModel>(context, onPressed: () => TypeOfProductionPage.fireForm(context), title: "home.production.form.fields.production_type.title".tr()),
                   asyncItems: (String filter) => Future.value(typeProductions),
                   itemAsString: (ProductionTypeModel u) => "${u.name} ${u.unit.value == null ? "" : "(${u.unit.value?.key ?? ""})"}",
                   onChanged: (ProductionTypeModel? data) => setState(() => productionTypeModel = data),
                   dropdownDecoratorProps: DropDownDecoratorProps(
-                    dropdownSearchDecoration: InputDecoration(labelText: "home.production.form.production_type.title".tr()),
+                    dropdownSearchDecoration: InputDecoration(labelText: "home.production.form.fields.production_type.title".tr()),
                   ),
                 ),
               ),
@@ -146,17 +146,17 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: TextFormField(
                   controller: _quantity,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(labelText: "home.production.form.quantity.title".tr()),
+                  decoration: InputDecoration(labelText: "home.production.form.fields.quantity.title".tr()),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return "home.production.form.quantity.mistakes.required".tr();
+                      return "home.production.form.fields.quantity.mistakes.required".tr();
                     }
                     if (double.tryParse(value ?? "-") == null) {
-                      return "home.production.form.quantity.mistakes.number".tr();
+                      return "home.production.form.fields.quantity.mistakes.number".tr();
                     }
                     if ((double.tryParse(value ?? '0') ?? 0) == 0) {
-                      return "home.production.form.quantity.mistakes.zero".tr();
+                      return "home.production.form.fields.quantity.mistakes.zero".tr();
                     }
 
                     return null;
@@ -168,14 +168,14 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: TextFormField(
                   controller: _breaks,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(labelText: "home.production.form.break.title".tr()),
+                  decoration: InputDecoration(labelText: "home.production.form.fields.break.title".tr()),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return "home.production.form.break.mistakes.required".tr();
+                      return "home.production.form.fields.break.mistakes.required".tr();
                     }
                     if (double.tryParse(value ?? "-") == null) {
-                      return "home.production.form.break.mistakes.number".tr();
+                      return "home.production.form.fields.break.mistakes.number".tr();
                     }
 
                     return null;

@@ -34,8 +34,8 @@ class LanguageSelect extends ConsumerWidget {
                 child: ListTile(
                   onTap: () async {
                     Navigator.pop(context);
+                    await context.setLocale(e);
                     refreshState?.call();
-                    context.setLocale(e);
                   },
                   leading: SizedBox(
                     width: 30,

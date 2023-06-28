@@ -43,12 +43,31 @@ class _PieChartGraphicState extends ConsumerState<PieChartGraphic> {
         aspectRatio: 1.2,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Production",
-                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Production",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                PopupMenuButton<int>(
+                  initialValue: null,
+                  onSelected: (value) {
+                    switch (value) {
+                      case 1:
+                        break;
+                    }
+                  },
+                  itemBuilder: (_) => const [PopupMenuItem(value: 1, child: Text("View details"))],
+                ),
+              ],
             ),
             Expanded(
               child: prodyctionType.isEmpty || workP.isEmpty

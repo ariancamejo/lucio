@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:lucio/data/const.dart';
-
 import 'package:lucio/data/repositories/sales/sub_sales_provider.dart';
 import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
 
@@ -89,10 +88,31 @@ class LineChartGraphicState extends State<LineChartGraphic> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "Sales",
-            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
+          padding: const EdgeInsets.all(kDefaultRefNumber),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Sales",
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              PopupMenuButton<int>(
+                initialValue: null,
+                onSelected: (value) {
+                  switch (value) {
+                    case 1:
+                      break;
+                  }
+                },
+                itemBuilder: (_) => const [PopupMenuItem(value: 1, child:  Text("View details"))],
+              ),
+            ],
           ),
         ),
         const Expanded(
