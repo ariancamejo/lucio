@@ -1,12 +1,12 @@
 {
   "home": {
     "drawer": {
-      "app": "Control de Producción simple",
+      "app": "Control Simple de Producción ",
       "employees": "Empleados",
       "materials_consumption": "Consumo de materiales",
       "productions_type": "Tipos de producción",
       "sales_type": "Tipos de ventas",
-      "materials": "Materials"
+      "materials": "Materiales"
     },
     "production": {
       "form": {

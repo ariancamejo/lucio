@@ -17,7 +17,6 @@ GlobalKey localeKey = GlobalKey();
 
 const locales = [
   Locale('es', 'ES'),
-  Locale('en', 'US'),
 ];
 
 void main() async => await Utils.init().then(
