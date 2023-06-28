@@ -7,6 +7,46 @@
       "productions_type": "Tipos de producción",
       "sales_type": "Tipos de ventas",
       "materials": "Materials"
+    },
+    "production": {
+      "form": {
+        "new": "Nueva producción",
+        "update": "Actualizar producción",
+        "change_date": "Actualizar fecha",
+        "fields": {
+          "employee": {
+            "title": "Empleado",
+            "hint": "Empleado",
+            "mistakes": {
+              "required": "Empleado es requerido"
+            }
+          },
+          "production_type": {
+            "title": "Tipo de producción",
+            "hint": "Tipo de producción",
+            "mistakes": {
+              "required": "Tipo de producción requerida"
+            }
+          },
+          "quantity": {
+            "title": "Cantidad",
+            "hint": "Cantidad",
+            "mistakes": {
+              "required": "Cantidad requerida",
+              "number": "Escriba un número correcto",
+              "zero": "Por favor, especifique un número mayor que 0"
+            }
+          },
+          "break": {
+            "title": "Roturas",
+            "hint": "Roturas",
+            "mistakes": {
+              "required": "Roturas requerida",
+              "number": "Escriba un número correcto"
+            }
+          }
+        }
+      }
     }
   },
   "settings": {

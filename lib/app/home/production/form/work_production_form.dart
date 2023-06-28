@@ -1,4 +1,5 @@
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -51,25 +52,35 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
     final typeProductions = ref.watch(productionTypeModelProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.model == null ? "New Work Production" : "Update Work Production"),
+        title: Text(widget.model == null ? "home.production.form.new".tr() : "home.production.form.update".tr()),
         actions: [
           IconButton(
             onPressed: () {
-              checkAuth(ref, message: "Change Date", onSuccess: () async {
-                DateTime? result = await showDatePicker(
-                    context: context, initialDate: dateTime, firstDate: DateTime.now().subtract(Duration(days: options.daysOfRangeDateProduction)), lastDate: DateTime.now());
-                setState(() {
-                  result = result ?? DateTime.now();
-                  TimeOfDay selectedTime = TimeOfDay.now();
-                  dateTime = DateTime(
-                    result!.year,
-                    result!.month,
-                    result!.day,
-                    selectedTime.hour,
-                    selectedTime.minute,
+              checkAuth(
+                ref,
+                message: "home.production.form.change_date".tr(),
+                onSuccess: () async {
+                  DateTime? result = await showDatePicker(
+                    context: context,
+                    initialDate: dateTime,
+                    firstDate: DateTime.now().subtract(Duration(days: options.daysOfRangeDateProduction)),
+                    lastDate: DateTime.now(),
                   );
-                });
-              });
+                  setState(
+                    () {
+                      result = result ?? DateTime.now();
+                      TimeOfDay selectedTime = TimeOfDay.now();
+                      dateTime = DateTime(
+                        result!.year,
+                        result!.month,
+                        result!.day,
+                        selectedTime.hour,
+                        selectedTime.minute,
+                      );
+                    },
+                  );
+                },
+              );
             },
             icon: const Icon(Icons.date_range_sharp),
           )
@@ -85,7 +96,7 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: DropdownSearch<EmployeModel>(
                   validator: (EmployeModel? value) {
                     if (value == null) {
-                      return "Employee required";
+                      return "home.production.form.employee.mistakes.required".tr();
                     }
                     return null;
                   },
@@ -101,11 +112,11 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                   items: employees,
                   selectedItem: employeModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
-                  popupProps: popUpsProps<EmployeModel>(context, onPressed: () => EmployeePage.fireForm(context), title: "Employees"),
+                  popupProps: popUpsProps<EmployeModel>(context, onPressed: () => EmployeePage.fireForm(context), title: "home.production.form.employee.title".tr()),
                   itemAsString: (EmployeModel u) => u.name,
                   onChanged: (EmployeModel? data) => setState(() => employeModel = data),
-                  dropdownDecoratorProps: const DropDownDecoratorProps(
-                    dropdownSearchDecoration: InputDecoration(labelText: "Employee"),
+                  dropdownDecoratorProps: DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(labelText: "home.production.form.employee.title".tr()),
                   ),
                 ),
               ),
@@ -114,18 +125,19 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: DropdownSearch<ProductionTypeModel>(
                   validator: (ProductionTypeModel? value) {
                     if (value == null) {
-                      return "Production Type required";
+                      return "home.production.form.production_type.mistakes.required".tr();
                     }
                     return null;
                   },
                   selectedItem: productionTypeModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
-                  popupProps: popUpsProps<ProductionTypeModel>(context, onPressed: () => TypeOfProductionPage.fireForm(context), title: "Production Type"),
+                  popupProps:
+                      popUpsProps<ProductionTypeModel>(context, onPressed: () => TypeOfProductionPage.fireForm(context), title: "home.production.form.production_type.title".tr()),
                   asyncItems: (String filter) => Future.value(typeProductions),
-                  itemAsString: (ProductionTypeModel u) => "${u.name} ${ u.unit.value ==null?"" : "(${u.unit.value?.key ?? ""})"}",
+                  itemAsString: (ProductionTypeModel u) => "${u.name} ${u.unit.value == null ? "" : "(${u.unit.value?.key ?? ""})"}",
                   onChanged: (ProductionTypeModel? data) => setState(() => productionTypeModel = data),
-                  dropdownDecoratorProps: const DropDownDecoratorProps(
-                    dropdownSearchDecoration: InputDecoration(labelText: "Production Type"),
+                  dropdownDecoratorProps: DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(labelText: "home.production.form.production_type.title".tr()),
                   ),
                 ),
               ),
@@ -134,17 +146,17 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: TextFormField(
                   controller: _quantity,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: "Quantity"),
+                  decoration: InputDecoration(labelText: "home.production.form.quantity.title".tr()),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return "Quantity required";
+                      return "home.production.form.quantity.mistakes.required".tr();
                     }
                     if (double.tryParse(value ?? "-") == null) {
-                      return "Enter correct number";
+                      return "home.production.form.quantity.mistakes.number".tr();
                     }
                     if ((double.tryParse(value ?? '0') ?? 0) == 0) {
-                      return "Please,specify a number greater than zero";
+                      return "home.production.form.quantity.mistakes.zero".tr();
                     }
 
                     return null;
@@ -156,14 +168,14 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: TextFormField(
                   controller: _breaks,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: "Breaks"),
+                  decoration: InputDecoration(labelText: "home.production.form.break.title".tr()),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return "Breaks required";
+                      return "home.production.form.break.mistakes.required".tr();
                     }
                     if (double.tryParse(value ?? "-") == null) {
-                      return "Enter correct number";
+                      return "home.production.form.break.mistakes.number".tr();
                     }
 
                     return null;
