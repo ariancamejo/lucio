@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -99,7 +100,7 @@ class _WorkProduction extends ConsumerWidget {
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Work Production"),
+          title: Text("home.production.widgets.production_item.title".tr()),
           bottom: TabBar(
             tabs: tabs,
           ),
@@ -146,7 +147,7 @@ class _InfoProduction extends StatelessWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
-                                    const Text("Quantity"),
+                                    Text("home.production.widgets.production_item.quantity".tr()),
                                     FutureBuilder(
                                       future: model.details(e, typeResult: ProductionTypeResult.quantity),
                                       builder: (_, snap) => Text(
@@ -161,7 +162,7 @@ class _InfoProduction extends StatelessWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
-                                    const Text("Breaks"),
+                                    Text("home.production.widgets.production_item.breaks".tr()),
                                     FutureBuilder(
                                       future: model.details(e, typeResult: ProductionTypeResult.breaks),
                                       builder: (_, snap) => Text(
@@ -184,11 +185,11 @@ class _InfoProduction extends StatelessWidget {
                               3: FixedColumnWidth(size.width * 0.22),
                             },
                             children: [
-                              const TableRow(children: [
-                                Text("Total", textAlign: TextAlign.center),
-                                Text("In Progress", textAlign: TextAlign.center),
-                                Text("Available", textAlign: TextAlign.center),
-                                Text("Sold", textAlign: TextAlign.center),
+                              TableRow(children: [
+                                Text("home.production.widgets.production_item.status.total".tr(), textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.in_progress".tr(), textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.available".tr(), textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.sold".tr(), textAlign: TextAlign.center),
                               ]),
                               TableRow(children: [
                                 FutureBuilder(

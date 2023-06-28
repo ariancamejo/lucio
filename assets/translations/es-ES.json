@@ -46,6 +46,21 @@
             }
           }
         }
+      },
+      "widgets": {
+        "production_item": {
+          "title": "Producción del trabajador",
+          "quantitys": "Cantidad",
+          "breaks": "Roturas",
+          "status": {
+            "total": "Total",
+            "in_progress": "En proceso",
+            "available": "Disponible",
+            "sold": "Vendido"
+          }
+        },
+        "work_production_item": {
+        }
       }
     }
   },
