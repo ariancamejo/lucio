@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lucio/app/home/production/production_tab.dart';
 import 'package:lucio/app/home/production/widget/work_prodction_item.dart';
@@ -119,13 +120,14 @@ class _WorkProduction extends ConsumerWidget {
   }
 }
 
-class _InfoProduction extends StatelessWidget {
+class _InfoProduction extends ConsumerWidget {
   final ProductionModel model;
 
   const _InfoProduction({Key? key, required this.model}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final workPs = ref.watch(workProductionProvider);
     final size = MediaQuery.of(context).size;
     return FutureBuilder(
         future: model.types(),
@@ -135,7 +137,7 @@ class _InfoProduction extends StatelessWidget {
               children: (typess.data ?? [])
                   .map(
                     (e) => Card(
-                      child:Column(
+                      child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TypeOfProductionItem(
@@ -147,13 +149,16 @@ class _InfoProduction extends StatelessWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
-                                    Text("home.production.widgets.production_item.quantity".tr(),overflow: TextOverflow.ellipsis,),
+                                    Text(
+                                      "home.production.widgets.production_item.real".tr(),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                     FutureBuilder(
-                                      future: model.details(e, typeResult: ProductionTypeResult.quantity),
+                                      future: model.details(e, typeResult: ProductionTypeResult.real),
                                       builder: (_, snap) => Text(
                                         "${snap.data ?? ""}",
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 22),
+                                        style: const TextStyle(fontSize: 20),
                                       ),
                                     ),
                                   ],
@@ -162,21 +167,40 @@ class _InfoProduction extends StatelessWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
-                                    Text("home.production.widgets.production_item.breaks".tr(), overflow: TextOverflow.ellipsis,),
+                                    Text(
+                                      "home.production.widgets.production_item.breaks".tr(),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                     FutureBuilder(
                                       future: model.details(e, typeResult: ProductionTypeResult.breaks),
-                                      builder: (_, snap) => Text(
-                                        "${snap.data ?? ""}",
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 22),
-                                      ),
+                                      builder: (_, snap) {
+                                        return RichText(
+                                          text: TextSpan(
+                                            text: '',
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                text: '${snap.data ?? ""} ',
+                                                style: const TextStyle(fontSize: 20),
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    '(${model.breaksPercent(null, productions: workPs.where((element) => element.type.value?.id == e.id).toList()).toStringAsFixed(1)}%)',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          Divider(),
+                          Divider(thickness: 2),
                           Table(
                             columnWidths: {
                               0: FixedColumnWidth(size.width * 0.22),
@@ -186,10 +210,10 @@ class _InfoProduction extends StatelessWidget {
                             },
                             children: [
                               TableRow(children: [
-                                Text("home.production.widgets.production_item.status.total".tr(), overflow: TextOverflow.ellipsis,textAlign: TextAlign.center),
-                                Text("home.production.widgets.production_item.status.in_progress".tr(), overflow: TextOverflow.ellipsis,textAlign: TextAlign.center),
-                                Text("home.production.widgets.production_item.status.available".tr(), overflow: TextOverflow.ellipsis,textAlign: TextAlign.center),
-                                Text("home.production.widgets.production_item.status.sold".tr(), overflow: TextOverflow.ellipsis,textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.total".tr(), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.in_progress".tr(), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.available".tr(), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
+                                Text("home.production.widgets.production_item.status.sold".tr(), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
                               ]),
                               TableRow(children: [
                                 FutureBuilder(

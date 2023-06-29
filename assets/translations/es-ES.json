@@ -50,7 +50,7 @@
       "widgets": {
         "production_item": {
           "title": "Producción del trabajador",
-          "quantity": "Cantidad",
+          "real": "Real",
           "breaks": "Roturas",
           "status": {
             "total": "Total",

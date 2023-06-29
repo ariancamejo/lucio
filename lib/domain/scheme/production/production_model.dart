@@ -8,7 +8,7 @@ import 'package:lucio/domain/scheme/sale/sale_model.dart';
 
 part 'production_model.g.dart';
 
-enum ProductionTypeResult { all, process, available, sold, quantity, breaks }
+enum ProductionTypeResult { all, process, available, sold, real, breaks }
 
 @collection
 class ProductionModel {
@@ -34,6 +34,13 @@ class ProductionModel {
     }
 
     return uniqueTypes.toList();
+  }
+
+  double breaksPercent(double? cant, {required List<WorkProductionModel> productions}) {
+    List<WorkProductionModel> filtered = productions.where((element) => element.production.value?.id == id).toList();
+    float totalSum = filtered.fold(0, (sum, item) => sum + item.quantity);
+    float breaksSum = filtered.fold(0, (sum, item) => sum + item.breaks);
+    return totalSum == 0 ? 0 : (breaksSum / totalSum) * 100;
   }
 
   lotName(ProductionTypeModel? type) {
@@ -72,7 +79,7 @@ class ProductionModel {
       return soldSum;
     }
 
-    if (typeResult == ProductionTypeResult.quantity) {
+    if (typeResult == ProductionTypeResult.real) {
       List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
       float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
       return stockSum;
