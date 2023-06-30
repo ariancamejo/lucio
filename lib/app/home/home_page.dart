@@ -52,7 +52,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
-    final user = ref.watch(googleAuthProvider);
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
