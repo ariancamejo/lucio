@@ -54,7 +54,7 @@ class TypeOfSaleItem extends ConsumerWidget {
         onTap: () {
           showCupertinoModalBottomSheet(
               context: context,
-              builder: (_) => SalesTab(type: model, salesTemp: sales.where((element) => element.saleType.value?.id == model.id).toList()));
+              builder: (_) => SalesTab(type: model));
         },
       ),
     );

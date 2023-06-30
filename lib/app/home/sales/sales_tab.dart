@@ -14,10 +14,9 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class SalesTab extends ConsumerStatefulWidget {
-  final List<SaleModel>? salesTemp;
   final SaleTypeModel? type;
 
-  const SalesTab({Key? key, this.type, this.salesTemp}) : super(key: key);
+  const SalesTab({Key? key, this.type}) : super(key: key);
 
   static fireSubForm(BuildContext context, SaleModel? sale, {SubSaleModel? model}) => showCupertinoModalBottomSheet(
         context: context,
@@ -90,7 +89,7 @@ class _SalesTabState extends ConsumerState<SalesTab> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    List<SaleModel> sales = widget.salesTemp ?? ref.watch(saleProvider);
+    List<SaleModel> sales = widget.type != null ? ref.watch(saleProvider).where((element) => element.saleType.value?.id == widget.type?.id).toList() : ref.watch(saleProvider);
 
     final dones = sales.where((element) => !element.pendingSales).toList();
     final pendings = sales.where((element) => element.pendingSales).toList();
