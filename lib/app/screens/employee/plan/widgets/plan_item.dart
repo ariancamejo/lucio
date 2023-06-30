@@ -68,12 +68,12 @@ class PlanItem extends ConsumerWidget {
                     ListTile(
                       title: shoeEmployee ? Text(model.employee.value?.name ?? "") : Text(model.type.value?.name ?? ""),
                       subtitle: Text(
-                        "Plan: ${snap.data == null ? "" : "${snap.data} /"} ${model.plan}",
+                        "Plan: ${snap.data == null ? "" : "${snap.data!.toStringAsFixed(options.decimals)} /"} ${model.plan.toStringAsFixed(options.decimals)}",
                         style: TextStyle(color: shoeEmployee ? Color(model.type.value?.color ?? 0x00000000) : null),
                       ),
                       leading: Icon(cumplido ? FontAwesomeIcons.check : FontAwesomeIcons.clock, color: cumplido ? scheme.primary : scheme.error),
                       trailing: Text(
-                        "${(model.plan - (snap.data ?? 0)).abs()}",
+                        ((model.plan - (snap.data ?? 0)).abs()).toStringAsFixed(options.decimals),
                         style: TextStyle(
                           color: cumplido ? Colors.green : scheme.error,
                           fontWeight: FontWeight.bold,

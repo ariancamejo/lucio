@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:lucio/app/home/sales/sales_tab.dart';
 import 'package:lucio/app/screens/type_of_sale/type_of_sale_page.dart';
 import 'package:lucio/data/const.dart';
+import 'package:lucio/data/repositories/sales/sales_provider.dart';
+
 import 'package:lucio/data/repositories/type_of_sale/type_of_sale_provider.dart';
 import 'package:lucio/domain/scheme/sale/sale_model.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class TypeOfSaleItem extends ConsumerWidget {
   final SaleTypeModel model;
@@ -14,6 +18,7 @@ class TypeOfSaleItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
+    final sales = ref.watch(saleProvider);
     return Slidable(
       // Specify a key if the Slidable is dismissible.
       key: ValueKey(model.id),
@@ -44,7 +49,13 @@ class TypeOfSaleItem extends ConsumerWidget {
       ),
       child: ListTile(
         title: Text(model.name),
+        trailing: Text(sales.where((element) => element.saleType.value?.id == model.id).length.toString()),
         onLongPress: () => TypeOfSalePage.fireForm(context, model: model),
+        onTap: () {
+          showCupertinoModalBottomSheet(
+              context: context,
+              builder: (_) => SalesTab(type: model, salesTemp: sales.where((element) => element.saleType.value?.id == model.id).toList()));
+        },
       ),
     );
   }

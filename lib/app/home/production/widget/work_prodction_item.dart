@@ -24,19 +24,6 @@ class WorkProductionItem extends ConsumerWidget {
       child: Slidable(
         // Specify a key if the Slidable is dismissible.
         key: ValueKey(model.id),
-        startActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
-            SlidableAction(
-              spacing: 8,
-              onPressed: (_) {},
-              backgroundColor: model.readyIn() == null ? scheme.primary : Colors.grey,
-              icon: model.readyIn() == null ? FontAwesomeIcons.check : FontAwesomeIcons.spinner,
-              label: model.readyIn() == null ? "Ready" : DateFormat(dateFormat).format(model.readyIn()!),
-              borderRadius: BorderRadius.circular(kDefaultRefNumber / 4),
-            ),
-          ],
-        ),
         // The end action pane is the one at the right or the bottom side.
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
@@ -62,23 +49,17 @@ class WorkProductionItem extends ConsumerWidget {
           ],
         ),
         child: ListTile(
-          title: showProductionType ? Text(model.type.value?.name ?? "Production Type has delete", style: TextStyle(color: Color(model.type.value?.color?? 0x00000000)),) : Text(model.employee.value?.name ?? "Employee has deleted"),
+          title: showProductionType
+              ? Text(
+                  model.type.value?.name ?? "Production Type has delete",
+                  style: TextStyle(color: Color(model.type.value?.color ?? 0x00000000)),
+                )
+              : Text(model.employee.value?.name ?? "Employee has deleted"),
           leading: model.type.value == null
               ? null
-              : ColorIndicator(
-                  width: 30,
-                  height: 30,
-                  borderRadius: 4,
-                  color: Color(model.type.value!.color),
-                  onSelectFocus: false,
-                  onSelect: () async {
-                    final Color colorBeforeDialog = Color(model.type.value!.color);
-                    Color result = await showColorPickerDialog(context, colorBeforeDialog);
-                    await ref.read(productionTypeModelProvider.notifier).update(
-                      model.type.value!,
-                      values: {"color": result.value},
-                    );
-                  },
+              : Icon(
+                  model.readyIn() == null ? FontAwesomeIcons.check : FontAwesomeIcons.spinner,
+                  color: model.readyIn() == null ? scheme.primary : Colors.grey,
                 ),
           trailing: model.breaks == 0
               ? null

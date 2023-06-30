@@ -20,8 +20,9 @@ import 'package:lucio/domain/scheme/sale/sale_model.dart';
 
 class SaleForm extends ConsumerStatefulWidget {
   final SaleModel? model;
+  final Map<String, dynamic>? initial;
 
-  const SaleForm({Key? key, this.model}) : super(key: key);
+  const SaleForm({Key? key, this.model, this.initial}) : super(key: key);
 
   @override
   ConsumerState<SaleForm> createState() => _SaleFormState();
@@ -38,7 +39,7 @@ class _SaleFormState extends ConsumerState<SaleForm> {
   @override
   void initState() {
     model = widget.model;
-    saleTypeModel = widget.model?.saleType.value;
+    saleTypeModel = widget.model?.saleType.value ?? (widget.initial ?? {})['saleType'];
     _client = TextEditingController(text: model?.client ?? "");
     super.initState();
   }

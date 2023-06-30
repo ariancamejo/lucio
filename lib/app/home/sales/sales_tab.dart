@@ -14,7 +14,10 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class SalesTab extends ConsumerStatefulWidget {
-  const SalesTab({Key? key}) : super(key: key);
+  final List<SaleModel>? salesTemp;
+  final SaleTypeModel? type;
+
+  const SalesTab({Key? key, this.type, this.salesTemp}) : super(key: key);
 
   static fireSubForm(BuildContext context, SaleModel? sale, {SubSaleModel? model}) => showCupertinoModalBottomSheet(
         context: context,
@@ -24,9 +27,9 @@ class SalesTab extends ConsumerStatefulWidget {
         ),
       );
 
-  static fireForm(BuildContext context, {SaleModel? model}) => showCupertinoModalBottomSheet(
+  static fireForm(BuildContext context, {SaleModel? model, Map<String, dynamic>? initial}) => showCupertinoModalBottomSheet(
         context: context,
-        builder: (_) => SaleForm(model: model),
+        builder: (_) => SaleForm(model: model, initial: initial),
       );
 
   static Future<bool> fireDelete(BuildContext context, {required SaleModel model}) async {
@@ -87,11 +90,13 @@ class _SalesTabState extends ConsumerState<SalesTab> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final sales = ref.watch(saleProvider);
+    List<SaleModel> sales = widget.salesTemp ?? ref.watch(saleProvider);
+
     final dones = sales.where((element) => !element.pendingSales).toList();
     final pendings = sales.where((element) => element.pendingSales).toList();
 
     return Scaffold(
+      appBar: widget.type == null ? null : AppBar(title: Text(widget.type!.name)),
       body: SizedBox(
         height: double.maxFinite,
         child: Column(
@@ -151,7 +156,7 @@ class _SalesTabState extends ConsumerState<SalesTab> with SingleTickerProviderSt
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.small(onPressed: () => SalesTab.fireForm(context), child: const Icon(Icons.add)),
+      floatingActionButton: FloatingActionButton.small(onPressed: () => SalesTab.fireForm(context, initial: {"saleType": widget.type}), child: const Icon(Icons.add)),
     );
   }
 }
