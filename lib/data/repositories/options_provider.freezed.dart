@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$OptionsState {
   DateTime get startFilter => throw _privateConstructorUsedError;
   DateTime get endFilter => throw _privateConstructorUsedError;
+  int get decimals => throw _privateConstructorUsedError;
   bool get checkAuth => throw _privateConstructorUsedError;
   int get daysOfRangeDateProduction => throw _privateConstructorUsedError;
 
@@ -35,6 +36,7 @@ abstract class $OptionsStateCopyWith<$Res> {
   $Res call(
       {DateTime startFilter,
       DateTime endFilter,
+      int decimals,
       bool checkAuth,
       int daysOfRangeDateProduction});
 }
@@ -54,6 +56,7 @@ class _$OptionsStateCopyWithImpl<$Res, $Val extends OptionsState>
   $Res call({
     Object? startFilter = null,
     Object? endFilter = null,
+    Object? decimals = null,
     Object? checkAuth = null,
     Object? daysOfRangeDateProduction = null,
   }) {
@@ -66,6 +69,10 @@ class _$OptionsStateCopyWithImpl<$Res, $Val extends OptionsState>
           ? _value.endFilter
           : endFilter // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      decimals: null == decimals
+          ? _value.decimals
+          : decimals // ignore: cast_nullable_to_non_nullable
+              as int,
       checkAuth: null == checkAuth
           ? _value.checkAuth
           : checkAuth // ignore: cast_nullable_to_non_nullable
@@ -89,6 +96,7 @@ abstract class _$$_OptionsStateCopyWith<$Res>
   $Res call(
       {DateTime startFilter,
       DateTime endFilter,
+      int decimals,
       bool checkAuth,
       int daysOfRangeDateProduction});
 }
@@ -106,6 +114,7 @@ class __$$_OptionsStateCopyWithImpl<$Res>
   $Res call({
     Object? startFilter = null,
     Object? endFilter = null,
+    Object? decimals = null,
     Object? checkAuth = null,
     Object? daysOfRangeDateProduction = null,
   }) {
@@ -118,6 +127,10 @@ class __$$_OptionsStateCopyWithImpl<$Res>
           ? _value.endFilter
           : endFilter // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      decimals: null == decimals
+          ? _value.decimals
+          : decimals // ignore: cast_nullable_to_non_nullable
+              as int,
       checkAuth: null == checkAuth
           ? _value.checkAuth
           : checkAuth // ignore: cast_nullable_to_non_nullable
@@ -136,6 +149,7 @@ class _$_OptionsState extends _OptionsState {
   const _$_OptionsState(
       {required this.startFilter,
       required this.endFilter,
+      this.decimals = 3,
       this.checkAuth = false,
       this.daysOfRangeDateProduction = 0})
       : super._();
@@ -146,6 +160,9 @@ class _$_OptionsState extends _OptionsState {
   final DateTime endFilter;
   @override
   @JsonKey()
+  final int decimals;
+  @override
+  @JsonKey()
   final bool checkAuth;
   @override
   @JsonKey()
@@ -153,7 +170,7 @@ class _$_OptionsState extends _OptionsState {
 
   @override
   String toString() {
-    return 'OptionsState(startFilter: $startFilter, endFilter: $endFilter, checkAuth: $checkAuth, daysOfRangeDateProduction: $daysOfRangeDateProduction)';
+    return 'OptionsState(startFilter: $startFilter, endFilter: $endFilter, decimals: $decimals, checkAuth: $checkAuth, daysOfRangeDateProduction: $daysOfRangeDateProduction)';
   }
 
   @override
@@ -165,6 +182,8 @@ class _$_OptionsState extends _OptionsState {
                 other.startFilter == startFilter) &&
             (identical(other.endFilter, endFilter) ||
                 other.endFilter == endFilter) &&
+            (identical(other.decimals, decimals) ||
+                other.decimals == decimals) &&
             (identical(other.checkAuth, checkAuth) ||
                 other.checkAuth == checkAuth) &&
             (identical(other.daysOfRangeDateProduction,
@@ -173,7 +192,7 @@ class _$_OptionsState extends _OptionsState {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, startFilter, endFilter,
+  int get hashCode => Object.hash(runtimeType, startFilter, endFilter, decimals,
       checkAuth, daysOfRangeDateProduction);
 
   @JsonKey(ignore: true)
@@ -187,6 +206,7 @@ abstract class _OptionsState extends OptionsState {
   const factory _OptionsState(
       {required final DateTime startFilter,
       required final DateTime endFilter,
+      final int decimals,
       final bool checkAuth,
       final int daysOfRangeDateProduction}) = _$_OptionsState;
   const _OptionsState._() : super._();
@@ -195,6 +215,8 @@ abstract class _OptionsState extends OptionsState {
   DateTime get startFilter;
   @override
   DateTime get endFilter;
+  @override
+  int get decimals;
   @override
   bool get checkAuth;
   @override

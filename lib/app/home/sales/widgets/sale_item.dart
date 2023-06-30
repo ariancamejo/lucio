@@ -8,6 +8,7 @@ import 'package:lucio/app/home/sales/widgets/sub_sale_item.dart';
 import 'package:lucio/app/screens/type_of_production/widgets/type_of_production_item.dart';
 import 'package:lucio/app/widgets/section_widget.dart';
 import 'package:lucio/data/const.dart';
+import 'package:lucio/data/repositories/options_provider.dart';
 import 'package:lucio/data/repositories/sales/sales_provider.dart';
 import 'package:lucio/data/repositories/sales/sub_sales_provider.dart';
 import 'package:collection/collection.dart';
@@ -70,7 +71,6 @@ class _SaleItemState extends ConsumerState<SaleItem> {
                     case 2:
                       SalesTab.fireDelete(context, model: widget.model).then((value) {
                         if (value == true) {
-
                           ref.read(saleProvider.notifier).delete([widget.model]);
                         }
                       });
@@ -81,19 +81,19 @@ class _SaleItemState extends ConsumerState<SaleItem> {
                   PopupMenuItem(
                     value: 0,
                     child: Row(
-                      children: [Icon(FontAwesomeIcons.shopify), const SizedBox(width: kDefaultRefNumber), Text("View SubSales")],
+                      children: [Icon(FontAwesomeIcons.shopify), SizedBox(width: kDefaultRefNumber), Text("View SubSales")],
                     ),
                   ),
                   PopupMenuItem(
                     value: 1,
                     child: Row(
-                      children: [Icon(FontAwesomeIcons.pencil), const SizedBox(width: kDefaultRefNumber), Text("Edit")],
+                      children: [Icon(FontAwesomeIcons.pencil), SizedBox(width: kDefaultRefNumber), Text("Edit")],
                     ),
                   ),
                   PopupMenuItem(
                     value: 2,
                     child: Row(
-                      children: [Icon(FontAwesomeIcons.trash), const SizedBox(width: kDefaultRefNumber), Text("Remove")],
+                      children: [Icon(FontAwesomeIcons.trash), SizedBox(width: kDefaultRefNumber), Text("Remove")],
                     ),
                   ),
                 ],
@@ -114,14 +114,15 @@ class _SaleItemState extends ConsumerState<SaleItem> {
   }
 }
 
-class _InfoSale extends StatelessWidget {
+class _InfoSale extends ConsumerWidget {
   final SaleModel model;
 
   const _InfoSale({Key? key, required this.model}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
+    final decimals = ref.watch(optionsP).decimals;
     return FutureBuilder(
         future: model.types(),
         builder: (context, typess) {
@@ -148,7 +149,7 @@ class _InfoSale extends StatelessWidget {
                                       FutureBuilder(
                                         future: model.saled(e, typeResult: SaleTypeResult.quantity),
                                         builder: (_, snap) => Text(
-                                          "${snap.data ?? ""}",
+                                          snap.data?.toStringAsFixed(decimals) ?? "",
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(fontSize: 22),
                                         ),
@@ -163,7 +164,7 @@ class _InfoSale extends StatelessWidget {
                                       FutureBuilder(
                                         future: model.saled(e, typeResult: SaleTypeResult.breaks),
                                         builder: (_, snap) => Text(
-                                          "${snap.data ?? ""}",
+                                          snap.data?.toStringAsFixed(decimals) ?? "",
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(fontSize: 22),
                                         ),
@@ -189,15 +190,24 @@ class _InfoSale extends StatelessWidget {
                                 TableRow(children: [
                                   FutureBuilder(
                                     future: model.saled(e, typeResult: SaleTypeResult.all),
-                                    builder: (_, snap) => Text("${snap.data ?? ""}", textAlign: TextAlign.center),
+                                    builder: (_, snap) => Text(
+                                      snap.data?.toStringAsFixed(decimals) ?? "",
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                   FutureBuilder(
                                     future: model.saled(e, typeResult: SaleTypeResult.withlot),
-                                    builder: (_, snap) => Text("${snap.data ?? ""}", textAlign: TextAlign.center),
+                                    builder: (_, snap) => Text(
+                                      snap.data?.toStringAsFixed(decimals) ?? "",
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                   FutureBuilder(
                                     future: model.saled(e, typeResult: SaleTypeResult.withoutlot),
-                                    builder: (_, snap) => Text("${snap.data ?? ""}", textAlign: TextAlign.center),
+                                    builder: (_, snap) => Text(
+                                      snap.data?.toStringAsFixed(decimals) ?? "",
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 ]),
                               ],
@@ -259,6 +269,8 @@ class _SubSale extends ConsumerWidget {
         appBar: AppBar(
           title: const Text("Sub Sales"),
           bottom: TabBar(
+            isScrollable: true,
+            physics: const BouncingScrollPhysics(),
             tabs: tabs,
           ),
         ),

@@ -1,5 +1,8 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
+import 'package:lucio/data/repositories/production/work_production_provider.dart';
+import 'package:lucio/data/repositories/sales/sub_sales_provider.dart';
 
 import 'package:lucio/device/helpers/storage/database.dart';
 import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
@@ -36,7 +39,7 @@ class ProductionModel {
     return uniqueTypes.toList();
   }
 
-  double breaksPercent(double? cant, {required List<WorkProductionModel> productions}) {
+  double breaksPercent({required List<WorkProductionModel> productions, bool breaks = true}) {
     List<WorkProductionModel> filtered = productions.where((element) => element.production.value?.id == id).toList();
     float totalSum = filtered.fold(0, (sum, item) => sum + item.quantity);
     float breaksSum = filtered.fold(0, (sum, item) => sum + item.breaks);
@@ -90,6 +93,46 @@ class ProductionModel {
       return stockSum;
     }
 
+    return 0;
+  }
+
+  float detailsNoSync(WidgetRef ref, ProductionTypeModel? type, {required ProductionTypeResult typeResult}) {
+    if (type == null) return 0;
+    List<SubSaleModel> soldAll = ref.read(subSalesProvider).where((element) => element.lot.value?.id == id && element.type.value?.id == type.id).toList();
+    List<WorkProductionModel> stockAll = ref.read(workProductionProvider).where((element) => element.production.value?.id == id && element.type.value?.id == type.id).toList();
+
+    if (typeResult == ProductionTypeResult.available) {
+      List<WorkProductionModel> stock = stockAll.where((element) => element.datetime.isAfter(DateTime.now())).toList();
+      float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+      float soldSum = soldAll.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      float result = stockSum - soldSum;
+      return result;
+    }
+
+    if (typeResult == ProductionTypeResult.process) {
+      List<WorkProductionModel> stock = stockAll.where((element) => element.datetime.isBefore(DateTime.now())).toList();
+      float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+      return stockSum;
+    }
+
+    if (typeResult == ProductionTypeResult.all) {
+      List<WorkProductionModel> stock = ref.read(workProductionProvider).where((element) => element.production.value?.id == id && element.type.value?.id == type.id).toList();
+      float stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
+      return stockSum;
+    }
+    if (typeResult == ProductionTypeResult.sold) {
+      float soldSum = soldAll.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      return soldSum;
+    }
+
+    if (typeResult == ProductionTypeResult.real) {
+      float stockSum = stockAll.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+      return stockSum;
+    }
+    if (typeResult == ProductionTypeResult.breaks) {
+      float stockSum = stockAll.fold(0, (sum, item) => sum + item.breaks);
+      return stockSum;
+    }
     return 0;
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lucio/app/screens/settings/widgets/backup.dart';
 import 'package:lucio/app/screens/settings/widgets/biometric.dart';
 import 'package:lucio/app/screens/settings/widgets/daysChangeWork.dart';
+import 'package:lucio/app/screens/settings/widgets/decimalPlaces.dart';
 import 'package:lucio/app/screens/settings/widgets/google.dart';
 import 'package:lucio/app/screens/settings/widgets/language.dart';
 import 'package:lucio/app/screens/settings/widgets/range_date_select.dart';
@@ -35,6 +36,7 @@ class _SettingsPageState extends State<SettingsPage> {
             const BiometricOption(),
             const BackUp(),
             const DaysOfChangeWorkProductionWidget(),
+            const DecimalPlacesWidget(),
             const RangeDateSelectWidget(),
             const UnitsWidget()
           ],

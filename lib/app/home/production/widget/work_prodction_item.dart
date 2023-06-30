@@ -9,7 +9,6 @@ import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/production/work_production_provider.dart';
 import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
 import 'package:lucio/domain/scheme/production/production_model.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class WorkProductionItem extends ConsumerWidget {
   final WorkProductionModel model;

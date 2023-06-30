@@ -17,6 +17,7 @@ class OptionsState with _$OptionsState {
   const factory OptionsState({
     required DateTime startFilter,
     required DateTime endFilter,
+    @Default(3) int decimals,
     @Default(false) bool checkAuth,
     @Default(0) int daysOfRangeDateProduction,
   }) = _OptionsState;
@@ -52,6 +53,11 @@ class OptionsNotifier extends StateNotifier<OptionsState> {
     _save();
   }
 
+  set decimals(int value) {
+    state = state.copyWith(decimals: value);
+    _save();
+  }
+
   set dateRange(DateTimeRange? dateTimeRange) {
     if (dateTimeRange != null) {
       state = state.copyWith(
@@ -71,6 +77,7 @@ class OptionsNotifier extends StateNotifier<OptionsState> {
   _save() async {
     Map<String, dynamic> json = {
       "daysOfRangeDateProduction": state.daysOfRangeDateProduction,
+      "decimals": state.decimals,
     };
     await SecureStorage.set('optionsSaved', value: jsonEncode(json));
   }
@@ -79,7 +86,7 @@ class OptionsNotifier extends StateNotifier<OptionsState> {
     final strOptionsSaved = await SecureStorage.read('optionsSaved');
     if (strOptionsSaved != null) {
       Map<String, dynamic> json = jsonDecode(strOptionsSaved);
-      state = state.copyWith(daysOfRangeDateProduction: json['daysOfRangeDateProduction']);
+      state = state.copyWith(daysOfRangeDateProduction: json['daysOfRangeDateProduction'], decimals: json['decimals']);
     }
   }
 }

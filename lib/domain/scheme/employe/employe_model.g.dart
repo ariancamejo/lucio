@@ -35,6 +35,13 @@ const EmployeModelSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {
+    r'plans': LinkSchema(
+      id: -720532245028270001,
+      name: r'plans',
+      target: r'EmployeePlanModel',
+      single: false,
+      linkName: r'employee',
+    ),
     r'workProductions': LinkSchema(
       id: 8224396867538782105,
       name: r'workProductions',
@@ -110,12 +117,14 @@ Id _employeModelGetId(EmployeModel object) {
 }
 
 List<IsarLinkBase<dynamic>> _employeModelGetLinks(EmployeModel object) {
-  return [object.workProductions];
+  return [object.plans, object.workProductions];
 }
 
 void _employeModelAttach(
     IsarCollection<dynamic> col, Id id, EmployeModel object) {
   object.id = id;
+  object.plans
+      .attach(col, col.isar.collection<EmployeePlanModel>(), r'plans', id);
   object.workProductions.attach(
       col, col.isar.collection<WorkProductionModel>(), r'workProductions', id);
 }
@@ -542,6 +551,67 @@ extension EmployeModelQueryObject
 
 extension EmployeModelQueryLinks
     on QueryBuilder<EmployeModel, EmployeModel, QFilterCondition> {
+  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition> plans(
+      FilterQuery<EmployeePlanModel> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'plans');
+    });
+  }
+
+  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition>
+      plansLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'plans', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition>
+      plansIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'plans', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition>
+      plansIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'plans', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition>
+      plansLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'plans', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition>
+      plansLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'plans', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition>
+      plansLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'plans', lower, includeLower, upper, includeUpper);
+    });
+  }
+
   QueryBuilder<EmployeModel, EmployeModel, QAfterFilterCondition>
       workProductions(FilterQuery<WorkProductionModel> q) {
     return QueryBuilder.apply(this, (query) {

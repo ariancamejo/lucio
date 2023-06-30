@@ -2,13 +2,13 @@ import 'package:animate_do/animate_do.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lucio/app/home/production/production_tab.dart';
 import 'package:lucio/app/home/production/widget/work_prodction_item.dart';
 import 'package:lucio/app/screens/type_of_production/widgets/type_of_production_item.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/employe/employe_provider.dart';
+import 'package:lucio/data/repositories/options_provider.dart';
 import 'package:lucio/data/repositories/production/work_production_provider.dart';
 import 'package:lucio/domain/scheme/production/production_model.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -103,6 +103,8 @@ class _WorkProduction extends ConsumerWidget {
         appBar: AppBar(
           title: Text("home.production.widgets.production_item.title".tr()),
           bottom: TabBar(
+            isScrollable: true,
+            physics: const BouncingScrollPhysics(),
             tabs: tabs,
           ),
         ),
@@ -128,6 +130,7 @@ class _InfoProduction extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final workPs = ref.watch(workProductionProvider);
+    final decimals = ref.watch(optionsP).decimals;
     final size = MediaQuery.of(context).size;
     return FutureBuilder(
         future: model.types(),
@@ -149,16 +152,17 @@ class _InfoProduction extends ConsumerWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
+                                    Text("home.production.widgets.production_item.real".tr()),
                                     Text(
-                                      "home.production.widgets.production_item.real".tr(),
-                                      overflow: TextOverflow.ellipsis,
+                                      ' (${model.breaksPercent(productions: workPs.where((element) => element.type.value?.id == e.id).toList(), breaks: false).toStringAsFixed(decimals)}%)',
+                                      style: const TextStyle(fontSize: 10),
                                     ),
                                     FutureBuilder(
                                       future: model.details(e, typeResult: ProductionTypeResult.real),
                                       builder: (_, snap) => Text(
-                                        "${snap.data ?? ""}",
+                                        snap.data?.toStringAsFixed(decimals) ?? "",
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 20),
+                                        style: const TextStyle(fontSize: 18),
                                       ),
                                     ),
                                   ],
@@ -167,31 +171,17 @@ class _InfoProduction extends ConsumerWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
+                                    Text("home.production.widgets.production_item.breaks".tr()),
                                     Text(
-                                      "home.production.widgets.production_item.breaks".tr(),
-                                      overflow: TextOverflow.ellipsis,
+                                      ' (${model.breaksPercent(productions: workPs.where((element) => element.type.value?.id == e.id).toList(), breaks: true).toStringAsFixed(decimals)}%)',
+                                      style: const TextStyle(fontSize: 10),
                                     ),
                                     FutureBuilder(
                                       future: model.details(e, typeResult: ProductionTypeResult.breaks),
                                       builder: (_, snap) {
-                                        return RichText(
-                                          text: TextSpan(
-                                            text: '',
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                text: '${snap.data ?? ""} ',
-                                                style: const TextStyle(fontSize: 20),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    '(${model.breaksPercent(null, productions: workPs.where((element) => element.type.value?.id == e.id).toList()).toStringAsFixed(1)}%)',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                        return Text(
+                                          snap.data?.toStringAsFixed(decimals) ?? "",
+                                          style: const TextStyle(fontSize: 18),
                                         );
                                       },
                                     ),
@@ -219,28 +209,28 @@ class _InfoProduction extends ConsumerWidget {
                                 FutureBuilder(
                                   future: model.details(e, typeResult: ProductionTypeResult.all),
                                   builder: (_, snap) => Text(
-                                    "${snap.data ?? ""}",
+                                    snap.data?.toStringAsFixed(decimals) ?? "",
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
                                 FutureBuilder(
                                   future: model.details(e, typeResult: ProductionTypeResult.process),
                                   builder: (_, snap) => Text(
-                                    "${snap.data ?? ""}",
+                                    snap.data?.toStringAsFixed(decimals) ?? "",
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
                                 FutureBuilder(
                                   future: model.details(e, typeResult: ProductionTypeResult.available),
                                   builder: (_, snap) => Text(
-                                    "${snap.data ?? ""}",
+                                    snap.data?.toStringAsFixed(decimals) ?? "",
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
                                 FutureBuilder(
                                   future: model.details(e, typeResult: ProductionTypeResult.sold),
                                   builder: (_, snap) => Text(
-                                    "${snap.data ?? ""}",
+                                    snap.data?.toStringAsFixed(decimals) ?? "",
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
