@@ -7,7 +7,9 @@ import 'package:lucio/app/screens/type_of_production/type_of_production_page.dar
 import 'package:lucio/app/widgets/dropdowns.dart';
 
 import 'package:lucio/data/const.dart';
+import 'package:lucio/data/repositories/options_provider.dart';
 import 'package:lucio/data/repositories/production/production_provider.dart';
+import 'package:lucio/data/repositories/production/work_production_provider.dart';
 import 'package:lucio/data/repositories/sales/sales_provider.dart';
 import 'package:lucio/data/repositories/sales/sub_sales_provider.dart';
 import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
@@ -46,8 +48,11 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
 
   @override
   Widget build(BuildContext context) {
+    final decimals = ref.watch(optionsP).decimals;
+    final workPs = ref.watch(workProductionProvider);
     final productions = ref.watch(productionProvider);
     final sales = ref.watch(saleProvider);
+    final subSales = ref.watch(subSalesProvider);
     final typeProductions = ref.watch(productionTypeModelProvider);
     return Scaffold(
       appBar: AppBar(
@@ -125,39 +130,70 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                   ),
                 ),
               ),
-              FutureBuilder<double?>(
-                  future: productionModel == null ? Future.value(null) : productionModel!.details(productionTypeModel, typeResult: ProductionTypeResult.available),
-                  builder: (context, snapshot) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
-                      child: TextFormField(
-                        controller: _quantity,
-                        enabled: productionTypeModel != null,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        decoration: const InputDecoration(labelText: "Quantity"),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value?.isEmpty ?? true) {
-                            return "Quantity required";
-                          }
-                          if (double.tryParse(value ?? "-") == null) {
-                            return "Enter correct number";
-                          }
-                          if (double.tryParse(value ?? "0") == 0) {
-                            return "Please,specify a number greater than zero";
-                          }
-                          if (snapshot.data != null && (double.tryParse(value ?? "0") ?? 0) > (snapshot.data ?? 0)) {
-                            if ((snapshot.data ?? 0) == 0) {
-                              return "No available";
-                            }
-                            return "Only ${snapshot.data ?? 0} available";
-                          }
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
+                child: TextFormField(
+                  controller: _quantity,
+                  enabled: productionTypeModel != null,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: const InputDecoration(labelText: "Quantity"),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return "Quantity required";
+                    }
+                    if (double.tryParse(value ?? "-") == null) {
+                      return "Enter correct number";
+                    }
+                    if (double.tryParse(value ?? "0") == 0) {
+                      return "Please,specify a number greater than zero";
+                    }
 
-                          return null;
-                        },
-                      ),
-                    );
-                  }),
+                    double res = productionModel?.detailsNoSync(workPs, subSales, productionTypeModel, typeResult: ProductionTypeResult.available) ?? 0;
+                    if ((double.tryParse(value ?? "0") ?? 0) > res) {
+                      if (res == 0) {
+                        return "No available";
+                      }
+                      return "Only ${res.toStringAsFixed(decimals)} available";
+                    }
+
+                    return null;
+                  },
+                ),
+              ),
+              // FutureBuilder<double?>(
+              //     future: productionModel == null ? Future.value(null) : productionModel!.detailsNoSync( productionTypeModel, typeResult: ProductionTypeResult.available),
+              //     builder: (context, snapshot) {
+              //       return Padding(
+              //         padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
+              //         child: TextFormField(
+              //           controller: _quantity,
+              //           enabled: productionTypeModel != null,
+              //           autovalidateMode: AutovalidateMode.onUserInteraction,
+              //           decoration: const InputDecoration(labelText: "Quantity"),
+              //           keyboardType: TextInputType.number,
+              //           validator: (value) {
+              //             if (value?.isEmpty ?? true) {
+              //               return "Quantity required";
+              //             }
+              //             if (double.tryParse(value ?? "-") == null) {
+              //               return "Enter correct number";
+              //             }
+              //             if (double.tryParse(value ?? "0") == 0) {
+              //               return "Please,specify a number greater than zero";
+              //             }
+              //             if (snapshot.data != null && (double.tryParse(value ?? "0") ?? 0) > (snapshot.data ?? 0)) {
+              //               if ((snapshot.data ?? 0) == 0) {
+              //                 return "No available";
+              //               }
+              //               return "Only ${snapshot.data ?? 0} available";
+              //             }
+              //
+              //             return null;
+              //           },
+              //         ),
+              //       );
+              //     }),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
                 child: TextFormField(

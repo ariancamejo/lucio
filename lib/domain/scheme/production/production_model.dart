@@ -41,68 +41,70 @@ class ProductionModel {
 
   double breaksPercent({required List<WorkProductionModel> productions, bool breaks = true}) {
     List<WorkProductionModel> filtered = productions.where((element) => element.production.value?.id == id).toList();
-    float totalSum = filtered.fold(0, (sum, item) => sum + item.quantity);
+    float totalSum = filtered.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+    float quantitySum = filtered.fold(0, (sum, item) => sum + item.quantity);
     float breaksSum = filtered.fold(0, (sum, item) => sum + item.breaks);
-    return totalSum == 0 ? 0 : (breaksSum / totalSum) * 100;
+    return totalSum == 0 ? 0 : ((breaks ? breaksSum : quantitySum) / totalSum) * 100;
   }
 
   lotName(ProductionTypeModel? type) {
     return DateFormat("ddMMyyyy").format(date);
   }
+  //
+  // Future<float> details(ProductionTypeModel? type, {required ProductionTypeResult typeResult}) async {
+  //   if (type == null) return 0;
+  //
+  //   if (typeResult == ProductionTypeResult.available) {
+  //     List<WorkProductionModel> stock =
+  //         await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleLessThan(DateTime.now()).findAll();
+  //
+  //     List<SubSaleModel> sold = await DBHelper.isar.subSaleModels.filter().lot((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+  //     float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+  //     float soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+  //     float result = stockSum - soldSum;
+  //     return result;
+  //   }
+  //
+  //   if (typeResult == ProductionTypeResult.process) {
+  //     List<WorkProductionModel> stock =
+  //         await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleGreaterThan(DateTime.now()).findAll();
+  //     float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+  //     return stockSum;
+  //   }
+  //
+  //   if (typeResult == ProductionTypeResult.all) {
+  //     List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+  //     float stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
+  //     return stockSum;
+  //   }
+  //   if (typeResult == ProductionTypeResult.sold) {
+  //     List<SubSaleModel> sold = await DBHelper.isar.subSaleModels.filter().lot((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+  //     float soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+  //     return soldSum;
+  //   }
+  //
+  //   if (typeResult == ProductionTypeResult.real) {
+  //     List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+  //     float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+  //     return stockSum;
+  //   }
+  //   if (typeResult == ProductionTypeResult.breaks) {
+  //     List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
+  //     float stockSum = stock.fold(0, (sum, item) => sum + item.breaks);
+  //     return stockSum;
+  //   }
+  //
+  //   return 0;
+  // }
 
-  Future<float> details(ProductionTypeModel? type, {required ProductionTypeResult typeResult}) async {
+  float detailsNoSync(List<WorkProductionModel> workProductionProvider, List<SubSaleModel> subsalesProvider, ProductionTypeModel? type,
+      {required ProductionTypeResult typeResult}) {
     if (type == null) return 0;
+    List<SubSaleModel> soldAll = subsalesProvider.where((element) => element.lot.value?.id == id && element.type.value?.id == type.id).toList();
+    List<WorkProductionModel> stockAll = workProductionProvider.where((element) => element.production.value?.id == id && element.type.value?.id == type.id).toList();
 
     if (typeResult == ProductionTypeResult.available) {
-      List<WorkProductionModel> stock =
-          await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleLessThan(DateTime.now()).findAll();
-
-      List<SubSaleModel> sold = await DBHelper.isar.subSaleModels.filter().lot((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-      float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
-      float soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
-      float result = stockSum - soldSum;
-      return result;
-    }
-
-    if (typeResult == ProductionTypeResult.process) {
-      List<WorkProductionModel> stock =
-          await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).listForSaleGreaterThan(DateTime.now()).findAll();
-      float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
-      return stockSum;
-    }
-
-    if (typeResult == ProductionTypeResult.all) {
-      List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-      float stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
-      return stockSum;
-    }
-    if (typeResult == ProductionTypeResult.sold) {
-      List<SubSaleModel> sold = await DBHelper.isar.subSaleModels.filter().lot((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-      float soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
-      return soldSum;
-    }
-
-    if (typeResult == ProductionTypeResult.real) {
-      List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-      float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
-      return stockSum;
-    }
-    if (typeResult == ProductionTypeResult.breaks) {
-      List<WorkProductionModel> stock = await DBHelper.isar.workProductionModels.filter().production((q) => q.idEqualTo(id)).type((q) => q.idEqualTo(type.id)).findAll();
-      float stockSum = stock.fold(0, (sum, item) => sum + item.breaks);
-      return stockSum;
-    }
-
-    return 0;
-  }
-
-  float detailsNoSync(WidgetRef ref, ProductionTypeModel? type, {required ProductionTypeResult typeResult}) {
-    if (type == null) return 0;
-    List<SubSaleModel> soldAll = ref.read(subSalesProvider).where((element) => element.lot.value?.id == id && element.type.value?.id == type.id).toList();
-    List<WorkProductionModel> stockAll = ref.read(workProductionProvider).where((element) => element.production.value?.id == id && element.type.value?.id == type.id).toList();
-
-    if (typeResult == ProductionTypeResult.available) {
-      List<WorkProductionModel> stock = stockAll.where((element) => element.datetime.isAfter(DateTime.now())).toList();
+      List<WorkProductionModel> stock = stockAll.where((element) => element.listForSale.isBefore(DateTime.now())).toList();
       float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
       float soldSum = soldAll.fold(0, (sum, item) => sum + item.quantity + item.breaks);
       float result = stockSum - soldSum;
@@ -110,13 +112,13 @@ class ProductionModel {
     }
 
     if (typeResult == ProductionTypeResult.process) {
-      List<WorkProductionModel> stock = stockAll.where((element) => element.datetime.isBefore(DateTime.now())).toList();
+      List<WorkProductionModel> stock = stockAll.where((element) => element.listForSale.isAfter(DateTime.now())).toList();
       float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
       return stockSum;
     }
 
     if (typeResult == ProductionTypeResult.all) {
-      List<WorkProductionModel> stock = ref.read(workProductionProvider).where((element) => element.production.value?.id == id && element.type.value?.id == type.id).toList();
+      List<WorkProductionModel> stock = workProductionProvider.where((element) => element.production.value?.id == id && element.type.value?.id == type.id).toList();
       float stockSum = stock.fold(0, (sum, item) => sum + item.quantity);
       return stockSum;
     }

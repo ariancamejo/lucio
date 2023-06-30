@@ -10,6 +10,8 @@ import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/employe/employe_provider.dart';
 import 'package:lucio/data/repositories/options_provider.dart';
 import 'package:lucio/data/repositories/production/work_production_provider.dart';
+import 'package:lucio/data/repositories/sales/sales_provider.dart';
+import 'package:lucio/data/repositories/sales/sub_sales_provider.dart';
 import 'package:lucio/domain/scheme/production/production_model.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:collection/collection.dart';
@@ -130,6 +132,7 @@ class _InfoProduction extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final workPs = ref.watch(workProductionProvider);
+    final subSalesPs = ref.watch(subSalesProvider);
     final decimals = ref.watch(optionsP).decimals;
     final size = MediaQuery.of(context).size;
     return FutureBuilder(
@@ -154,17 +157,22 @@ class _InfoProduction extends ConsumerWidget {
                                   children: [
                                     Text("home.production.widgets.production_item.real".tr()),
                                     Text(
-                                      ' (${model.breaksPercent(productions: workPs.where((element) => element.type.value?.id == e.id).toList(), breaks: false).toStringAsFixed(decimals)}%)',
+                                      '(${model.breaksPercent(productions: workPs.where((element) => element.type.value?.id == e.id).toList(), breaks: false).toStringAsFixed(decimals)}%)',
                                       style: const TextStyle(fontSize: 10),
                                     ),
-                                    FutureBuilder(
-                                      future: model.details(e, typeResult: ProductionTypeResult.real),
-                                      builder: (_, snap) => Text(
-                                        snap.data?.toStringAsFixed(decimals) ?? "",
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 18),
-                                      ),
+                                    Text(
+                                      model.detailsNoSync(workPs, subSalesPs, e, typeResult: ProductionTypeResult.real).toStringAsFixed(decimals),
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(fontSize: 18),
                                     ),
+                                    // FutureBuilder(
+                                    //   future: model.details(e, typeResult: ProductionTypeResult.real),
+                                    //   builder: (_, snap) => Text(
+                                    //     snap.data?.toStringAsFixed(decimals) ?? "",
+                                    //     textAlign: TextAlign.center,
+                                    //     style: const TextStyle(fontSize: 18),
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                                 const SizedBox(width: kDefaultRefNumber),
@@ -173,18 +181,19 @@ class _InfoProduction extends ConsumerWidget {
                                   children: [
                                     Text("home.production.widgets.production_item.breaks".tr()),
                                     Text(
-                                      ' (${model.breaksPercent(productions: workPs.where((element) => element.type.value?.id == e.id).toList(), breaks: true).toStringAsFixed(decimals)}%)',
+                                      '(${model.breaksPercent(productions: workPs.where((element) => element.type.value?.id == e.id).toList(), breaks: true).toStringAsFixed(decimals)}%)',
                                       style: const TextStyle(fontSize: 10),
                                     ),
-                                    FutureBuilder(
-                                      future: model.details(e, typeResult: ProductionTypeResult.breaks),
-                                      builder: (_, snap) {
-                                        return Text(
-                                          snap.data?.toStringAsFixed(decimals) ?? "",
-                                          style: const TextStyle(fontSize: 18),
-                                        );
-                                      },
-                                    ),
+                                    Text(model.detailsNoSync(workPs, subSalesPs, e, typeResult: ProductionTypeResult.breaks).toStringAsFixed(decimals), textAlign: TextAlign.center, style: const TextStyle(fontSize: 18),),
+                                    // FutureBuilder(
+                                    //   future: model.details(e, typeResult: ProductionTypeResult.breaks),
+                                    //   builder: (_, snap) {
+                                    //     return Text(
+                                    //       snap.data?.toStringAsFixed(decimals) ?? "",
+                                    //       style: const TextStyle(fontSize: 18),
+                                    //     );
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ],
@@ -206,34 +215,42 @@ class _InfoProduction extends ConsumerWidget {
                                 Text("home.production.widgets.production_item.status.sold".tr(), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
                               ]),
                               TableRow(children: [
-                                FutureBuilder(
-                                  future: model.details(e, typeResult: ProductionTypeResult.all),
-                                  builder: (_, snap) => Text(
-                                    snap.data?.toStringAsFixed(decimals) ?? "",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                FutureBuilder(
-                                  future: model.details(e, typeResult: ProductionTypeResult.process),
-                                  builder: (_, snap) => Text(
-                                    snap.data?.toStringAsFixed(decimals) ?? "",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                FutureBuilder(
-                                  future: model.details(e, typeResult: ProductionTypeResult.available),
-                                  builder: (_, snap) => Text(
-                                    snap.data?.toStringAsFixed(decimals) ?? "",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                FutureBuilder(
-                                  future: model.details(e, typeResult: ProductionTypeResult.sold),
-                                  builder: (_, snap) => Text(
-                                    snap.data?.toStringAsFixed(decimals) ?? "",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
+                                Text(model.detailsNoSync(workPs, subSalesPs, e, typeResult: ProductionTypeResult.all).toStringAsFixed(decimals), textAlign: TextAlign.center),
+                                Text(model.detailsNoSync(workPs, subSalesPs, e, typeResult: ProductionTypeResult.process).toStringAsFixed(decimals), textAlign: TextAlign.center),
+                                Text(model.detailsNoSync(workPs, subSalesPs, e, typeResult: ProductionTypeResult.available).toStringAsFixed(decimals), textAlign: TextAlign.center),
+                                Text(model.detailsNoSync(workPs, subSalesPs, e, typeResult: ProductionTypeResult.sold).toStringAsFixed(decimals), textAlign: TextAlign.center),
+                                // FutureBuilder(
+                                //   future: model.details(e, typeResult: ProductionTypeResult.all),
+                                //   builder: (_, snap) =>
+                                //       Text(
+                                //         snap.data?.toStringAsFixed(decimals) ?? "",
+                                //         textAlign: TextAlign.center,
+                                //       ),
+                                // ),
+                                // FutureBuilder(
+                                //   future: model.details(e, typeResult: ProductionTypeResult.process),
+                                //   builder: (_, snap) =>
+                                //       Text(
+                                //         snap.data?.toStringAsFixed(decimals) ?? "",
+                                //         textAlign: TextAlign.center,
+                                //       ),
+                                // ),
+                                // FutureBuilder(
+                                //   future: model.details(e, typeResult: ProductionTypeResult.available),
+                                //   builder: (_, snap) =>
+                                //       Text(
+                                //         snap.data?.toStringAsFixed(decimals) ?? "",
+                                //         textAlign: TextAlign.center,
+                                //       ),
+                                // ),
+                                // FutureBuilder(
+                                //   future: model.details(e, typeResult: ProductionTypeResult.sold),
+                                //   builder: (_, snap) =>
+                                //       Text(
+                                //         snap.data?.toStringAsFixed(decimals) ?? "",
+                                //         textAlign: TextAlign.center,
+                                //       ),
+                                // ),
                               ]),
                             ],
                           ),

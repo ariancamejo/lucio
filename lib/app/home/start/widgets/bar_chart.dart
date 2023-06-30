@@ -52,22 +52,21 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
     if (consumption.isNotEmpty && productTypes.isNotEmpty && workProductions.isNotEmpty) {
       dataList = productTypes
           .map((type) => _BarData(
-          Color(type.color),
-          consumption
-              .where((f) => f.type.value?.id == type.id)
-              .map(
-                (co) => DataWithColor(
-              material: co.material.value,
-              value: co.quantity(
-                PieChartGraphic.quantityOfProductionType(workProductions, type, productTypes).toInt(),
-              ),
-            ),
-          )
-              .toList()))
+              Color(type.color),
+              consumption
+                  .where((f) => f.type.value?.id == type.id)
+                  .map(
+                    (co) => DataWithColor(
+                      material: co.material.value,
+                      value: co.quantity(
+                        PieChartGraphic.quantityOfProductionType(workProductions, type, productTypes).toInt(),
+                      ),
+                    ),
+                  )
+                  .toList()))
           .toList();
       maxValue = dataList
-          .map((myObject) =>
-          myObject.consumptions.fold<double>(double.negativeInfinity, (currentMax, listMax) => listMax.value > currentMax ? listMax.value : currentMax))
+          .map((myObject) => myObject.consumptions.fold<double>(double.negativeInfinity, (currentMax, listMax) => listMax.value > currentMax ? listMax.value : currentMax))
           .fold<double>(double.negativeInfinity, (a, b) => a > b ? a : b);
     }
     maxValue = roundToNextMultipleOf5(maxValue);
@@ -120,7 +119,7 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
             ),
             AspectRatio(
               aspectRatio: 1.5,
-              child:  BarChart(
+              child: BarChart(
                 key: Key(refreshing.toString()),
                 BarChartData(
                   alignment: BarChartAlignment.spaceBetween,
@@ -184,11 +183,11 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                       barRods: data.consumptions
                           .map(
                             (e) => BarChartRodData(
-                          toY: e.value,
-                          color: Color(e.material?.color ?? 0x00000000),
-                          width: 4,
-                        ),
-                      )
+                              toY: e.value,
+                              color: Color(e.material?.color ?? 0x00000000),
+                              width: 4,
+                            ),
+                          )
                           .toList(),
                       showingTooltipIndicators: touchedGroupIndex == index ? [0] : [],
                     );
@@ -201,11 +200,11 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                       tooltipBgColor: Colors.transparent,
                       tooltipMargin: 0,
                       getTooltipItem: (
-                          BarChartGroupData group,
-                          int groupIndex,
-                          BarChartRodData rod,
-                          int rodIndex,
-                          ) {
+                        BarChartGroupData group,
+                        int groupIndex,
+                        BarChartRodData rod,
+                        int rodIndex,
+                      ) {
                         return BarTooltipItem(
                           "",
                           TextStyle(
@@ -244,32 +243,37 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                   const SizedBox(width: double.maxFinite, height: kDefaultRefNumber / 2),
                   Expanded(
                     child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
                       child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        alignment: WrapAlignment.start,
+                        runAlignment: WrapAlignment.start,
                         spacing: 4.0, // espacio horizontal entre los chips
                         runSpacing: -8, // espacio vertical entre las filas de chips
+                        direction: Axis.horizontal, // hacer que el Wrap sea horizontal
                         children: materials
                             .map(
                               (e) => Chip(
-                                surfaceTintColor: Color(e.color),
-                                onDeleted: () {},
-                                deleteIcon: ColorIndicator(
-                                  width: 30,
-                                  height: 30,
-                                  borderRadius: 4,
-                                  color: Color(e.color),
-                                  onSelectFocus: false,
-                                  onSelect: () async {
-                                    final Color colorBeforeDialog = Color(e.color);
-                                    Color result = await showColorPickerDialog(context, colorBeforeDialog);
-                                    await ref.read(materialsProvider.notifier).update(e, values: {"color": result.value});
-                                  },
-                                ),
-                                // avatar: Container(
-                                //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRefNumber / 4), color: Color(e.color)),
-                                // ),
-                                label: Text(e.name),
-                              ),
-                            )
+                            surfaceTintColor: Color(e.color),
+                            onDeleted: () {},
+                            deleteIcon: ColorIndicator(
+                              width: 30,
+                              height: 30,
+                              borderRadius: 4,
+                              color: Color(e.color),
+                              onSelectFocus: false,
+                              onSelect: () async {
+                                final Color colorBeforeDialog = Color(e.color);
+                                Color result = await showColorPickerDialog(context, colorBeforeDialog);
+                                await ref.read(materialsProvider.notifier).update(e, values: {"color": result.value});
+                              },
+                            ),
+                            // avatar: Container(
+                            //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRefNumber / 4), color: Color(e.color)),
+                            // ),
+                            label: Text(e.name),
+                          ),
+                        )
                             .toList(),
                       ),
                     ),

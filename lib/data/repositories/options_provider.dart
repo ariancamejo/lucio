@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:lucio/data/repositories/consume_materials/consume_material_provider.dart';
 import 'package:lucio/data/repositories/production/production_provider.dart';
 import 'package:lucio/data/repositories/production/work_production_provider.dart';
 import 'package:lucio/data/repositories/sales/sales_provider.dart';
@@ -17,7 +16,7 @@ class OptionsState with _$OptionsState {
   const factory OptionsState({
     required DateTime startFilter,
     required DateTime endFilter,
-    @Default(3) int decimals,
+    @Default(2) int decimals,
     @Default(false) bool checkAuth,
     @Default(0) int daysOfRangeDateProduction,
   }) = _OptionsState;
@@ -33,16 +32,8 @@ class OptionsNotifier extends StateNotifier<OptionsState> {
   OptionsNotifier(this.ref)
       : super(
           OptionsState(
-            startFilter: DateTime(
-              DateTime.now().year,
-              DateTime.now().month,
-              1,
-            ),
-            endFilter: DateTime(
-              DateTime.now().year,
-              DateTime.now().month + 1,
-              0,
-            ),
+            startFilter: DateTime(DateTime.now().year, DateTime.now().month, 1, 0, 0, 0),
+            endFilter: DateTime(DateTime.now().year, DateTime.now().month + 1, 0, 0, 0, 0).add(const Duration(hours: 23, minutes: 59, seconds: 59)),
           ),
         ) {
     Future.microtask(() => _init());

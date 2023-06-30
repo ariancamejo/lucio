@@ -149,7 +149,7 @@ class _$_OptionsState extends _OptionsState {
   const _$_OptionsState(
       {required this.startFilter,
       required this.endFilter,
-      this.decimals = 3,
+      this.decimals = 2,
       this.checkAuth = false,
       this.daysOfRangeDateProduction = 0})
       : super._();
