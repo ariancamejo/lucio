@@ -59,8 +59,14 @@ class TypeOfSalePage extends ConsumerWidget {
               )
             : ListView.separated(
                 separatorBuilder: (_, index) => const SizedBox(height: 1),
-                itemBuilder: (_, index) => TypeOfSaleItem(model: typeOfSales[index]),
-                itemCount: typeOfSales.length,
+                itemBuilder: (_, index) {
+                  if (index == typeOfSales.length) {
+                    return const SizedBox(height: 60);
+                  }
+
+                  return TypeOfSaleItem(model: typeOfSales[index]);
+                },
+                itemCount: typeOfSales.length + 1,
               ),
       ),
       floatingActionButton: FloatingActionButton(onPressed: () => fireForm(context), child: const Icon(Icons.add)),

@@ -41,14 +41,17 @@ class EmployeeItem extends ConsumerWidget {
           const SizedBox(width: 1),
         ],
       ),
-      child: ListTile(
-        title: Text(model.name),
-        subtitle: Text("CI: ${model.ci ?? ""}"),
-        trailing: IconButton(
-          onPressed: () {
-            PlanPage.fireForm(context, employeModelInitial: model);
-          },
-          icon: const Icon(FontAwesomeIcons.listCheck),
+      child: Container(
+        color: Theme.of(context).cardColor,
+        child: ListTile(
+          title: Text(model.name),
+          subtitle: Text("CI: ${model.ci ?? ""}"),
+          trailing: IconButton(
+            onPressed: () {
+              PlanPage.fireForm(context, employeModelInitial: model);
+            },
+            icon: const Icon(FontAwesomeIcons.listCheck),
+          ),
         ),
       ),
     );

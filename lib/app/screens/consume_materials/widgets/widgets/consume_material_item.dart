@@ -8,8 +8,9 @@ import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
 
 class ConsumeMaterialItem extends ConsumerWidget {
   final ConsumptionModel model;
+  final bool typeShow;
 
-  const ConsumeMaterialItem({Key? key, required this.model}) : super(key: key);
+  const ConsumeMaterialItem({Key? key, required this.model, this.typeShow = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,10 +44,10 @@ class ConsumeMaterialItem extends ConsumerWidget {
         ],
       ),
       child: ListTile(
-        title: Text(model.type.value?.name ?? ""),
-        subtitle: Text(model.material.value?.name ?? ""),
+        title: typeShow ? Text(model.type.value?.name ?? "") : Text(model.material.value?.name ?? ""),
+        subtitle: typeShow ? Text(model.material.value?.name ?? "") : null,
         trailing: Text(
-          "${model.quantityMaterial} / ${model.quantityType}",
+          "${model.quantityType} / ${model.quantityMaterial}",
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         onLongPress: () => ConsumeMaterialsPage.fireForm(context, model: model),

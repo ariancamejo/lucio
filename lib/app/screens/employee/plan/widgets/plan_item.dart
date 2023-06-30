@@ -29,7 +29,7 @@ class PlanItem extends ConsumerWidget {
             borderRadius: BorderRadius.circular(kDefaultRefNumber),
             gradient: LinearGradient(
               stops: [percent, percent > 0.99 ? 1 : percent + 0.1],
-              colors: [percent >= 0.01 ? scheme.onSecondary : scheme.background, scheme.background],
+              colors: [percent >= 0.01 ? scheme.surfaceVariant : scheme.background, scheme.background],
             ),
           ),
           child: Slidable(

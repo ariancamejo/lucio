@@ -56,8 +56,14 @@ class MaterialsPage extends ConsumerWidget {
               )
             : ListView.separated(
                 separatorBuilder: (_, index) => const SizedBox(height: 1),
-                itemBuilder: (_, index) => MaterialItem(model: materials[index]),
-                itemCount: materials.length,
+                itemBuilder: (_, index) {
+                  if (index == materials.length) {
+                    return const SizedBox(height: 60);
+                  }
+
+                  return MaterialItem(model: materials[index]);
+                },
+                itemCount: materials.length + 1,
               ),
       ),
       floatingActionButton: FloatingActionButton(onPressed: () => fireForm(context), child: const Icon(Icons.add)),

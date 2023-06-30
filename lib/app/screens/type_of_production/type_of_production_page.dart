@@ -59,8 +59,14 @@ class TypeOfProductionPage extends ConsumerWidget {
               )
             : ListView.separated(
                 separatorBuilder: (_, index) => const SizedBox(height: 1),
-                itemBuilder: (_, index) => TypeOfProductionItem(model: typeOfProductions[index],showColors: true),
-                itemCount: typeOfProductions.length,
+                itemBuilder: (_, index) {
+                  if (index == typeOfProductions.length) {
+                    return const SizedBox(height: 60);
+                  }
+
+                  return  TypeOfProductionItem(model: typeOfProductions[index],showColors: true);
+                },
+                itemCount: typeOfProductions.length + 1,
               ),
       ),
       floatingActionButton: FloatingActionButton(onPressed: () => fireForm(context), child: const Icon(Icons.add)),

@@ -78,6 +78,7 @@ class EmployeePage extends ConsumerWidget {
                         )
                         .toList(),
                   ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 60))
                 ],
               ),
       ),

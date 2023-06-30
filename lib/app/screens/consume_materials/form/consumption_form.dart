@@ -52,6 +52,7 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
                 child: DropdownSearch<ProductionTypeModel>(
+                  enabled: widget.model == null,
                   validator: (ProductionTypeModel? value) {
                     if (value == null) {
                       return "Production Type required";
@@ -78,7 +79,26 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
+                child: TextFormField(
+                  controller: _quantityType,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: "Quantity Type"),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return "Quantity Type required";
+                    }
+                    if (double.tryParse(value ?? '-') == null) {
+                      return "Enter valid cant";
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
                 child: DropdownSearch<MaterialModel>(
+                  enabled: widget.model == null,
                   validator: (MaterialModel? value) {
                     if (value == null) {
                       return "Material required";
@@ -101,24 +121,6 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(labelText: "Material"),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
-                child: TextFormField(
-                  controller: _quantityType,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: "Quantity Type"),
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return "Quantity Type required";
-                    }
-                    if (double.tryParse(value ?? '-') == null) {
-                      return "Enter valid cant";
-                    }
-                    return null;
-                  },
                 ),
               ),
               Padding(
