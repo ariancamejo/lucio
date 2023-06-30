@@ -148,13 +148,14 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                     if (double.tryParse(value ?? "0") == 0) {
                       return "Please,specify a number greater than zero";
                     }
-
-                    double res = productionModel?.detailsNoSync(workPs, subSales, productionTypeModel, typeResult: ProductionTypeResult.available) ?? 0;
-                    if ((double.tryParse(value ?? "0") ?? 0) > res) {
-                      if (res == 0) {
-                        return "No available";
+                    if (productionModel != null) {
+                      double res = productionModel!.detailsNoSync(workPs, subSales, productionTypeModel, typeResult: ProductionTypeResult.available) ?? 0;
+                      if ((double.tryParse(value ?? "0") ?? 0) > res) {
+                        if (res == 0) {
+                          return "No available";
+                        }
+                        return "Only ${res.toStringAsFixed(decimals)} available";
                       }
-                      return "Only ${res.toStringAsFixed(decimals)} available";
                     }
 
                     return null;
