@@ -12,7 +12,7 @@ class ConsumptionModel {
   late double quantityType;
   late double quantityMaterial;
 
-  double quantity(int cantType) {
+  double quantity(double cantType) {
     return (cantType / quantityType) * quantityMaterial;
   }
 }

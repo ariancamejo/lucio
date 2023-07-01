@@ -13,8 +13,9 @@ import 'package:lucio/domain/scheme/production/production_model.dart';
 
 class ConsumptionForm extends ConsumerStatefulWidget {
   final ConsumptionModel? model;
+  final Map<String, dynamic>? initial;
 
-  const ConsumptionForm({Key? key, this.model}) : super(key: key);
+  const ConsumptionForm({Key? key, this.model, this.initial}) : super(key: key);
 
   @override
   ConsumerState<ConsumptionForm> createState() => _ConsumeMaterialFormState();
@@ -29,10 +30,10 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
 
   @override
   void initState() {
-    productionTypeModel = widget.model?.type.value;
-    materialModel = widget.model?.material.value;
-    _quantityType = TextEditingController(text: widget.model?.quantityType.toString() ?? "");
-    _quantityMaterial = TextEditingController(text: widget.model?.quantityMaterial.toString() ?? "");
+    productionTypeModel = widget.model?.type.value ?? (widget.initial ?? {})['type'];
+    materialModel = widget.model?.material.value ?? (widget.initial ?? {})['material'];
+    _quantityType = TextEditingController(text: widget.model?.quantityType.toString() ?? (widget.initial ?? {})['quantityType'] ?? "");
+    _quantityMaterial = TextEditingController(text: widget.model?.quantityMaterial.toString() ?? (widget.initial ?? {})['quantityMaterial'] ?? "");
     super.initState();
   }
 

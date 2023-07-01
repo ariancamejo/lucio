@@ -47,7 +47,7 @@ class ConsumeMaterialItem extends ConsumerWidget {
         title: typeShow ? Text(model.type.value?.name ?? "") : Text(model.material.value?.name ?? ""),
         subtitle: typeShow ? Text(model.material.value?.name ?? "") : null,
         trailing: Text(
-          "${model.quantityType} / ${model.quantityMaterial}",
+          "${model.quantityMaterial} / ${model.quantityType} ",
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         onLongPress: () => ConsumeMaterialsPage.fireForm(context, model: model),

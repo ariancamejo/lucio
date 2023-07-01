@@ -23,7 +23,7 @@ class EmployeModel {
   }) async {
     double real =
         (await DBHelper.isar.workProductionModels.filter().type((q) => q.idEqualTo(type.id)).datetimeBetween(startFilter, endFilter).employee((q) => q.idEqualTo(id)).findAll())
-            .fold(0, (sum, item) => sum + item.quantity);
+            .fold(0, (sum, item) => sum + item.quantity - item.breaks);
     return real;
   }
 }

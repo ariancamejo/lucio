@@ -59,7 +59,7 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                     (co) => DataWithColor(
                       material: co.material.value,
                       value: co.quantity(
-                        PieChartGraphic.quantityOfProductionType(workProductions, type, productTypes).toInt(),
+                        PieChartGraphic.quantityOfProductionType(workProductions, type, productTypes),
                       ),
                     ),
                   )

@@ -6,7 +6,6 @@ import 'package:lucio/app/screens/consume_materials/widgets/widgets/consume_mate
 
 import 'package:lucio/app/widgets/empty.dart';
 import 'package:lucio/app/widgets/section_widget.dart';
-import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/consume_materials/consume_material_provider.dart';
 import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
 import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
@@ -18,9 +17,9 @@ class ConsumeMaterialsPage extends ConsumerWidget {
 
   const ConsumeMaterialsPage({Key? key}) : super(key: key);
 
-  static fireForm(BuildContext context, {ConsumptionModel? model}) => showCupertinoModalBottomSheet(
+  static fireForm(BuildContext context, {ConsumptionModel? model, Map<String, dynamic>? initial }) => showCupertinoModalBottomSheet(
         context: context,
-        builder: (_) => ConsumptionForm(model: model),
+        builder: (_) => ConsumptionForm(model: model,initial:initial),
       );
 
   static Future<bool> fireDelete(BuildContext context, {required ConsumptionModel model}) async {

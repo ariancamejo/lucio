@@ -24,7 +24,18 @@ class WorkProductionItem extends ConsumerWidget {
       child: Slidable(
         // Specify a key if the Slidable is dismissible.
         key: ValueKey(model.id),
-        // The end action pane is the one at the right or the bottom side.
+        startActionPane: ActionPane(
+          motion: const ScrollMotion(),
+          children: [
+            SlidableAction(
+              spacing: 8,
+              onPressed: (_) {},
+              backgroundColor: model.readyIn() == null ? scheme.primary : Colors.grey,
+              label: model.readyIn() == null ? "Ready" : DateFormat(dateFormat).format(model.readyIn()!),
+              borderRadius: BorderRadius.circular(kDefaultRefNumber / 4),
+            ),
+          ],
+        ),
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
           children: [
