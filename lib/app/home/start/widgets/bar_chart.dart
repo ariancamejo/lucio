@@ -59,7 +59,7 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                     (co) => DataWithColor(
                       material: co.material.value,
                       value: co.quantity(
-                        PieChartGraphic.quantityOfProductionType(workProductions, type, productTypes),
+                        PieChartGraphic.quantityOfProductionType(workProductions, type),
                       ),
                     ),
                   )
@@ -81,7 +81,7 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
                     child: GestureDetector(
                       onTap: () {
                         context.go(context.namedLocation(ConsumeMaterialsPage.name));
@@ -99,21 +99,9 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                   ),
                   initialValue: units.selected,
                   onSelected: (value) {
-                    if (value.key == 'all') {
-                      showCupertinoModalBottomSheet(context: context, builder: (_) => BarChartDetail());
-                    } else {
-                      ref.read(unitsProvider.notifier).selected = value;
-                    }
+                    ref.read(unitsProvider.notifier).selected = value;
                   },
-                  itemBuilder: (_) => [
-                    PopupMenuItem(
-                      value: UnitOfMeasurementModel()
-                        ..key = 'all'
-                        ..value = 'All',
-                      child: const Text("View details"),
-                    ),
-                    ...units.units.map((e) => PopupMenuItem(value: e, child: Text(e.value))).toList()
-                  ],
+                  itemBuilder: (_) => units.units.map((e) => PopupMenuItem(value: e, child: Text(e.value))).toList(),
                 ),
               ],
             ),
@@ -248,32 +236,35 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                         crossAxisAlignment: WrapCrossAlignment.start,
                         alignment: WrapAlignment.start,
                         runAlignment: WrapAlignment.start,
-                        spacing: 4.0, // espacio horizontal entre los chips
-                        runSpacing: -8, // espacio vertical entre las filas de chips
-                        direction: Axis.horizontal, // hacer que el Wrap sea horizontal
+                        spacing: 4.0,
+                        // espacio horizontal entre los chips
+                        runSpacing: -8,
+                        // espacio vertical entre las filas de chips
+                        direction: Axis.horizontal,
+                        // hacer que el Wrap sea horizontal
                         children: materials
                             .map(
                               (e) => Chip(
-                            surfaceTintColor: Color(e.color),
-                            onDeleted: () {},
-                            deleteIcon: ColorIndicator(
-                              width: 30,
-                              height: 30,
-                              borderRadius: 4,
-                              color: Color(e.color),
-                              onSelectFocus: false,
-                              onSelect: () async {
-                                final Color colorBeforeDialog = Color(e.color);
-                                Color result = await showColorPickerDialog(context, colorBeforeDialog);
-                                await ref.read(materialsProvider.notifier).update(e, values: {"color": result.value});
-                              },
-                            ),
-                            // avatar: Container(
-                            //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRefNumber / 4), color: Color(e.color)),
-                            // ),
-                            label: Text(e.name),
-                          ),
-                        )
+                                surfaceTintColor: Color(e.color),
+                                onDeleted: () {},
+                                deleteIcon: ColorIndicator(
+                                  width: 30,
+                                  height: 30,
+                                  borderRadius: 4,
+                                  color: Color(e.color),
+                                  onSelectFocus: false,
+                                  onSelect: () async {
+                                    final Color colorBeforeDialog = Color(e.color);
+                                    Color result = await showColorPickerDialog(context, colorBeforeDialog);
+                                    await ref.read(materialsProvider.notifier).update(e, values: {"color": result.value});
+                                  },
+                                ),
+                                // avatar: Container(
+                                //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRefNumber / 4), color: Color(e.color)),
+                                // ),
+                                label: Text(e.name),
+                              ),
+                            )
                             .toList(),
                       ),
                     ),

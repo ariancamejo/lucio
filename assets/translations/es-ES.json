@@ -56,7 +56,8 @@
             "total": "Total",
             "in_progress": "En proceso",
             "available": "Disponible",
-            "sold": "Vendido"
+            "sold": "Vendido",
+            "breaks": "Roturas"
           }
         },
         "work_production_item": {

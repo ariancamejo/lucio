@@ -12,12 +12,13 @@ class PieChartGraphic extends ConsumerStatefulWidget {
   static double _allCount(List<WorkProductionModel> wp) {
     double total = 0.0;
     for (var element in wp) {
-      total = total + (element.quantity - element.breaks);
+      total = total + (element.quantity);
+      // total = total + (element.quantity - element.breaks);
     }
     return total;
   }
 
-  static double quantityOfProductionType(List<WorkProductionModel> all, ProductionTypeModel p, List<ProductionTypeModel> prodyctionTypeAll) {
+  static double quantityOfProductionType(List<WorkProductionModel> all, ProductionTypeModel p) {
     double total = 0.0;
 
     total = _allCount(all);
@@ -43,31 +44,13 @@ class _PieChartGraphicState extends ConsumerState<PieChartGraphic> {
         aspectRatio: 1.2,
         child: Column(
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Production",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                PopupMenuButton<int>(
-                  initialValue: null,
-                  onSelected: (value) {
-                    switch (value) {
-                      case 1:
-                        break;
-                    }
-                  },
-                  itemBuilder: (_) => const [PopupMenuItem(value: 1, child: Text("View details"))],
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Production",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
+              ),
             ),
             Expanded(
               child: prodyctionType.isEmpty || workP.isEmpty
@@ -80,9 +63,9 @@ class _PieChartGraphicState extends ConsumerState<PieChartGraphic> {
                             .map(
                               (e) => PieChartSectionData(
                                 showTitle: false,
-                                value: PieChartGraphic.quantityOfProductionType(workP, e, prodyctionType),
+                                value: PieChartGraphic.quantityOfProductionType(workP, e),
                                 color: Color(e.color).withOpacity(0.8),
-                                title: PieChartGraphic.quantityOfProductionType(workP, e, prodyctionType).toStringAsFixed(0),
+                                title: PieChartGraphic.quantityOfProductionType(workP, e).toStringAsFixed(0),
                                 radius: contrain.maxWidth / 4,
                                 titleStyle: const TextStyle(
                                   fontSize: 16,

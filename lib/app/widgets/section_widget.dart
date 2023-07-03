@@ -32,7 +32,7 @@ class Section extends MultiSliver {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber / 2),
+              padding: const EdgeInsets.symmetric(horizontal:kDefaultRefNumber/2),
               sliver: SliverList(
                 delegate: SliverChildListDelegate.fixed(items),
               ),

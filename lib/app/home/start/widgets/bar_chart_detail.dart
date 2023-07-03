@@ -94,7 +94,7 @@ class _BarChartDetailState extends ConsumerState<BarChartDetail> {
                           },
                           title: Text(m.name),
                           subtitle: Text("${consump.quantity(
-                                PieChartGraphic.quantityOfProductionType(workProductions, type, productionTypes),
+                                PieChartGraphic.quantityOfProductionType(workProductions, type),
                               ).toStringAsFixed(options.decimals)} (${m.unit.value?.key ?? ""})"),
                           trailing: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,

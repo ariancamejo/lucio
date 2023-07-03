@@ -8,9 +8,9 @@ import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
 
 class ConsumeMaterialItem extends ConsumerWidget {
   final ConsumptionModel model;
-  final bool typeShow;
+  final Widget? subtitle;
 
-  const ConsumeMaterialItem({Key? key, required this.model, this.typeShow = true}) : super(key: key);
+  const ConsumeMaterialItem({Key? key, required this.model, this.subtitle}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,8 +44,8 @@ class ConsumeMaterialItem extends ConsumerWidget {
         ],
       ),
       child: ListTile(
-        title: typeShow ? Text(model.type.value?.name ?? "") : Text(model.material.value?.name ?? ""),
-        subtitle: typeShow ? Text(model.material.value?.name ?? "") : null,
+        title: subtitle == null ? Text(model.type.value?.name ?? "") : Text(model.material.value?.name ?? ""),
+        subtitle: subtitle ?? Text(model.material.value?.name ?? ""),
         trailing: Text(
           "${model.quantityMaterial} / ${model.quantityType} ",
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),

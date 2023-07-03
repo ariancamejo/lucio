@@ -17,7 +17,7 @@ class DecimalPlacesWidget extends ConsumerWidget {
       trailing: CustomizableCounter(
         step: 1,
         minCount: 0,
-        maxCount: 4,
+        maxCount: 5,
         buttonText: "Change",
         borderColor: Colors.transparent,
         incrementIcon: const Icon(Icons.add),
