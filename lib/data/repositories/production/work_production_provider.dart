@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/options_provider.dart';
 import 'package:lucio/data/repositories/production/production_provider.dart';
 import 'package:lucio/data/repositories/rlp_provider.dart';
@@ -42,10 +44,15 @@ class WorkProductionNotifier extends StateNotifier<List<WorkProductionModel>> {
 
     ProductionModel? productionModel = await ref.read(productionProvider.notifier).findProduction(dateTime);
     if (productionModel == null) {
+      ref.read(rlP.notifier).stop();
+      return null;
+    }
+    if (productionModel.workProductions.map((e) => e).toList().where((element) => element.employee.value?.id == employee.id && element.type.value?.id == type.id).isNotEmpty) {
       BuildContext? context = Utils.currentContext(ref);
       if (context != null && context.mounted) {
-        Utils.showSnack(context, title: "Two Production of some Day", message: "Please, contact your developer");
+        Utils.showSnack(context, title: DateFormat(dateFormat).format(now), message: "And there is a production of ${type.name} for ${employee.name}");
       }
+      ref.read(rlP.notifier).stop();
       return null;
     }
 

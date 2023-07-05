@@ -2,7 +2,7 @@ name: lucio
 description: A new Flutter project.
 publish_to: 'none'
 
-version: 1.0.20
+version: 1.0.22
 
 environment:
   sdk: '>=3.1.0-129.0.dev <4.0.0'
@@ -59,6 +59,9 @@ dependencies:
   driven: ^0.1.4
   google_sign_in: ^5.4.0
   googleapis: ^9.2.0
+  #CALCULATOR
+  math_expressions: ^2.3.1
+  auto_size_text: ^3.0.0
 
 
 dev_dependencies:

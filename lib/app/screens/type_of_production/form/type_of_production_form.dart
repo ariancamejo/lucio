@@ -3,6 +3,7 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucio/app/screens/settings/unit/unit_page.dart';
+import 'package:lucio/app/widgets/calculator.dart';
 import 'package:lucio/app/widgets/dropdowns.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
@@ -101,7 +102,12 @@ class _MaterialFormState extends ConsumerState<TypeOfProductionForm> {
                   controller: _price,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: "Price"),
+                  decoration: InputDecoration(
+                    labelText: "Price",
+                    prefixIcon: CalculatorIcon(
+                      controller: _price,
+                    ),
+                  ),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return "Price required";

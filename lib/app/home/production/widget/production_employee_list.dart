@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucio/app/home/production/production_tab.dart';
 import 'package:lucio/app/home/production/widget/work_prodction_item.dart';
 import 'package:lucio/app/widgets/section_widget.dart';
 import 'package:lucio/data/const.dart';
@@ -52,6 +53,7 @@ class PrductionEmployeeList extends ConsumerWidget {
                   .toList())
         ],
       ),
+      floatingActionButton: FloatingActionButton(onPressed: () => ProductionTab.fireForm(context, initial: {"dateTimeParam": model.date}), child: const Icon(Icons.add)),
     );
   }
 }

@@ -16,6 +16,7 @@ class OptionsState with _$OptionsState {
   const factory OptionsState({
     required DateTime startFilter,
     required DateTime endFilter,
+    @Default(false) bool permanentDates,
     @Default(2) int decimals,
     @Default(false) bool checkAuth,
     @Default(0) int daysOfRangeDateProduction,
@@ -69,15 +70,37 @@ class OptionsNotifier extends StateNotifier<OptionsState> {
     Map<String, dynamic> json = {
       "daysOfRangeDateProduction": state.daysOfRangeDateProduction,
       "decimals": state.decimals,
+      "startFilter": state.startFilter.toString(),
+      "endFilter": state.endFilter.toString(),
+      "permanentDates": state.permanentDates
     };
     await SecureStorage.set('optionsSaved', value: jsonEncode(json));
   }
 
+  permanentDates(bool value) {
+    state = state.copyWith(permanentDates: value);
+    _save();
+  }
+
   _init() async {
     final strOptionsSaved = await SecureStorage.read('optionsSaved');
+
     if (strOptionsSaved != null) {
       Map<String, dynamic> json = jsonDecode(strOptionsSaved);
-      state = state.copyWith(daysOfRangeDateProduction: json['daysOfRangeDateProduction'], decimals: json['decimals']);
+      state = state.copyWith(
+          daysOfRangeDateProduction: json['daysOfRangeDateProduction'],
+          decimals: json['decimals'],
+          permanentDates: json['permanentDates'] ?? false,
+          startFilter: json['permanentDates'] ?? false
+              ? json['startFilter'] != null
+                  ? DateTime.parse(json['startFilter'])
+                  : state.startFilter
+              : state.startFilter,
+          endFilter: json['permanentDates'] ?? false
+              ? json['endFilter'] != null
+                  ? DateTime.parse(json['endFilter'])
+                  : state.endFilter
+              : state.endFilter);
     }
   }
 }

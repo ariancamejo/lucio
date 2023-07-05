@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucio/app/home/production/production_tab.dart';
 import 'package:lucio/app/screens/type_of_production/type_of_production_page.dart';
+import 'package:lucio/app/widgets/calculator.dart';
 import 'package:lucio/app/widgets/dropdowns.dart';
 
 import 'package:lucio/data/const.dart';
@@ -136,7 +137,12 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                   controller: _quantity,
                   enabled: productionTypeModel != null,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: "Quantity"),
+                  decoration: InputDecoration(
+                    labelText: "Quantity",
+                    prefixIcon: CalculatorIcon(
+                      controller: _quantity,
+                    ),
+                  ),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -201,7 +207,12 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                   controller: _breaks,
                   enabled: productionTypeModel != null,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: "Breaks"),
+                  decoration: InputDecoration(
+                    labelText: "Breaks",
+                    prefixIcon: CalculatorIcon(
+                      controller: _breaks,
+                    ),
+                  ),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {

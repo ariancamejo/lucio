@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucio/app/screens/employee/employee_page.dart';
 import 'package:lucio/app/screens/type_of_production/type_of_production_page.dart';
+import 'package:lucio/app/widgets/calculator.dart';
 import 'package:lucio/app/widgets/dropdowns.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/employe/employe_provider.dart';
@@ -38,7 +39,7 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
     final Map<String, dynamic> initialData = widget.initial ?? {};
     _quantity = TextEditingController(text: widget.model?.quantity.toString() ?? initialData['quantity'] ?? "");
     _breaks = TextEditingController(text: widget.model?.breaks.toString() ?? initialData['breaks'] ?? "0");
-    dateTime = widget.model?.datetime ?? dateTime;
+    dateTime = widget.model?.datetime ?? initialData['dateTimeParam'] ?? dateTime;
     productionTypeModel = widget.model?.type.value ?? initialData['type'];
     employeModel = widget.model?.employee.value ?? initialData['employee'];
 
@@ -52,7 +53,10 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
     final typeProductions = ref.watch(productionTypeModelProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.model == null ? "home.production.form.new".tr() : "home.production.form.update".tr()),
+        title: ListTile(
+          title: Text(widget.model == null ? "home.production.form.new".tr() : "home.production.form.update".tr()),
+          subtitle: Text(DateFormat(dateFormat).format(dateTime)),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -127,12 +131,16 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                     if (value == null) {
                       return "home.production.form.fields.production_type.mistakes.required".tr();
                     }
+
+
+
+
                     return null;
                   },
                   selectedItem: productionTypeModel,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
-                  popupProps:
-                      popUpsProps<ProductionTypeModel>(context, onPressed: () => TypeOfProductionPage.fireForm(context), title: "home.production.form.fields.production_type.title".tr()),
+                  popupProps: popUpsProps<ProductionTypeModel>(context,
+                      onPressed: () => TypeOfProductionPage.fireForm(context), title: "home.production.form.fields.production_type.title".tr()),
                   asyncItems: (String filter) => Future.value(typeProductions),
                   itemAsString: (ProductionTypeModel u) => "${u.name} ${u.unit.value == null ? "" : "(${u.unit.value?.key ?? ""})"}",
                   onChanged: (ProductionTypeModel? data) => setState(() => productionTypeModel = data),
@@ -146,7 +154,12 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: TextFormField(
                   controller: _quantity,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(labelText: "home.production.form.fields.quantity.title".tr()),
+                  decoration: InputDecoration(
+                    labelText: "home.production.form.fields.quantity.title".tr(),
+                    prefixIcon: CalculatorIcon(
+                      controller: _quantity,
+                    ),
+                  ),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -159,6 +172,8 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                       return "home.production.form.fields.quantity.mistakes.zero".tr();
                     }
 
+
+
                     return null;
                   },
                 ),
@@ -168,7 +183,12 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
                 child: TextFormField(
                   controller: _breaks,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(labelText: "home.production.form.fields.break.title".tr()),
+                  decoration: InputDecoration(
+                    labelText: "home.production.form.fields.break.title".tr(),
+                    prefixIcon: CalculatorIcon(
+                      controller: _breaks,
+                    ),
+                  ),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -190,6 +210,14 @@ class _WorkProductionFormState extends ConsumerState<WorkProductionForm> {
         label: Text(DateFormat(dateFormat).format(dateTime)),
         onPressed: () async {
           if (_key.currentState?.validate() ?? false) {
+
+
+
+
+
+
+
+
             if (widget.model == null) {
               await ref.read(workProductionProvider.notifier).insert(
                     employee: employeModel!,

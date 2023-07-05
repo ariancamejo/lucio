@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucio/app/screens/materials/materials_page.dart';
 import 'package:lucio/app/screens/type_of_production/type_of_production_page.dart';
+import 'package:lucio/app/widgets/calculator.dart';
 import 'package:lucio/app/widgets/dropdowns.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/consume_materials/consume_material_provider.dart';
@@ -84,7 +85,12 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
                   controller: _quantityType,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: "Quantity Type"),
+                  decoration: InputDecoration(
+                    labelText: "Quantity Type",
+                    prefixIcon: CalculatorIcon(
+                      controller: _quantityType,
+                    ),
+                  ),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return "Quantity Type required";
@@ -130,7 +136,12 @@ class _ConsumeMaterialFormState extends ConsumerState<ConsumptionForm> {
                   controller: _quantityMaterial,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: "Quantity Material"),
+                  decoration: InputDecoration(
+                    labelText: "Quantity Material",
+                    prefixIcon: CalculatorIcon(
+                      controller: _quantityMaterial,
+                    ),
+                  ),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return "Quantity Material required";

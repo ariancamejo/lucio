@@ -49,14 +49,14 @@ class GoogleWidget extends ConsumerWidget {
           ),
       ],
       icon: CachedNetworkImage(
-        imageUrl: user?.photoUrl ?? "",
+        imageUrl: user?.photoUrl ?? "http://server.image",
         imageBuilder: (_, image) => CircleAvatar(
           backgroundColor: scheme.primary,
           backgroundImage: image,
         ),
         placeholder: (_, __) => const CircleAvatar(
           child: Stack(
-            children: [Center(child: CircularProgressIndicator(strokeWidth: 2)), Center(child: Icon(FontAwesomeIcons.google))],
+            children: [Center(child: CircularProgressIndicator(strokeWidth: 1)), Center(child: Icon(FontAwesomeIcons.google))],
           ),
         ),
         errorWidget: (_, __, ___) => CircleAvatar(
