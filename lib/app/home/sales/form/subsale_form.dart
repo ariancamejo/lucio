@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucio/app/home/production/production_tab.dart';
+import 'package:lucio/app/home/production/widget/production_item_info.dart';
 import 'package:lucio/app/screens/type_of_production/type_of_production_page.dart';
 import 'package:lucio/app/widgets/calculator.dart';
 import 'package:lucio/app/widgets/dropdowns.dart';
@@ -57,7 +58,12 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
     final typeProductions = ref.watch(productionTypeModelProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.model == null ? "New SubSale" : "Update SubSale"),
+        actions: widget.saleModel == null ? null : [Text(DateFormat(dateFormat).format(widget.saleModel!.date)), const SizedBox(width: kDefaultRefNumber)],
+        title: Text(widget.saleModel == null
+            ? widget.model == null
+                ? "New SubSale"
+                : "Update SubSale"
+            : widget.saleModel!.client),
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -103,6 +109,12 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                   ),
                 ),
               ),
+              productionModel != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(kDefaultRefNumber),
+                      child: ProductionByTypeInfo(model: productionModel!, typeModel: productionTypeModel),
+                    )
+                  : const SizedBox(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
                 child: DropdownSearch<ProductionTypeModel>(
@@ -131,6 +143,7 @@ class _SaleFormState extends ConsumerState<SubSaleForm> {
                   ),
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber, vertical: kDefaultRefNumber / 2),
                 child: TextFormField(

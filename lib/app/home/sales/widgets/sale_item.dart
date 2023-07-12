@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:lucio/app/home/sales/sales_tab.dart';
 import 'package:lucio/app/home/sales/widgets/sub_sale_item.dart';
 import 'package:lucio/app/screens/type_of_production/widgets/type_of_production_item.dart';
-import 'package:lucio/app/widgets/section_widget.dart';
 import 'package:lucio/data/const.dart';
 import 'package:lucio/data/repositories/options_provider.dart';
 import 'package:lucio/data/repositories/sales/sales_provider.dart';
@@ -55,48 +54,43 @@ class _SaleItemState extends ConsumerState<SaleItem> {
               });
             },
           ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PopupMenuButton(
-                onSelected: (value) {
-                  switch (value) {
-                    case 0:
-                      showCupertinoModalBottomSheet(context: context, builder: (_) => _SubSale(model: widget.model));
-                      break;
-                    case 1:
-                      SalesTab.fireForm(context, model: widget.model);
-                      break;
+          trailing: PopupMenuButton(
+            onSelected: (value) {
+              switch (value) {
+                case 0:
+                  showCupertinoModalBottomSheet(context: context, builder: (_) => _SubSale(model: widget.model));
+                  break;
+                case 1:
+                  SalesTab.fireForm(context, model: widget.model);
+                  break;
 
-                    case 2:
-                      SalesTab.fireDelete(context, model: widget.model).then((value) {
-                        if (value == true) {
-                          ref.read(saleProvider.notifier).delete([widget.model]);
-                        }
-                      });
-                      break;
-                  }
-                },
-                itemBuilder: (_) => const [
-                  PopupMenuItem(
-                    value: 0,
-                    child: Row(
-                      children: [Icon(FontAwesomeIcons.shopify), SizedBox(width: kDefaultRefNumber), Text("View SubSales")],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 1,
-                    child: Row(
-                      children: [Icon(FontAwesomeIcons.pencil), SizedBox(width: kDefaultRefNumber), Text("Edit")],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 2,
-                    child: Row(
-                      children: [Icon(FontAwesomeIcons.trash), SizedBox(width: kDefaultRefNumber), Text("Remove")],
-                    ),
-                  ),
-                ],
+                case 2:
+                  SalesTab.fireDelete(context, model: widget.model).then((value) {
+                    if (value == true) {
+                      ref.read(saleProvider.notifier).delete([widget.model]);
+                    }
+                  });
+                  break;
+              }
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: 0,
+                child: Row(
+                  children: [Icon(FontAwesomeIcons.shopify), SizedBox(width: kDefaultRefNumber), Text("View SubSales")],
+                ),
+              ),
+              PopupMenuItem(
+                value: 1,
+                child: Row(
+                  children: [Icon(FontAwesomeIcons.pencil), SizedBox(width: kDefaultRefNumber), Text("Edit")],
+                ),
+              ),
+              PopupMenuItem(
+                value: 2,
+                child: Row(
+                  children: [Icon(FontAwesomeIcons.trash), SizedBox(width: kDefaultRefNumber), Text("Remove")],
+                ),
               ),
             ],
           ),
@@ -145,9 +139,9 @@ class _InfoSale extends ConsumerWidget {
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: [
-                                      const Text("Quantity"),
+                                      const Text("Real"),
                                       FutureBuilder(
-                                        future: model.saled(e, typeResult: SaleTypeResult.quantity),
+                                        future: model.saled(e, typeResult: SaleTypeResult.real),
                                         builder: (_, snap) => Text(
                                           snap.data?.toStringAsFixed(decimals) ?? "",
                                           textAlign: TextAlign.center,

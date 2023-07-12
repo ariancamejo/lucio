@@ -45,9 +45,12 @@ class ProductionModel {
       filtered = productions.where((element) => element.production.value?.id == id).toList();
     }
 
-    float totalSum = filtered.fold(0, (sum, item) => sum + item.quantity + item.breaks);
-    float quantitySum = filtered.fold(0, (sum, item) => sum + item.quantity);
+    float totalSum = filtered.fold(0, (sum, item) => sum + item.quantity);
+    print(totalSum);
+
+    float quantitySum = filtered.fold(0, (sum, item) => sum + item.quantity - item.breaks);
     float breaksSum = filtered.fold(0, (sum, item) => sum + item.breaks);
+
     return totalSum == 0 ? 0 : ((breaks ? breaksSum : quantitySum) / totalSum) * 100;
   }
 
@@ -71,7 +74,8 @@ class ProductionModel {
     if (typeResult == ProductionTypeResult.available) {
       List<WorkProductionModel> stock = stockAll.where((element) => element.listForSale.isBefore(DateTime.now())).toList();
       float stockSum = stock.fold(0, (sum, item) => sum + item.quantity - item.breaks);
-      float soldSum = soldAll.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      float soldSum = soldAll.fold(0, (sum, item) => sum + item.quantity);
+
       float result = stockSum - soldSum;
       return result;
     }
@@ -87,7 +91,7 @@ class ProductionModel {
       return stockSum;
     }
     if (typeResult == ProductionTypeResult.sold) {
-      float soldSum = soldAll.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      float soldSum = soldAll.fold(0, (sum, item) => sum + item.quantity);
       return soldSum;
     }
 

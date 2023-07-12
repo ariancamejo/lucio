@@ -27,7 +27,7 @@ class PrductionEmployeeList extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("home.production.widgets.production_item.title".tr()),
+        title: Text(DateFormat(dateFormat).format(model.date)),
       ),
       body: CustomScrollView(
         slivers: [
@@ -50,7 +50,8 @@ class PrductionEmployeeList extends ConsumerWidget {
                           .toList(),
                     ),
                   )
-                  .toList())
+                  .toList()),
+          const SliverToBoxAdapter(child: SizedBox(height: kDefaultRefNumber * 5))
         ],
       ),
       floatingActionButton: FloatingActionButton(onPressed: () => ProductionTab.fireForm(context, initial: {"dateTimeParam": model.date}), child: const Icon(Icons.add)),

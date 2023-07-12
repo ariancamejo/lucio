@@ -10,8 +10,9 @@ import 'package:lucio/domain/scheme/production/production_model.dart';
 
 class ProductionByTypeInfo extends ConsumerWidget {
   final ProductionModel model;
+  final ProductionTypeModel? typeModel;
 
-  const ProductionByTypeInfo({Key? key, required this.model}) : super(key: key);
+  const ProductionByTypeInfo({Key? key, required this.model, this.typeModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,16 +21,10 @@ class ProductionByTypeInfo extends ConsumerWidget {
     final decimals = ref.watch(optionsP).decimals;
     final size = MediaQuery.of(context).size;
     return FutureBuilder(
-        future: model.types(),
+        future: typeModel == null ? model.types() : Future.value([typeModel!]),
         builder: (context, typess) {
           if (typess.connectionState != ConnectionState.done) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(kDefaultRefNumber),
-                child: const LinearProgressIndicator(),
-              ),
-            );
+            return const SizedBox();
           }
 
           return SingleChildScrollView(
@@ -80,7 +75,7 @@ class ProductionByTypeInfo extends ConsumerWidget {
                               ],
                             ),
                           ),
-                          Divider(thickness: 2),
+                          const Divider(thickness: 2),
                           Table(
                             columnWidths: {
                               0: FixedColumnWidth(size.width * 0.22),

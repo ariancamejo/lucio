@@ -4,7 +4,7 @@ import 'package:lucio/domain/scheme/production/production_model.dart';
 
 part 'sale_model.g.dart';
 
-enum SaleTypeResult { all, withoutlot, withlot, quantity, breaks }
+enum SaleTypeResult { all, withoutlot, withlot, real, breaks }
 
 @collection
 class SaleModel {
@@ -21,6 +21,20 @@ class SaleModel {
 
   SaleModel() {
     date = DateTime.now();
+  }
+
+  double breaksPercent({required List<SubSaleModel> subsales, bool breaks = true, bool withOutP = false}) {
+    List<SubSaleModel> filtered = subsales;
+    if (!withOutP) {
+      filtered = subsales.where((element) => element.sale.value?.id == id).toList();
+    }
+
+    float totalSum = filtered.fold(0, (sum, item) => sum + item.quantity);
+
+    float quantitySum = filtered.fold(0, (sum, item) => sum + item.quantity - item.breaks);
+    float breaksSum = filtered.fold(0, (sum, item) => sum + item.breaks);
+
+    return totalSum == 0 ? 0 : ((breaks ? breaksSum : quantitySum) / totalSum) * 100;
   }
 
   Future<List<ProductionTypeModel>> types() async {
@@ -40,17 +54,24 @@ class SaleModel {
     return await DBHelper.isar.subSaleModels.filter().sale((q) => q.idEqualTo(id)).lotIsNull().count() > 0;
   }
 
-  Future<float> saled(ProductionTypeModel type, {required SaleTypeResult typeResult}) async {
-    SaleModel? sale = await DBHelper.isar.saleModels.filter().idEqualTo(id).findFirst();
-    if (sale == null) return 0;
+  Future<float> saled(ProductionTypeModel type, {required SaleTypeResult typeResult, bool withOutP = false}) async {
+    List<SubSaleModel> sold = [];
 
-    List<SubSaleModel> sold = sale.subsales.where((element) => element.type.value?.id == type.id).toList();
+    if (withOutP) {
+      sold = await DBHelper.isar.subSaleModels.where().findAll();
+    } else {
+      SaleModel? sale = await DBHelper.isar.saleModels.filter().idEqualTo(id).findFirst();
+      if (sale == null) return 0;
+      sold = sale.subsales.toList();
+    }
+    sold = subsales.where((element) => element.type.value?.id == type.id).toList();
     if (typeResult == SaleTypeResult.all) {
-      float soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+      float soldSum = sold.fold(0, (sum, item) => sum + item.quantity);
       return soldSum;
     }
-    if (typeResult == SaleTypeResult.quantity) {
-      float soldSum = sold.fold(0, (sum, item) => sum + item.quantity);
+
+    if (typeResult == SaleTypeResult.real) {
+      float soldSum = sold.fold(0, (sum, item) => sum + item.quantity - item.breaks);
       return soldSum;
     }
     if (typeResult == SaleTypeResult.breaks) {
@@ -66,7 +87,7 @@ class SaleModel {
       sold = sold.where((element) => element.lot.value != null).toList();
     }
 
-    float soldSum = sold.fold(0, (sum, item) => sum + item.quantity + item.breaks);
+    float soldSum = sold.fold(0, (sum, item) => sum + item.quantity);
     return soldSum;
   }
 }

@@ -9,9 +9,12 @@ import 'package:lucio/app/home/start/widgets/line_chart.dart';
 import 'package:lucio/app/home/start/widgets/pie_chart.dart';
 import 'package:lucio/app/screens/employee/employee_page.dart';
 import 'package:lucio/data/const.dart';
+import 'package:lucio/data/repositories/consume_materials/consume_material_provider.dart';
 import 'package:lucio/data/repositories/employe/employe_provider.dart';
 import 'package:lucio/data/repositories/production/work_production_provider.dart';
 import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
+import 'package:lucio/data/repositories/units/units_provider.dart';
+import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
 
 class StartTab extends ConsumerWidget {
   const StartTab({Key? key}) : super(key: key);
@@ -107,12 +110,12 @@ class StartTab extends ConsumerWidget {
             ),
           ),
         );
-    bar() => const StaggeredGridTile.count(
+    bar({UnitOfMeasurementModel? unit}) => StaggeredGridTile.count(
           crossAxisCellCount: 4,
           mainAxisCellCount: 4.2,
           child: Card(
             child: Center(
-              child: BarChartGraphic(),
+              child: BarChartGraphic(unit: unit),
             ),
           ),
         );
@@ -126,25 +129,33 @@ class StartTab extends ConsumerWidget {
             ),
           ),
         );
-
+    final consum = ref.watch(consumeMaterialsProvider);
+    final units = ref.watch(unitsProvider).units.where((element) => consum.map((cm) => cm.material.value?.unit.value?.id).toList().contains(element.id));
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: kDefaultRefNumber / 2),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: StaggeredGrid.count(
-            crossAxisCount: 4,
-            mainAxisSpacing: 0,
-            crossAxisSpacing: 0,
-            axisDirection: AxisDirection.down,
-            children: [
-              pie(),
-              leyend(),
-              productionCount(),
-              employeesCount(),
-              bar(),
-              line(),
-            ],
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await ref.read(workProductionProvider.notifier).findData();
+
+            return Future.value();
+          },
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: StaggeredGrid.count(
+              crossAxisCount: 4,
+              mainAxisSpacing: 0,
+              crossAxisSpacing: 0,
+              axisDirection: AxisDirection.down,
+              children: [
+                pie(),
+                leyend(),
+                productionCount(),
+                employeesCount(),
+                ...units.map((e) => bar(unit: e)).toList(),
+                line(),
+              ],
+            ),
           ),
         ),
       ),

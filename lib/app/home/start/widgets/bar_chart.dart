@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucio/app/home/start/widgets/bar_chart_detail.dart';
 import 'package:lucio/app/home/start/widgets/pie_chart.dart';
 import 'package:lucio/app/screens/consume_materials/consume_materials_page.dart';
 import 'package:lucio/data/const.dart';
@@ -14,10 +13,11 @@ import 'package:lucio/data/repositories/production/work_production_provider.dart
 import 'package:lucio/data/repositories/type_of_production/type_of_production_provider.dart';
 import 'package:lucio/data/repositories/units/units_provider.dart';
 import 'package:lucio/domain/scheme/consumption/consumption_model.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class BarChartGraphic extends ConsumerStatefulWidget {
-  const BarChartGraphic({super.key});
+  final UnitOfMeasurementModel? unit;
+
+  const BarChartGraphic({super.key, this.unit});
 
   @override
   ConsumerState<BarChartGraphic> createState() => _BarChartGraphicState();
@@ -43,10 +43,13 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
   Widget build(BuildContext context) {
     final units = ref.watch(unitsProvider);
     final scheme = Theme.of(context).colorScheme;
-    final materials = ref.watch(materialsProvider).where((element) => element.unit.value?.id == units.selected?.id).toList();
+
+    UnitOfMeasurementModel? unitSelect = widget.unit ?? units.selected;
+
+    final materials = ref.watch(materialsProvider).where((element) => element.unit.value?.id == unitSelect?.id).toList();
     final workProductions = ref.watch(workProductionProvider);
     final productTypes = ref.watch(productionTypeModelProvider);
-    final consumption = ref.watch(consumeMaterialsProvider).where((element) => element.material.value?.unit.value?.id == units.selected?.id).toList();
+    final consumption = ref.watch(consumeMaterialsProvider).where((element) => element.material.value?.unit.value?.id == unitSelect?.id).toList();
     List<_BarData> dataList = [];
     double maxValue = 100;
     if (consumption.isNotEmpty && productTypes.isNotEmpty && workProductions.isNotEmpty) {
@@ -93,18 +96,24 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
                     ),
                   ),
                 ),
-                PopupMenuButton<UnitOfMeasurementModel>(
-                  icon: Row(
-                    children: [Text(units.selected?.key ?? ""), const Icon(Icons.more_vert)],
-                  ),
-                  initialValue: units.selected,
-                  onSelected: (value) {
-                    ref.read(unitsProvider.notifier).selected = value;
-                  },
-                  itemBuilder: (_) => units.units.map((e) => PopupMenuItem(value: e, child: Text(e.value))).toList(),
-                ),
+                widget.unit == null
+                    ? PopupMenuButton<UnitOfMeasurementModel>(
+                        icon: Row(
+                          children: [Text(units.selected?.key ?? ""), const Icon(Icons.more_vert)],
+                        ),
+                        initialValue: units.selected,
+                        onSelected: (value) {
+                          ref.read(unitsProvider.notifier).selected = value;
+                        },
+                        itemBuilder: (_) => units.units.map((e) => PopupMenuItem(value: e, child: Text(e.value))).toList(),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(vertical: kDefaultRefNumber),
+                        child: Text(unitSelect?.key ?? ""),
+                      ),
               ],
             ),
+            const SizedBox(height: kDefaultRefNumber / 2),
             AspectRatio(
               aspectRatio: 1.5,
               child: BarChart(
@@ -227,7 +236,7 @@ class _BarChartGraphicState extends ConsumerState<BarChartGraphic> {
             Expanded(
               child: Column(
                 children: [
-                  const Align(alignment: Alignment.topLeft, child: Text("Materials ", textAlign: TextAlign.left)),
+                   Align(alignment: Alignment.topLeft, child: Text("Materials (${unitSelect?.value ?? ""})", textAlign: TextAlign.left)),
                   const SizedBox(width: double.maxFinite, height: kDefaultRefNumber / 2),
                   Expanded(
                     child: SingleChildScrollView(

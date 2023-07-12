@@ -41,6 +41,26 @@ class ProductionTab extends ConsumerWidget {
     );
     return res ?? false;
   }
+  static Future<bool> fireProductionDelete(BuildContext context, {required ProductionModel model}) async {
+    bool? res = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Can you sure ?"),
+        content: Text("Press 'Delete' for remove all production of ${DateFormat(dateFormat).format(model.date)}"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              "Delete",
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    );
+    return res ?? false;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
